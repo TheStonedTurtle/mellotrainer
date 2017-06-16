@@ -69,7 +69,7 @@ RegisterNUICallback("vehspawnoptions", function(data,cb)
 		drawNotification("Spawn Into Vehicle: "..tostring(text))
 	end
 
-	cb("ok")
+	if(cb)then cb("ok") end
 end)
 
 
@@ -93,7 +93,7 @@ RegisterNUICallback("vehspawn", function(data, cb)
 
 	SpawnVehicle(vehhash, x, y, z, heading, playerPed)
 
-	cb("ok")
+	if(cb)then cb("ok") end
 end)
 
 RegisterNUICallback("vehcolor", function(data, cb)
@@ -113,7 +113,7 @@ RegisterNUICallback("vehcolor", function(data, cb)
 	SetVehicleCustomSecondaryColour(playerVeh, r, g, b)
 	drawNotification("~g~Repainted vehicle!")
 
-	cb("ok")
+	if(cb)then cb("ok") end
 end)
 
 
@@ -274,9 +274,8 @@ RegisterNUICallback("veh", function(data, cb)
 		end
 
 	end
-	cb("ok")
 
-
+	if(cb)then cb("ok") end
 end)
 
 
@@ -417,7 +416,6 @@ RegisterNUICallback("vehmod", function(data, cb)
 		local data = createVariableData()
 		SendNUIMessage({updateVariables = true, data = data})
 	end
-
 end)
 
 
@@ -503,18 +501,18 @@ RegisterNUICallback("vehmods", function(data, cb)
 		local customJSON = createJSONString(validOptions)
 		Citizen.Trace(customJSON);
 		SendNUIMessage({
-			newmenu = true,
+			createmenu = true,
 			name = "vehmods",
 			menudata = customJSON
 		})
 	else
 		SendNUIMessage({
-			newmenu = true,
+			createmenu = true,
 			name = "vehmods",
 			menudata = "{}"
 			})
 	end
-	cb("ok")
+	if(cb)then cb("ok") end
 end)
 
 

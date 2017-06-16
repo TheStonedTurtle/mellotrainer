@@ -47,7 +47,7 @@
                     <p class="traineroption" data-action="otherplayer teleportto">Teleport to Player</p>
                     <p class="traineroption" data-action="otherplayer teleportinside">Teleport into Player Vehicle</p>
                     <p class="traineroption" data-action="otherplayer drawroute">Draw Route to Player</p>
-                    <p class="traineroption" data-action="otherplayer spectate">Spectate Player</p>
+                    <p class="traineroption" data-action="otherplayer spectate" data-state="OFF">Spectate Player</p>
                     <p class="traineroption" data-action="otherplayer relationship friendly">Mark Friendly</p>
                     <p class="traineroption" data-action="otherplayer relationship normal">Mark Neutral</p>
                     <p class="traineroption" data-action="otherplayer relationship hostile">Mark Hostile</p>
@@ -67,6 +67,16 @@
                 <p class="traineroption" data-action="player everyone" data-state="OFF">Everyone Ignores You</p>
                 <p class="traineroption" data-action="player police" data-state="OFF">Police Ignore You</p>
                 <p class="traineroption" data-action="player wanted" data-state="OFF">Never Wanted</p>
+
+                <p class="traineroption" data-action="player keepwet" data-state="OFF">Keep Wet</p>
+                <p class="traineroption" data-action="player fastswim" data-state="OFF">Fast Swim</p>
+                <p class="traineroption" data-action="player fastrun" data-state="OFF">Fast Run</p>
+                <p class="traineroption" data-action="player superjump" data-state="OFF">Super Jump</p>
+                <p class="traineroption" data-action="player noragdoll" data-state="OFF">No Ragdoll</p>
+                <p class="traineroption" data-action="player nightvision" data-state="OFF">Night Vision</p>
+                <p class="traineroption" data-action="player thermalvision" data-state="OFF">Thermal Vision</p>
+                <p class="traineroption" data-action="player radiooff" data-state="OFF">Radio Always Off</p>
+                
                 <p class="traineroption" data-action="player suicide">Suicide</p>
             </div>
             
@@ -300,7 +310,7 @@
 
             
             <!-- Vehicle Customization Menu -->
-            <div id="vehiclesmodmenu" data-parent="vehiclesmenu">
+            <div id="vehiclesmodmenu" data-parent="vehiclesmenu" data-dynamicmenu="vehiclesmodmenu" data-dynamicmenucallback="vehmods">
                 <p class="traineroption" data-sub="vehiclesenginemenu">Engine (5)</p>
                 <p class="traineroption" data-sub="vehiclesbrakemenu">Brakes (5)</p>
                 <p class="traineroption" data-sub="vehiclestransmissionmenu">Transmission (4)</p>

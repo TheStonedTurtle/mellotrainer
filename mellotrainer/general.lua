@@ -5,6 +5,12 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 
+
+function initServerConfig()
+	NetworkSetFriendlyFireOption(true)
+end
+
+
 --[[
    _____   _           _               _     ______                          _     _                       
   / ____| | |         | |             | |   |  ____|                        | |   (_)                      
@@ -81,6 +87,32 @@ function sortByValue(custTable)
 end
 
 
+
+
+
+
+-- Teleport to map blip
+function teleportToWaypoint()
+	local targetPed = GetPlayerPed(-1)
+	local targetVeh = GetVehiclePedIsUsing(targetPed)
+	if(IsPedInAnyVehicle(targetPed))then
+		targetPed = targetVeh
+	end
+
+	if(not IsWaypointActive())then
+		drawNotification("No active waypoint.")
+		return
+	end
+
+	local waypointBlip = GetFirstBlipInfoId(8) -- 8 = Waypoint ID
+	local x,y,z = table.unpack(Citizen.InvokeNative(0xFA7C7F0AADF25D09, waypointBlip, Citizen.ResultAsVector())) 
+
+	SetEntityCoordsNoOffset(targetPed, x,y,z, 0, 0, 1)
+	drawNotification("Teleported to waypoint.")
+end
+
+
+
 --[[
   _______                  _                            _____                   _                    _       
  |__   __|                (_)                          / ____|                 | |                  | |      
@@ -112,6 +144,10 @@ Citizen.CreateThread(function()
 					hidetrainer = true
 				})
 			end
+		end
+
+		if IsControlJustReleased(1, 170) and not blockinput then
+			teleportToWaypoint()
 		end
 
 		if showtrainer and not blockinput then
@@ -185,3 +221,6 @@ RegisterNUICallback("trainerclose", function(data, cb)
 	showtrainer = false
 	cb("ok")
 end)
+
+
+initServerConfig()

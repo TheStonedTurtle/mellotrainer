@@ -97,23 +97,13 @@ end)
 --]]
 
 function toggleBlips()
-	Citizen.Trace("ToggleBlips")
-	for i=1,maxPlayers, 1 do
+	--Citizen.Trace("ToggleBlips")
+	for i=0,maxPlayers, 1 do
 		if(NetworkIsPlayerConnected(i) and (i ~= playerID)) then
-			local name = GetPlayerName(i)
-			local playerPed = GetPlayerPed(i)
-
-			-- Player has changed since last load, lets save the user information.
-			if( (playerdb[i].ped ~= playerPed) or (playerdb[i].name ~= name) ) then
-				playerdb[i].ped = playerPed
-				playerdb[i].name = name
-			end
-
+			checkPlayerInformation(i)
 
 			if (featurePlayerBlips) then
-				if (playerdb[i].blip == nil) then
-					createBlip(i)
-				elseif (not DoesBlipExist(playerdb[i].blip)) then
+				if (playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip))) then
 					createBlip(i)
 				end
 			else
@@ -126,16 +116,9 @@ end
 
 
 function toggleHeadDisplay()
-	for i=1,maxPlayers, 1 do
+	for i=0,maxPlayers, 1 do
 		if(NetworkIsPlayerConnected(i) and (i ~= playerID)) then
-			local name = GetPlayerName(i)
-			local playerPed = GetPlayerPed(i)
-
-			-- Player has changed since last load, lets save the user information.
-			if( (playerdb[i].ped ~= playerPed) or (playerdb[i].name ~= name) ) then
-				playerdb[i].ped = playerPed
-				playerdb[i].name = name
-			end
+			checkPlayerInformation(i)
 
 			if (featurePlayerHeadDisplay) then
 				createHead(i)
@@ -187,30 +170,37 @@ function createBlip(i)
 end
 
 
-function checkBlipType(i)
-	-- Update it to a vehicle sprite if needed.
-	if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
-		local sprite = 1
-		local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
-		local vehClass = GetVehicleClass(veh)
+function checkBlipTypes()
+	for i=0,maxPlayers,1 do
+		if(NetworkIsPlayerConnected(i) and (i ~= playerID))then
+			checkPlayerInformation(i)
 
-		if(vehClass == 8 or vehClass == 13)then
-			sprite = 226 -- Bikes
-		elseif(vehClass == 14)then
-			sprite = 410 -- Boats
-		elseif(vehClass == 15)then
-			sprite = 422 -- Helicopters
-		elseif(vehClass == 16)then
-			sprite = 423 -- Airplanes
-		elseif(vehClass == 19)then
-			sprite = 421 -- Military
-		else
-			sprite = 225 -- Car
-		end
+			-- Update it to a vehicle sprite if needed.
 
-		if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
-			SetBlipSprite(playerdb[i].blip, sprite)
-			SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
+			local sprite = 1
+			if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
+				local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
+				local vehClass = GetVehicleClass(veh)
+
+				if(vehClass == 8 or vehClass == 13)then
+					sprite = 226 -- Bikes
+				elseif(vehClass == 14)then
+					sprite = 410 -- Boats
+				elseif(vehClass == 15)then
+					sprite = 422 -- Helicopters
+				elseif(vehClass == 16)then
+					sprite = 423 -- Airplanes
+				elseif(vehClass == 19)then
+					sprite = 421 -- Military
+				else
+					sprite = 225 -- Car
+				end
+			end
+
+			if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
+				SetBlipSprite(playerdb[i].blip, sprite)
+				SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
+			end
 		end
 	end
 
@@ -246,7 +236,7 @@ end
 
 function createHead(i)
 	if(playerdb[i].head == nil) then
-		Citizen.Trace("Head Display created for:"..playerdb[i].name)
+		--Citizen.Trace("Head Display created for:"..playerdb[i].name)
 		playerdb[i].head = N_0xbfefe3321a3f5015(playerdb[i].ped, playerdb[i].name, false, false, "", false) -- Create head display
 	end
 
@@ -256,7 +246,7 @@ end
 
 function clearHead(i)-- If there was a head display remove it.
 	if (N_0x4e929e7a5796fd26(playerdb[i].head)) then
-		Citizen.Trace("removed head ID: "..tostring(playerdb[i].head))
+		--Citizen.Trace("removed head ID: "..tostring(playerdb[i].head))
 		N_0x31698aa80e0223f8(playerdb[i].head)
 		playerdb[i].head = nil
 	end
@@ -291,48 +281,29 @@ Citizen.CreateThread(function()
 
 		-- Head Display (Player & Vehicles)
 		if (featurePlayerHeadDisplay) then
-			for i=1, maxPlayers, 1 do
-				if(NetworkIsPlayerConnected(i) and (i ~= playerID)) then
-					checkPlayerInformation(i)
-					createHead(i)
-				end
+			if (not nameToggle) then
+				toggleHeadDisplay()
+				nameToggle = true
 			end
 		else
-			for i=0, maxPlayers, 1 do
-				if(NetworkIsPlayerConnected(i)) then
-					clearHead(i)
-					--N_0x31698aa80e0223f8(i)
-				end
+			if(nameToggle) then
+				toggleHeadDisplay()
+				nameToggle = false
 			end
 		end
 
 
 		-- Player Blips
 		if(featurePlayerBlips) then
-			blipToggle = true
-			for i=1,maxPlayers, 1 do
-				if(NetworkIsPlayerConnected(i) and (i ~= playerID)) then
-					checkPlayerInformation(i)
-
-					if (playerdb[i].blip == nil) then
-						createBlip(i)
-					elseif (not DoesBlipExist(playerdb[i].blip)) then
-						createBlip(i)
-					end
-
-					checkBlipType(i)
-				else
-					clearBlip(i)
-				end
+			if(not blipToggle)then
+				toggleBlips()
+				blipToggle = true
 			end
+			checkBlipTypes()
 		else
 			if (blipToggle) then
-				for i=1,maxPlayers, 1 do
-					if(NetworkIsPlayerConnected(i)) then
-						clearBlip(i)
-					end
-				end
 				blipToggle = false
+				toggleBlips()
 			end
 		end
 	end

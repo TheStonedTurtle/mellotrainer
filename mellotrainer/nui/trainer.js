@@ -45,7 +45,7 @@ var dynamicActions = {
 var dynamicIDs = {
     "skinmenu" : "playerskinmenuskins",
     "propmenu" : "playerskinmenuprops",
-    "vehmods" : "",
+    "vehmods" : "vehiclesmodmenu",
     "onlineplayers" : "onlineplayersmenu"
 
 }
@@ -640,8 +640,9 @@ function convertToMenu(){
             menus[$(this).attr("id")] = data;
 
             // Needed for recreating Vehicles Weehl Mod HTML
-            if($(this).attr("id") == vehicleWheelModID){
+            if($(this).attr("id") == vehicleWheelModID && vehicleModFlag == false){
                 vehicleWheelModMenuData = data
+                vehicleModFlag = true
             }
         }
     });
@@ -839,9 +840,11 @@ function createStaticMenus(){
 // Hold the Data for the Vehicles Mod Menu so we can Recreate it when necessary.
 var vehicleWheelModMenuData = {}
 var vehicleWheelModID = "vehiclesmodmenu" // Find better way or retreiving this?
+var vehicleModFlag = false
 
 // Recreate Vehicle Wheel Mod Menu
 function recreateVehicleWheelModMenuHTML(){
+    sendData("debug","recreating mod menu.")
     // Remove the menu if it exists since we are re-creating based off original template.
     showMenu(menus[vehicleWheelModID])
     $("#"+vehicleWheelModID).html("").remove()
@@ -920,7 +923,6 @@ function createDynamicMenu(object,name){
 
     if(name == "vehmods"){
         recreateVehicleWheelModMenuHTML()
-
         choiceDiv = $("#"+idName).detach()
     } else {
         if($("#"+idName).html() == undefined){

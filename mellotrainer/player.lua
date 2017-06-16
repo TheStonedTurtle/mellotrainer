@@ -22,9 +22,10 @@ RegisterNUICallback("player", function(data, cb)
 	if action == "heal" then
 		SetEntityHealth(playerPed, 200)
 		ClearPedBloodDamage(playerPed)
+		ClearPedWetness(playerPed)
 
-		if(not featureKeepWet)then -- Keep Wet Check.
-			ClearPedWetness(playerPed)
+		if(featureKeepWet)then -- Keep Wet Check.
+			SetPedWetnessHeight(playerPed, 2.0)
 		end
 		drawNotification("~g~Cleaned & Healed.")
 
@@ -236,7 +237,6 @@ Citizen.CreateThread(function()
 			-- Stamina
 			if featurePlayerInfiniteStamina then
 				RestorePlayerStamina(playerID, 1.0)
-				featurePlayerInfiniteStamina = false;
 			end
 
 

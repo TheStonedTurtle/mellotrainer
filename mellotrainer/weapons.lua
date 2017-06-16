@@ -130,9 +130,6 @@ RegisterNUICallback("weapon", function(data)
 	else
 		drawNotification("Error")
 	end
-	
-
-	--cb("ok")
 end)
 
 

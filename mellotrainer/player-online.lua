@@ -4,7 +4,7 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
-
+local drawRouteTarget = nil
 
 
 -- Returns all player names in alphabetical order.
@@ -98,6 +98,27 @@ function drawRoute(target)
 	end
 end
 
+function updateDrawRoute()
+	if(not IsWaypointActive())then
+		featureDrawRoute = false
+		return
+	end
+
+	local target = drawRouteTarget
+	local targetId = target['id']
+	if(featureDrawRoute)then
+		if(NetworkIsPlayerConnected(targetId))then
+			local drawroute = GetEntityCoords(target['ped'], false)
+
+			SetNewWaypoint(drawroute['x'], drawroute['y'])
+		else
+			SetWaypointOff()
+			featureDrawRoute = false
+			drawRouteTarget = nil
+			drawNotification("Player "..target['menuName'].." has ~r~<C>disconnected</C>.")
+		end
+	end
+end
 
 
 -- Teleport to Player
@@ -132,6 +153,7 @@ end
 
 
 
+
 -- Teleport into player Vehicle
 function teleportIntoPlayerVehicle(target)
 	local playerPed = GetPlayerPed(-1)
@@ -141,6 +163,11 @@ function teleportIntoPlayerVehicle(target)
 	end
 
 	local targetVeh = GetVehiclePedIsIn(target['ped'], false)
+
+	if(targetVeh == GetVehiclePedIsIn(playerPed))then
+		drawNotification("You are already in ".."~b~<C>"..target['menuName'].."'s</C> ~s~vehicle.")
+		return
+	end
 
 	if(GetVehicleDoorsLockedForPlayer(targetVeh, playerPed))then
 		drawNotification("~b~<C>"..target['menuName'].."'s</C> ~s~vehicle is locked.")
@@ -163,7 +190,7 @@ function teleportIntoPlayerVehicle(target)
 		end
 	end
 
-	if (seatNum > passNum) then
+	if (seatNum >= passNum) then
 		drawNotification("~b~<C>"..target['menuName'].."'s</C> ~s~vehicle is full.")
 	    return
 	end
@@ -221,11 +248,11 @@ RegisterNUICallback("otherplayer", function(data, cb)
 
 		--Normal
 		elseif(relationshipType == "normal")then
-			toggleRelationshipBlip(1, "Normal",target)
+			toggleRelationshipBlip(0, "Normal",target)
 
 		--Hostile
 		elseif(relationshipType == "hostile")then
-			toggleRelationshipBlip(0, "Hostile",target)
+			toggleRelationshipBlip(1, "Hostile",target)
 		end
 
 	-- Teleport to the player.
@@ -239,6 +266,7 @@ RegisterNUICallback("otherplayer", function(data, cb)
 	--Draw Route to player
 	elseif action == "drawroute" then
 		featureDrawRoute = newstate
+		drawRouteTarget = target
 		drawRoute(target)
 
 	-- Spectate player.
@@ -292,3 +320,12 @@ RegisterNUICallback("getonlineplayers", function(data,cb)
 end)
 
 
+Citizen.CreateThread(function()
+	while true do
+		Wait(2000)
+
+		if(featureDrawRoute)then
+			updateDrawRoute()
+		end
+	end
+end)

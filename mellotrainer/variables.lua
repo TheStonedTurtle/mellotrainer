@@ -35,17 +35,17 @@ pallet = {};
 
 
 --General Settings
-featurePlayerBlips = true;
+featurePlayerBlips = false;
 featurePlayerBlipNames = false;
-featurePlayerHeadDisplay = true;
-featurePlayerVehHeadDisplay = true;
+featurePlayerHeadDisplay = false;
+featurePlayerVehHeadDisplay = false;
 --featurePlayerBlipCone = false;
 --featurePlayerNotifications = true;
 --featureDeathNotifications = true;
 featureHideMap = false;
 featureHideHud = false;
 featureBigHud = false;
-featurePoliceBlips = true;
+featurePoliceBlips = false;
 featureMapBlips = false;
 featureAreaStreetNames = false;
 --featureShowDeathCutscene = false;
