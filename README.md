@@ -42,4 +42,5 @@ A FiveM(GTA5 Modded Multiplayer) Trainer Made by <a href="https://github.com/The
 <ul>
 <li><a href="https://github.com/pongo1231/ScorpionTrainer">Scorpion Trainer</a> for a lot of the basic NUI functionality & structure.</li>
 <li><a href="https://github.com/citizenfx/project-lambdamenu">Lambda Menu</a> which I used to convert useful functionality from C++ to Lua.</li>
+<li><a href="https://forum.fivem.net/t/release-simple-speedometer/7846">Simple Speedometer</a> for the speedometer used by the trainer. (Black Outline)</li>
 </ul>
