@@ -989,6 +989,9 @@ function createDynamicMenu(object,name){
                 var Action = defaultAction + currentObject.modtype + " " + currentObject.mod
                 choiceEle.text(currentObject.name)
                 choiceEle.attr("data-action", Action)
+                if(currentObject.modtype == "extra"){
+                    choiceEle.attr("data-state", currentObject.state)
+                }
             }
             
 

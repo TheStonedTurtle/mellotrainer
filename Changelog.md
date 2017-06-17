@@ -1,3 +1,20 @@
+<h1> V 0.0.1 (06-16-2017) #2</h1>
+
+Added Vehicle Extra Toggles as well as Fixed Vehicle Livery Options.
+
+<h3>Changes</h3>
+<ul>
+<li>Fixed Vehicle Liveries not showing for specific Vehicles</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+<li>Added Vehicle Extra Toggles to Vehicle Modification Menu</li>
+</ul>
+
+
+
+
 <h1>V 0.0.1 (06-16-2017)</h1>
 
 Added additional functionality to the trainer and fixed some bugs found by the alpha testing team

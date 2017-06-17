@@ -434,13 +434,26 @@ RegisterNUICallback("vehmodify", function(data, cb)
 
 	SetVehicleModKit(playerVeh, 0)
 
+	if(data.data[2] == "extra")then
+		local extraID = tonumber(data.data[3])
+		local newstate = data.newstate
+		SetVehicleExtra(playerVeh, extraID, not newstate)
+		drawNotification("Extra toggled.")
+	end
+
 	local modID = tonumber(data.data[2])
 	if (data.data[3] == "clear") then
 		RemoveVehicleMod(playerVeh, modID)
+		if(modID == 48)then
+			SetVehicleLivery(playerVeh, 0)
+		end
 		return
 	end
 	local modIndex = tonumber(data.data[3])
 
+	if(modID == 48)then
+		SetVehicleLivery(playerVeh, modIndex)
+	end
 	SetVehicleMod(playerVeh, modID, modIndex, customTires)
 	drawNotification("Mod Applied.")
 end)
@@ -479,7 +492,8 @@ local vehicleMods = {
 	["Trim 2"] =  44,
 	["Tank"] =  45,
 	["Windows"] =  46,
-	["Livery"] =  48
+	["Livery"] =  48,
+	["Extras"] = "extra"
 }
 
 
@@ -488,7 +502,12 @@ RegisterNUICallback("vehmods", function(data, cb)
 	local optCount = 0
 
 	for keyName,value in pairs(vehicleMods) do
-		local validComponents = checkValidVehicleMods(value)
+		local validCOmponents
+		if (value == "extra") then
+			validComponents = checkValidVehicleExtras()
+		else
+			validComponents = checkValidVehicleMods(value)
+		end
 
 		if #validComponents > 0 then
 
@@ -559,14 +578,21 @@ function createJSONString(myTable)
 		local subcount = 0
 		for key,value in pairs(v) do
 			-- Loop over the textures for each drawable (should always have at least 1)
-			local subString = '{"name": "'..tostring(value.name)..'", "modtype": "'..tostring(value.modtype)..'", "mod": "'..tostring(value.mod)..'"}'
+			local curJSON = '"name": "'..tostring(value.name)..'", "modtype": "'..tostring(value.modtype)..'", "mod": "'..tostring(value.mod)..'"'
 
+			if(k == "Extras") then
+				curJSON = curJSON..', "state": "'..value.state..'"'
+			end
+
+			local subString = '{'..curJSON..'}'
 
 			if subcount > 0 then
 				subString = ","..subString
 			else
 				-- Add the ability to change back to stock.
-				subString = '{"name": "Stock", "modtype": "'..tostring(value.modtype)..'", "mod": "clear"},'..subString
+				if(k ~= "Extras")then
+					subString = '{"name": "Stock", "modtype": "'..tostring(value.modtype)..'", "mod": "clear"},'..subString
+				end
 			end
 			JSONString = JSONString..subString
 			subcount = subcount + 1
@@ -582,11 +608,49 @@ function createJSONString(myTable)
 end
 
 
+function checkValidVehicleExtras()
+	local playerPed = GetPlayerPed(-1)
+	local playerVeh = GetVehiclePedIsIn(playerPed, false)
+	local valid = {}
+
+	-- Get Extra Toggle Options
+	for i=0,50,1 do
+		if(DoesExtraExist(playerVeh, i))then
+			local realModName = "Extra #"..tostring(i)
+			local text = "OFF"
+			if(IsVehicleExtraTurnedOn(playerVeh, i))then
+				text = "ON"
+				Citizen.Trace(tostring(i).." is ON")
+			end
+			valid[i] = {name=realModName, modtype="extra",mod=i,state=text}
+		end
+	end
+
+	return valid
+end
+
 function checkValidVehicleMods(modID)
 	local playerPed = GetPlayerPed(-1)
 	local playerVeh = GetVehiclePedIsIn(playerPed, false)
 	local valid = {}
 	local modCount = GetNumVehicleMods(playerVeh,modID)
+
+
+
+	-- Handle Liveries if they don't exist in modCount
+	if (modID == 48 and modCount == 0) then
+		--Citizen.Trace("Adding Non-mod Liveries")
+		modCount = GetVehicleLiveryCount(playerVeh)
+		for i=1, modCount, 1 do
+			local realIndex = i - 1
+			local modName = GetLiveryName(playerVeh, realIndex)
+			local realModName = GetLabelText(modName)
+			Citizen.Trace("modname:realModName "..tostring(modName)..":"..tostring(realModName))
+			valid[i] = {name=realModName, modtype=modID,mod=realIndex}
+		end
+
+		return valid
+	end
 
 	for i = 1, modCount, 1 do
 		local realIndex = i - 1
