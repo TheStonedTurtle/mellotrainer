@@ -19,7 +19,6 @@ function getOnlinePlayersAndNames()
             players[scoreboardID] = {['ped'] = GetPlayerPed(i), ['menuName']=playerName,['spawnName'] = scoreboardID, ['id'] = i}
         end
     end
-    --players = sortByValues(players) -- Alphabetical Order for players.
     return players
 end
 
@@ -27,7 +26,7 @@ end
 
 -- Spectate target player.
 function spectatePlayer(target)
-	local playerPed = GetPlayerPed() -- yourself
+	local playerPed = GetPlayerPed(-1) -- yourself
 
 	if(featureSpectate)then
 		if (not IsScreenFadedOut() and not IsScreenFadingOut()) then
@@ -73,23 +72,13 @@ end
 -- Draw Route to player on map.
 
 
--- TODO: Add check to ensure target is still online/update route.
+-- Draw Initial Route
 function drawRoute(target)
 	local targetId = tonumber(target['id'])
 	if (featureDrawRoute) then
-
---		if (NetworkIsPlayerConnected(targetId)) then
---			SetWaypointOff()
---			featureDrawRoute = false;
---			drawNotification("Player "..target['menuName'].." has ~r~<C>disconnected</C>.")
-
-		--else
 		if (DoesEntityExist(target['ped'])) then
-
 			local drawroute = GetEntityCoords(target['ped'], false)
-
 			SetNewWaypoint(drawroute['x'], drawroute['y'])
-
 			drawNotification("Drawing Live Route To:~n~~b~<C>"..target['menuName'].."</C>.")
 		end
 	else
@@ -98,6 +87,8 @@ function drawRoute(target)
 	end
 end
 
+
+-- Update draw route.
 function updateDrawRoute()
 	if(not IsWaypointActive())then
 		featureDrawRoute = false
@@ -119,6 +110,7 @@ function updateDrawRoute()
 		end
 	end
 end
+
 
 
 -- Teleport to Player
@@ -144,7 +136,7 @@ function teleportToPlayer(target)
 
 	local x,y,z = table.unpack(GetEntityCoords(target['ped']))
 	--Citizen.Trace("XYZ: "..tostring(x).." "..tostring(y).." "..tostring(z))
-	z = z + 3.0
+	z = z + 3.5
 	RequestCollisionAtCoord(x,y,z)
 	SetEntityCoordsNoOffset(targetPed, x,y,z, 0, 0, 1)
 
@@ -153,10 +145,15 @@ end
 
 
 
-
 -- Teleport into player Vehicle
 function teleportIntoPlayerVehicle(target)
 	local playerPed = GetPlayerPed(-1)
+
+	-- Prevents false "false" returns by being far away from target.
+	local x,y,z = table.unpack(GetEntityCoords(target['ped']))
+	RequestCollisionAtCoord(x,y,z)
+
+	 
 	if(not IsPedInAnyVehicle(target['ped'], false))then
 		drawNotification("~b~<C>"..target['menuName'].."</C> ~s~is not in any vehicle")
 		return
@@ -197,6 +194,7 @@ function teleportIntoPlayerVehicle(target)
 
 	drawNotification("Teleported into ~b~<C>"..target['menuName'].."'s</C> ~s~vehicle.")
 end
+
 
 
 -- Relationship Toggles
@@ -281,36 +279,13 @@ end)
 
 
 
-
--- Convert the tables We create to a JSON string to be converted by trainer.js
-local function createJSONString(myTable)
-	local JSONString = '{"onlineplayers": ['
-	local count = 0
-
-	-- Loop over each player
-	for k in pairs(myTable) do
-		v = myTable[k]
-
-		local curString = '{"menuName": "'..tostring(v['menuName'])..'", "spawnName": "'..tostring(v['spawnName'])..'"}'
-
-		if count > 0 then
-			curString = ","..curString
-		end
-
-		count = count + 1
-		JSONString = JSONString..curString
-	end
-
-	JSONString = JSONString.."]}"	
-	return JSONString
-end
-
-
 -- Return all player names to the trainer
 RegisterNUICallback("getonlineplayers", function(data,cb)
 	--Citizen.Trace("Get Online Players")
 	local players = getOnlinePlayersAndNames()
-	local playerJSON = createJSONString(players)
+	local playersTable = {onlineplayers = players}
+	local playerJSON = json.encode(playersTable, {indent = true})
+
 
 	SendNUIMessage({
 		createonlineplayersmenu = true,
@@ -320,6 +295,7 @@ RegisterNUICallback("getonlineplayers", function(data,cb)
 end)
 
 
+-- Update draw route every 2 seconds
 Citizen.CreateThread(function()
 	while true do
 		Wait(2000)

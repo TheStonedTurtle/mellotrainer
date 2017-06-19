@@ -168,11 +168,6 @@ end)
 
 
 
-
-RegisterNUICallback("requireadmin", function(data)
-	-- Check for Admin Permisions. Currently everyone.
-end)
-
 -- Only show menu if they are an admin
 RegisterNUICallback("requireadmin", function(data, cb)
 	-- check to be added, currently everyone can access.

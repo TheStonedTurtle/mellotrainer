@@ -199,6 +199,12 @@ RegisterNUICallback("veh", function(data, cb)
 	if action == "set" then
 		SetVehicleOnGroundProperly(playerVeh)
 
+	elseif action == "fixset"then
+		SetVehicleOnGroundProperly(playerVeh)
+		SetVehicleFixed(playerVeh)
+		SetVehicleDirtLevel(playerVeh, 0.0)
+		drawNotification("~g~Vehicle repaired & set properly.")
+
 	elseif action == "fix" then
 		SetVehicleFixed(playerVeh)
 		drawNotification("~g~Vehicle repaired.")
@@ -517,7 +523,8 @@ RegisterNUICallback("vehmods", function(data, cb)
 	end
 
 	if (optCount > 0) then
-		local customJSON = createJSONString(validOptions)
+		local customJSON = json.encode(validOptions,{indent = true})
+
 		Citizen.Trace(customJSON);
 		SendNUIMessage({
 			createmenu = true,
@@ -544,67 +551,10 @@ function createVariableData()
 		wheelModID = 24
 	end
 
-	local data = "{"
-	data = data..'"wheeltype": "'..tostring(GetVehicleWheelType(playerVeh))..'",'
-	data = data..'"wheelindex": "'..tostring(GetVehicleMod(playerVeh, wheelModID))..'"'
-	data = data.."}"
+	local data = json.encode({wheeltype=tostring(GetVehicleWheelType(playerVeh)),wheelindex=tostring(GetVehicleMod(playerVeh, wheelModID))}, {indent = true})
 	Citizen.Trace(data)
 
 	return data
-end
-
-
--- Convert the tables We create to a JSON string to be converted by trainer.js
-function createJSONString(myTable)
-	local JSONString = "{"
-	local count = 0
-
-	-- Loop over each Skin Feature.
-	for k,v in pairs(myTable) do
-		-- print(k,v)
-
-
-		local customString = '"'..tostring(k)..'":['
-
-		if count > 0 then
-			customString = ","..customString 
-		end
-
-
-
-		JSONString = JSONString..customString
-
-		-- Loop through each drawable for the skin feature
-		local subcount = 0
-		for key,value in pairs(v) do
-			-- Loop over the textures for each drawable (should always have at least 1)
-			local curJSON = '"name": "'..tostring(value.name)..'", "modtype": "'..tostring(value.modtype)..'", "mod": "'..tostring(value.mod)..'"'
-
-			if(k == "Extras") then
-				curJSON = curJSON..', "state": "'..value.state..'"'
-			end
-
-			local subString = '{'..curJSON..'}'
-
-			if subcount > 0 then
-				subString = ","..subString
-			else
-				-- Add the ability to change back to stock.
-				if(k ~= "Extras")then
-					subString = '{"name": "Stock", "modtype": "'..tostring(value.modtype)..'", "mod": "clear"},'..subString
-				end
-			end
-			JSONString = JSONString..subString
-			subcount = subcount + 1
-		end
-		JSONString = JSONString.."]"	
-		count = count + 1
-	end
-
-
-	JSONString = JSONString.."}"
-
-	return JSONString
 end
 
 
@@ -620,7 +570,7 @@ function checkValidVehicleExtras()
 			local text = "OFF"
 			if(IsVehicleExtraTurnedOn(playerVeh, i))then
 				text = "ON"
-				Citizen.Trace(tostring(i).." is ON")
+				--Citizen.Trace(tostring(i).." is ON")
 			end
 			valid[i] = {name=realModName, modtype="extra",mod=i,state=text}
 		end
@@ -628,6 +578,7 @@ function checkValidVehicleExtras()
 
 	return valid
 end
+
 
 function checkValidVehicleMods(modID)
 	local playerPed = GetPlayerPed(-1)
@@ -659,12 +610,191 @@ function checkValidVehicleMods(modID)
 		valid[i] = { name=realModName, modtype=modID,mod=realIndex }
 	end
 
+
+	-- Insert Stock Option for modifications
+	if(modCount > 0)then
+		table.insert(valid, 1, {name="Stock", modtype=modID,mod="clear"})
+	end
+
 	return valid
 end
 
 
 
 
+local torqueMultiplier = 1
+local powerMultiplier = 1
+local lowerForce = 0
+
+local lowerForces = {
+	[0] = 0.00,
+	[1] = -0.018,
+	[2] = -0.03,
+	[3] = -0.05,
+	[4] = -0.08,
+	[5] = -0.11,
+	[6] = -0.15
+}
+
+RegisterNUICallback("vehopts", function(data, cb)
+	local playerPed = GetPlayerPed(-1)
+	local playerVeh = GetVehiclePedIsIn(playerPed, false)
+	local action = data.action
+	local state = data.newstate
+
+	local text,text2
+	if(data.newstate) then
+		text = "~g~ON"
+		text2 = "~r~OFF"
+	else
+		text = "~r~OFF"
+		text2 = "~g~ON"
+	end	
+
+
+	-- No Drag Out
+	if(action == "nodrag")then
+		featureNoDragOut = state;
+		featureNoDragOutUpdated = true;
+		drawNotification("No Drag: "..text)
+
+	-- No Fall Off
+	elseif(action == "nofall")then
+		featureNoFallOff = state;
+		featureNoFallOffUpdated = true;
+		drawNotification("No Fall: "..text)
+
+	-- No Helmet
+	elseif(action == "nohelmet")then
+		featureNoHelmet = state;
+		drawNotification("No Helmet: "..text)
+	end
+
+
+	if(not IsPedInAnyVehicle(playerPed, false))then
+		drawNotification("Not in a vehicle.")
+		return
+	end
+
+	local playerVeh = GetVehiclePedIsUsing(PlayerPedId())
+	if(not(playerPed == (GetPedInVehicleSeat(playerVeh,-1))))then
+		drawNotification("Not owner of vehicle.")
+		return
+	end
+
+
+
+	-- Drift Mode
+	if(action == "driftmode")then
+		if(not(IsThisModelACar(GetEntityModel(playerVeh))))then
+			drawNotification("Vehicle must be a car")
+			return
+		end
+
+		featureDriftMode = state
+		SetVehicleReduceGrip(playerVeh, featureDriftMode)
+		drawNotification("Drift Mode: "..text)
+
+	-- Power Options
+	elseif(action == "powerboost")then
+		powerMultiplier = tonumber(data.data[3])
+		SetVehicleEnginePowerMultiplier(playerVeh, powerMultiplier)
+
+		drawNotification("Power Boost Multiplier: "..tostring(powerMultiplier))
+
+	-- Torque Options
+	elseif(action == "torqueboost")then
+		torqueMultiplier = tonumber(data.data[3])
+		SetVehicleEngineTorqueMultiplier(playerVeh, torqueMultiplier)
+
+		drawNotification("Torque Multiplier: "..tostring(torqueMultiplier))
+
+	-- Lowering Level
+	elseif(action == "lowering")then
+		if(not(IsThisModelACar(GetEntityModel(playerVeh))))then
+			drawNotification("Vehicle must be a car")
+			return
+		end
+
+		lowerForce = tonumber(data.data[3])
+		ApplyForceToEntity(playerVeh, true, 0.0, 0.0, lowerForces[lowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true);
+
+	--
+	elseif(action == "cosdamage")then
+		featureVehCosDamage = state
+		SetVehicleCanBeVisiblyDamage(playerVeh, not featureVehCosDamage)
+		SetVehicleStrong(playerVeh, featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 0, not featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 1, not featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 2, not featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 3, not featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 4, not featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 5, not featureVehCosDamage)
+		SetVehicleDoorBreakable(playerVeh, 6, not featureVehCosDamage)
+
+		drawNotification("No Cosmetic Damage: "..text)
+	--
+	elseif(action == "mechdamage")then
+		featureVehMechDamage = state
+		SetVehicleEngineCanDegrade(playerVeh, not featureVehMechDamage)
+		SetVehicleCanBreak(playerVeh, not featureVehMechDamage)
+		SetVehicleWheelsCanBreak(playerVeh, not featureVehMechDamage)
+		SetDisableVehiclePetrolTankDamage(playerVeh, featureVehMechDamage)
+		drawNotification("No Mechanical Damage: "..text)
+	--
+	elseif(action == "invincible")then
+		featureVehInvincible = state
+		SetEntityInvincible(playerVeh, featureVehInvincible)
+		drawNotification("Vehicle Indestructable: "..text)
+	end
+
+
+
+	if(cb)then cb("ok") end
+end)
+
+
+
+
+-- Vehicle Options Thread
+Citizen.CreateThread(function()
+	while true do
+		Wait(10)
+		local playerPed = GetPlayerPed(-1)
+		local playerVeh = GetVehiclePedIsUsing(playerPed)
+
+
+		-- No Drag Out
+		if(featureNoDragOutUpdated)then
+			SetPedCanBeDraggedOut(playerPed, featureNoDragOut)	
+			featureNoDragOutUpdated = false
+		end
+
+
+		-- No FallL Off
+		if(featureNoFallOffUpdated)then
+			SetPedCanBeKnockedOffVehicle(playerPed, featureNoFallOff)
+			featureNoFallOffUpdated = false
+		end
+
+
+		-- No Helmet
+		if(featureNoHelmet)then
+			SetPedHelmet(playerPed, featureNoHelmet)
+			RemovePedHelmet(playerPed, true)
+		end
+
+	end
+end)
+
+
+
+
+
+
+
+
+-- Speedometer Thread
 Citizen.CreateThread(function()
 	local hudtoggle = false
 	while true do

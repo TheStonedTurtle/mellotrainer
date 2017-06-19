@@ -21,7 +21,7 @@ function checkValidComponents(componentID, componentName)
 	for i = 1, pedCount, 1 do
 		--if IsPedComponentVariationValid(playerPed, componentID, i, -1) then
 		local textureCount = GetNumberOfPedTextureVariations(playerPed, componentID, i - 1)
-		valid[i] = { value=i, textureCount=textureCount }
+		valid[i] = { id=i, textureCount=textureCount }
 		--end
 	end
 	return valid
@@ -36,7 +36,7 @@ function checkValidPropComponents(propID)
 	for i = 1, propCount, 1 do
 		local textureCount = GetNumberOfPedPropTextureVariations(playerPed, propID, i - 1)
 		if textureCount > 0 then
-			valid[i] = { value=i, textureCount=textureCount }
+			valid[i] = { id=i, textureCount=textureCount }
 		end
 	end
 
@@ -45,73 +45,30 @@ end
 
 
 
--- Convert the tables We create to a JSON string to be converted by trainer.js
-local function createJSONString(myTable)
-	local JSONString = "{"
-	local count = 0
-
-	-- Loop over each Skin Feature.
-	for k,v in pairs(myTable) do
-		-- print(k,v)
-
-
-		local customString = '"'..tostring(k)..'":['
-
-		if count > 0 then
-			customString = ","..customString 
-		end
-
-		JSONString = JSONString..customString
-
-		-- Loop through each drawable for the skin feature
-		local subcount = 0
-		for key,value in pairs(v) do
-			-- Loop over the textures for each drawable (should always have at least 1)
-			local subString = '{"id": "'..tostring(value.value)..'", "textureCount": "'..tostring(value.textureCount)..'"}'
-
-
-			if subcount > 0 then
-				subString = ","..subString
-			end
-			JSONString = JSONString..subString
-			subcount = subcount + 1
-		end
-		JSONString = JSONString.."]"	
-		count = count + 1
-	end
-
-
-	JSONString = JSONString.."}"
-
-	return JSONString
-end
-
-
-
-
 -- Skin DB
 local components = {
-	{ name = 'Face', t = 0},
-	{ name = 'Beard', t = 1},
+	{ name = 'Head/Face', t = 0},
+	{ name = 'Beard/Mask', t = 1},
 	{ name = 'Hair/Hats', t = 2},
-	{ name = 'Shirts', t = 3},
-	{ name = 'Top', t = 11},
-	{ name = 'Pants', t = 4},
-	{ name = 'Hands', t = 5},
-	{ name = 'Shoes', t = 6},
-	{ name = 'Eyes', t = 7},
-	{ name = 'Accessories', t = 8},
-	{ name = 'Accessories2', t = 9},
-	{ name = 'Decals/Masks', t = 10}
+	{ name = 'Top/Shirts', t = 3},
+	{ name = 'Legs/Pants', t = 4},
+	{ name = 'Gloves/Hands', t = 5},
+	{ name = 'Shoes/Feet', t = 6},
+	{ name = 'Neck/Eyes', t = 7},
+	{ name = 'Accessories-Top', t = 8},
+	{ name = 'Accessories-Extra', t = 9},
+	{ name = 'Badges/Decals', t = 10},
+	{ name = 'Shirt/Jacket', t = 11}
 }
 
 
 -- Prop DB
 local propComponents = {
-	{ name = "Headware", t = 0},
+	{ name = "Hats/Mask/Helmets", t = 0},
 	{ name = "Glasses", t = 1},
 	{ name = "Ears/Accessories", t = 2}
 }
+
 
 -- Error message
 local modifyEmpty = "~r~Nothing to modify!"
@@ -126,6 +83,11 @@ RegisterNUICallback("playerskin", function(data, cb)
 	else
 		model = GetHashKey(data.action)
 	end
+	if(not(IsModelValid(model)))then
+		drawNotification("~r~Invalid Model Name")
+		return
+	end
+	
 	RequestModel(model)
 	while not HasModelLoaded(model) do
 		Wait(1)
@@ -135,7 +97,8 @@ RegisterNUICallback("playerskin", function(data, cb)
 	SetPedDefaultComponentVariation(GetPlayerPed(-1))
 	drawNotification("~g~Changed Player Model.")
 	resetOptions("playerskinmodify playerpropmodify")
-	cb("ok")
+
+	if(cb)then cb("ok")end
 end)
 
 
@@ -162,9 +125,10 @@ RegisterNUICallback("playerskinmodify", function(data, cb)
 	end
 
 	if (optCount > 0) then
+		local SkinJSON = json.encode(validOptions, {indent = true})
 
-		local SkinJSON = createJSONString(validOptions)
 		Citizen.Trace(SkinJSON);
+
 		SendNUIMessage({
 			createmenu = true,
 			name = "skinmenu",
@@ -192,8 +156,10 @@ RegisterNUICallback("playerpropmodify", function(data, cb)
 	end
 
 	if (optCount > 0) then
-		local PropJSON = createJSONString(validOptions)
+		local PropJSON = json.encode(validOptions, {indent = true})
+
 		Citizen.Trace(PropJSON);
+
 		SendNUIMessage({
 			createmenu = true,
 			name = "propmenu",
@@ -217,7 +183,7 @@ RegisterNUICallback("defaultskin", function(data, cb)
 		ClearAllPedProps(playerPed)
 	end
 
-	cb("ok")
+	if(cb)then cb("ok")end
 end)
 
 
@@ -233,7 +199,7 @@ RegisterNUICallback("clearpropid", function(data, cb)
 
 	ClearPedProp(GetPlayerPed(-1), componentID)
 
-	cb("ok")
+	if(cb)then cb("ok")end
 end)
 
 
@@ -249,7 +215,7 @@ RegisterNUICallback("randomskin", function(data, cb)
 		SetPedRandomProps(playerPed)
 	end
 
-	cb("ok")
+	if(cb)then cb("ok")end
 end)
 
 
@@ -274,6 +240,7 @@ RegisterNUICallback("changeskin", function(data, cb)
 			end
 		end
 		SetPedComponentVariation(playerPed, componentID, drawableID, textureID)
+
 	elseif(data.action == "props") then
 		for i,v in ipairs(propComponents) do
 			if(v.name == componentText) then
@@ -286,5 +253,5 @@ RegisterNUICallback("changeskin", function(data, cb)
 	Citizen.Trace("ComponentID: "..tostring(componentID)..", Drawable ID:"..tostring(drawableID)..", Texture ID:"..tostring(textureID))
 
 
-	cb("ok")
+	if(cb)then cb("ok")end
 end)

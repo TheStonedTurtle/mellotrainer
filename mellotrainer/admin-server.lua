@@ -52,9 +52,7 @@ end)
 
 RegisterServerEvent('mellotrainer:adminTime')
 AddEventHandler('mellotrainer:adminTime', function(from, hour, minutes, seconds)
-	for playerIndex,obj in pairs(Users) do
-		TriggerClientEvent('mellotrainer:updateTime', playerIndex, hour, minutes, seconds)
-	end
+	TriggerClientEvent('mellotrainer:updateTime', -1, hour, minutes, seconds)
 end)
 
 
@@ -70,17 +68,13 @@ end)
 
 RegisterServerEvent('mellotrainer:adminWeather')
 AddEventHandler('mellotrainer:adminWeather', function(from, weatherState, persistToggle)
-	for playerIndex,obj in pairs(Users) do
-		TriggerClientEvent('mellotrainer:updateWeather', playerIndex, weatherState, persistToggle)
-	end
+	TriggerClientEvent('mellotrainer:updateWeather', -1, weatherState, persistToggle)
 end)
 
 
 RegisterServerEvent('mellotrainer:adminBlackout')
 AddEventHandler('mellotrainer:adminBlackout', function(from, toggle)
-	for playerIndex,obj in pairs(Users) do
-		TriggerClientEvent('mellotrainer:updateBlackout', playerIndex, toggle)
-	end
+	TriggerClientEvent('mellotrainer:updateBlackout', -1, toggle)
 end)
 
 
@@ -88,7 +82,5 @@ end)
 
 RegisterServerEvent('mellotrainer:adminWind')
 AddEventHandler('mellotrainer:adminWind', function(from, state, heading)
-	for playerIndex,obj in pairs(Users) do
-		TriggerClientEvent('mellotrainer:updateWind', playerIndex, state, heading)
-	end
+	TriggerClientEvent('mellotrainer:updateWind', -1, state, heading)
 end)

@@ -59,6 +59,14 @@ featureSpeedometer = false;
 featureVehicleDespawnable = nil;
 featureSpawnInsideCar = nil;
 featureDeleteLastVehicle = nil;
+featureNoFallOff = nil;
+featureNoFallOffUpdated = nil;
+featureNoDragOut = nil;
+featureNoDragOutUpdated = nil;
+featureNoHelmet = nil;
+featureVehCosDamage = nil;
+featureVehMechDamage = nil;
+featureVehInvincible = nil;
 
 
 --Online Player

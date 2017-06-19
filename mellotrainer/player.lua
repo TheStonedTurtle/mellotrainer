@@ -101,45 +101,54 @@ RegisterNUICallback("player", function(data, cb)
 	elseif action == "keepwet" then
 		featureKeepWet = newstate
 		featureKeepWetUpdated = true;
+		drawNotification("Keep Wet: "..tostring(text))
 
 	elseif action == "fastswim" then
 		fastSwimEnabled = newstate
 		fastSwimEnabledUpdated = true;
+		drawNotification("Fast Swim: "..tostring(text))
 
 	elseif action == "fastrun" then
 		fastRunEnabled = newstate
 		fastRunEnabledUpdated = true;
+		drawNotification("Fast Run: "..tostring(text))
 
 	elseif action == "superjump" then
 		featureSuperJumpEnabled = newstate
 
+		drawNotification("Super Jump: "..tostring(text))
+
 	elseif action == "noragdoll" then
 		featureNoRagdoll = newstate
 		featureNoRagdollUpdated = true;
+		drawNotification("No Ragdoll: "..tostring(text))
 
 	elseif action == "nightvision" then
 		featureNightVision = newstate
 		featureNightVisionUpdated = true;
+		drawNotification("Night Vision: "..tostring(text))
 
 	elseif action == "thermalvision" then
 		featureThermalVision = newstate
 		featureThermalVisionUpdated = true;
+		drawNotification("Thermal Vision: "..tostring(text))
 
 	elseif action == "radiooff" then
 		featureRadioAlwaysOff = newstate
 		featureRadioAlwaysOffUpdated = true;
+		drawNotification("Radio Always Off: "..tostring(text))
 
-
+	elseif action == "keepclean" then
+		featureKeepClean = newstate
+		drawNotification("Keep Clean: "..tostring(text))
 	end
 
-	cb("ok")
+	if(cb)then cb("ok") end
 end)
 
 
 
 Citizen.CreateThread(function()
-
-
 	while true do
 		Wait(1)
 
@@ -240,6 +249,12 @@ Citizen.CreateThread(function()
 			end
 
 
+			-- Keep Clean
+			if featureKeepClean then
+				ClearPedBloodDamage(playerPed)
+			end
+
+
 			-- Drunk
 			if(featurePlayerDrunkUpdated) then
 				SetPedIsDrunk(playerPed, drunk)
@@ -269,7 +284,6 @@ Citizen.CreateThread(function()
 				end
 				featurePlayerInvisibleUpdated = false;
 			end
-
 
 
 			-- Everyone Ignores Me

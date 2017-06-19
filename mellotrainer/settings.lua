@@ -9,7 +9,7 @@
 
 -- Variables used for this part of the trainer.
 local playerdb = {}
-local playerID = PlayerId()
+local playerID = PlayerId(-1)
 
 -- Creates an empty table of tables to hold the blip/ped information for users.
 for i=0, maxPlayers, 1 do
@@ -77,6 +77,7 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 		featureAreaStreetNames = newstate
 		drawNotification("Street Names: "..tostring(text2))
 
+	-- Map Location Blips
 	elseif(action == "mapblips")then
 		featureMapBlips = newstate
 		toggleMapBlips(featureMapBlips) -- In maps.lua
