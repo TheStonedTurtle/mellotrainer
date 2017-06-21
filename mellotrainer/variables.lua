@@ -1,3 +1,8 @@
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 --    _____        __            _ _    __      __        _       _     _           
 --   |  __ \      / _|          | | |   \ \    / /       (_)     | |   | |          
@@ -40,8 +45,8 @@ featurePlayerBlipNames = false;
 featurePlayerHeadDisplay = false;
 featurePlayerVehHeadDisplay = false;
 --featurePlayerBlipCone = false;
---featurePlayerNotifications = true;
---featureDeathNotifications = true;
+featurePlayerNotifications = true;
+featureDeathNotifications = true;
 featureHideMap = false;
 featureHideHud = false;
 featureBigHud = false;

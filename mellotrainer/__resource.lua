@@ -15,18 +15,20 @@ files {
 
 
 client_scripts {
-	"variables.lua",      -- Create all default variables. 
-	"general.lua",        -- User Managment/Trainer Controls/Global Functions
-	"map.lua",			  -- Map Blips.
-	"player.lua",	      -- Player Toggles & Options
-	"settings.lua",	      -- General Settings (Player Blips etc)
-	"player-skin.lua",    -- Player Skins & Props
-	"player-online.lua",  -- Other Player Options (Teleport/Spectate)
-	"vehicles.lua",       -- Vehicle Spawning/Modifications
-	"weapons.lua",        -- Weapon Spawning/Attachments
-	"admin.lua" 		  -- Handles Admin Menu Access & Options
+	"variables.lua",      		  -- Create all default variables. 
+	"general.lua",        		  -- User Managment/Trainer Controls/Global Functions
+	"map.lua",			  		  -- Map Blips.
+	"player.lua",	      		  -- Player Toggles & Options
+	"settings.lua",	      		  -- General Settings (Player Blips etc)
+	"settings-voice.lua", 		  -- Handles all voice-chat related settings
+	"settings-notifications.lua", -- Handles Player & Death Notifications
+	"player-skin.lua",    		  -- Player Skins & Props
+	"player-online.lua",  		  -- Other Player Options (Teleport/Spectate)
+	"vehicles.lua",       		  -- Vehicle Spawning/Modifications
+	"weapons.lua",        		  -- Weapon Spawning/Attachments
+	"admin.lua" 		  		  -- Handles Admin Menu Access & Options
 }
 
 server_scripts{
-	"admin-server.lua"    -- Handles Cross-Player Admin Commands
+	"admin-server.lua"    		  -- Handles Cross-Player Admin Commands
 }

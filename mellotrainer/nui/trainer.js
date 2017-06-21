@@ -30,9 +30,11 @@ var counter;            // Current Trainer Option
 var maxamount;          // Max Amount of Options for Current Menu
 var currentpage;        // Current Page Number
 var content;            // Current Menu Content (Shown Menu Information)
-var container;          // Trainer Container Div.
+var container;          // Trainer Container Div
 var speedContainer;     // Speedometer Container Div
 var speedText;          // Speedometer Text Div
+var voiceContainer;     // Voice Menu Container Div
+var voicePlayers;       // Container Div for Talking Players
 var menus = {};         // Holds detached HTML elements of each menu (each div)
 var menuLoaded = [];    // Dynamic Menu IDs are added/removed from here to prevent excess server requests
 var dynamicIDs = {};    // Key:Value pair of action:menu created by JS
@@ -71,6 +73,11 @@ $(function() {
     /** Containers for Speedometer **/
     speedContainer = $("#speedcontainer");
     speedText = $(".speedtext");
+
+
+    /** Container for the voice menu **/
+    voiceContainer = $("#voicecontainer")
+    voicePlayers = $("#voiceActive")
 
     // Initialize the trainer.
     init();
@@ -154,6 +161,18 @@ $(function() {
         if (item.hidespeed) {
            speedContainer.fadeOut();
         }
+
+        if(item.hidevoice){
+            voiceContainer.fadeOut()
+            
+        }
+
+        if(item.showvoice){
+            voiceContainer.fadeIn()
+            var results = JSON.parse(item.talkingplayers)
+            updateVoices(results);
+        }
+
 
         /***
          *      __  __                             ____            _     _                       
@@ -943,10 +962,33 @@ function createDynamicMenu(menuArray,name){
 
 }
 
+/***
+ *      _______                  _                           ______                  _                               
+ *     |__   __|                (_)                         |  ____|                | |                              
+ *        | |     _ __    __ _   _   _ __     ___   _ __    | |__      ___    __ _  | |_   _   _   _ __    ___   ___ 
+ *        | |    | '__|  / _` | | | | '_ \   / _ \ | '__|   |  __|    / _ \  / _` | | __| | | | | | '__|  / _ \ / __|
+ *        | |    | |    | (_| | | | | | | | |  __/ | |      | |      |  __/ | (_| | | |_  | |_| | | |    |  __/ \__ \
+ *        |_|    |_|     \__,_| |_| |_| |_|  \___| |_|      |_|       \___|  \__,_|  \__|  \__,_| |_|     \___| |___/
+ *                                                                                                                   
+ *                                                                                                                   
+ */
 
 
+// Update voice div with active talking players
+function updateVoices(custArray){
+    sendData("debug","updatedVoices")
 
+    // Remove all players to be readded.
+    voicePlayers.children().remove()
 
+    // Readd all player voices
+    for(var i=0;i<custArray.length;i++){
+        var newEle = $("<p class='voicename'></p>");
+        newEle.text(custArray[i]);
+        voicePlayers.append(newEle);
+    }
+    sendData("debug","done")
+}
 
 
 /***

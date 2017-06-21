@@ -1,3 +1,29 @@
+<h1>V 0.1.5 (06-21-2017)</h1>
+
+Implemented the functionality behind some trainer options that had todo notes as well as some minor bug fixes
+
+
+<h3>Changes</h3>
+<ul>
+	<li>Removed Actions Menu, decided to create a separate animations menu. May be integrated later.</li>
+	<li>Fixed Vehicle Modifications Menu for entering vehicles not spawned by menu.</li>
+	<li>Denied Access to Vehicle Modifications Menu if Not Driver of Vehicle.</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+	<li>Added Player Notification functionality</li>
+	<li>Added Death Notification functionality</li>
+	<li>Added Voice Options and functionality</li>
+	<li>Added Radio Options and functionality</li>
+</ul>
+
+
+
+
+
+
+
 <h1>V 0.1.0 (06-20-2017)</h1>
 
 This is part 2 of 2 of the Major Update which completely rewrote the menu creation JS and the JSON Format. This is a massive update and is considered unstable as it hasn't been thoroughly tested. All remaining updates should only fix existing trainer options or add in new trainer options.

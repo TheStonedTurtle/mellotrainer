@@ -82,6 +82,20 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 		featureMapBlips = newstate
 		toggleMapBlips(featureMapBlips) -- In maps.lua
 
+	-- Radio Always Off
+	elseif(action=="radiooff")then
+		featureRadioAlwaysOff = newstate
+		drawNotification("Radio Always Off: "..text)
+
+	-- Mobile Radio 
+	elseif(action=="mobileradio")then
+		featurePlayerRadio = newstate
+		SetMobileRadioEnabledDuringGameplay(featurePlayerRadio);
+		SetUserRadioControlEnabled(not featureRadioAlwaysOff)
+		drawNotification("Player Radio: "..text)
+
+	elseif(action=="skipradio")then
+		SkipRadioForward();
 	end
 	--elseif(action == )then
 end)
@@ -254,6 +268,17 @@ function clearHead(i)-- If there was a head display remove it.
 end
 
 
+
+-- Toggle Radio Control
+function toggleRadio(playerPed)
+	if(IsPedInAnyVehicle(playerPed, false))then
+		local veh = GetVehiclePedIsUsing(playerPed)
+		SetVehicleRadioEnabled(veh, not featureRadioAlwaysOff)
+	end
+
+	SetUserRadioControlEnabled(not featureRadioAlwaysOff)
+end
+
 --[[
   _______   _                                 _ 
  |__   __| | |                               | |
@@ -305,6 +330,45 @@ Citizen.CreateThread(function()
 			if (blipToggle) then
 				blipToggle = false
 				toggleBlips()
+			end
+		end
+	end
+end)
+
+
+
+-- Toggles to reset whenever someone enters a new vehicle (any vehicle)
+RegisterNetEvent('mellotrainer:playerEnteredVehicle')
+AddEventHandler('mellotrainer:playerEnteredVehicle', function(h,m,s)
+	local playerPed = GetPlayerPed(-1)
+	toggleRadio(playerPed)
+	resetVehOptions()
+end)
+
+
+
+-- Turn off Radio.
+Citizen.CreateThread(function()
+	local radioToggle = false
+	while true do
+		Wait(100)
+		local playerPed = GetPlayerPed(-1)
+
+		-- Radio Always Off
+		if(featureRadioAlwaysOff)then
+			if(featurePlayerRadio)then
+				SetMobileRadioEnabledDuringGameplay(false);
+				featurePlayerRadio = false;
+			end
+
+			if(not radioToggle)then
+				toggleRadio(playerPed)
+			end
+			radioToggle = true
+		else
+			if(radioToggle)then
+				toggleRadio(playerPed)
+				radioToggle = false
 			end
 		end
 	end

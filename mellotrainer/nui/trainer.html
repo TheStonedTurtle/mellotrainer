@@ -7,7 +7,10 @@
     <body>
 
         <!-- Voice Overlay Container, Top-Center of screen. -->
-        <div id="voicecontainer" class="hidden" data-container="true">
+        <div id="voicecontainer" style="display: none;" data-container="true">
+            <p class="voiceHeader">Currently Talking:</p>
+            <span id="voiceActive">
+            </span>
         </div>
 
 
@@ -35,7 +38,7 @@
             <div id="mainmenu">
                 <p class="traineroption" data-sub="onlineplayersmenu">Online Players</p>
                 <p class="traineroption" data-sub="playermenu">Player</p>
-                <p class="traineroption" data-sub="actionsmenu">Actions</p>    <!-- TODO -->
+                <!-- <p class="traineroption" data-sub="actionsmenu">Actions</p>  -->
                 <p class="traineroption" data-sub="weaponsmenu">Weapons</p>
                 <p class="traineroption" data-sub="vehiclesmenu">Vehicles</p>
                 <p class="traineroption" data-sub="settingsmenu">Settings</p>
@@ -176,8 +179,8 @@
             <div id="vehiclesmenu" data-parent="mainmenu">
                 <p class="traineroption" data-sub="vehiclesspawnmenu">Vehicle Spawner</p>
                 <p class="traineroption" data-sub="vehiclesspawnoptionsmenu">Spawn Options</p>
-                <!-- <p class="traineroption" data-sub="vehiclessavedmenu">Saved Vehicles -NOT WORKING</p> -->
-                <!-- <p class="traineroption" data-sub="vehiclesownedmenu">Owned Vehicles -NOT WORKING</p> -->
+                <!-- <p class="traineroption" data-sub="vehiclessavedmenu">Saved Vehicles </p> -->
+                <!-- <p class="traineroption" data-sub="vehiclesownedmenu">Owned Vehicles </p> -->
                 <p class="traineroption" data-sub="vehiclesmodmenu" data-require="vehicle">Modifications</p>
                 <p class="traineroption" data-sub="vehiclespaintoptions">Paint Options</p>
                 <p class="traineroption" data-sub="vehiclesdamagesettings">Damage Settings</p>
@@ -867,13 +870,13 @@
                 <p class="traineroption" data-action="settingtoggle blips" data-state="OFF">Player Blips</p>
                 <p class="traineroption" data-action="settingtoggle text" data-state="OFF">Overhead Player Names</p>
 
-                <p class="traineroption" data-action="settingtoggle " data-state="OFF">Player Notifications</p>    <!-- TODO -->
-                <p class="traineroption" data-action="settingtoggle " data-state="OFF">Death Notifications</p>    <!-- TODO -->
-                <p class="traineroption" data-sub="voicesettingsmenu">Voice Options</p>    <!-- TODO -->
+                <p class="traineroption" data-action="notifications players" data-state="OFF">Player Notifications</p>
+                <p class="traineroption" data-action="notifications death" data-state="OFF">Death Notifications</p>
+                <p class="traineroption" data-sub="voicesettingsmenu">Voice Options</p>
 
-                <p class="traineroption" data-action="player radiooff" data-state="OFF">Radio Always Off</p>    <!-- TODO -->
-                <p class="traineroption" data-action="player radiooff" data-state="OFF">Portable Radio</p>    <!-- TODO -->
-                <p class="traineroption" data-action="">Next Radio Track</p>    <!-- TODO -->
+                <p class="traineroption" data-action="settingtoggle radiooff" data-state="OFF">Radio Always Off</p>
+                <p class="traineroption" data-action="settingtoggle mobileradio" data-state="OFF">Portable Radio</p>
+                <p class="traineroption" data-action="settingtoggle skipradio">Next Radio Track</p>
 
                 <p class="traineroption" data-action="settingtoggle radar" data-state="OFF">Hide Map</p>
                 <p class="traineroption" data-action="settingtoggle enlarge" data-state="OFF">Large Map</p>
@@ -884,32 +887,34 @@
 
                 <!-- Voice Menu -->
                 <div id="voicesettingsmenu" data-parent="settingsmenu">
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Voice Chat</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Show Voice Chat Speaker</p>    <!-- TODO -->
-                    <p class="traineroption" data-sub="voicesettingsmenuchannel">Voice Channel</p>    <!-- TODO -->
-                    <p class="traineroption" data-sub="voicesettingsmenuproximity">Voice Proximity</p>    <!-- TODO -->
+                    <p class="traineroption" data-action="voiceopts voicetoggle" data-state="OFF">Voice Chat</p>
+                    <p class="traineroption" data-action="voiceopts showtoggle" data-state="OFF">Show Voice Chat Speakers</p>
+                    <p class="traineroption" data-sub="voicesettingsmenuchannel">Voice Channel</p>
+                    <p class="traineroption" data-sub="voicesettingsmenuproximity">Voice Proximity</p>
                 </div>
 
 
                 <!-- Voice Channel Menu -->
                 <div id="voicesettingsmenuchannel" data-parent="voicesettingsmenu">
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Channel 1</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Channel 2</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Channel 3</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Channel 4</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Channel 5</p>    <!-- TODO -->
+                    <p class="traineroption" data-action="voiceopts channel 0" data-state="OFF">Default Channel</p>
+                    <p class="traineroption" data-action="voiceopts channel 1" data-state="OFF">Channel 1</p>
+                    <p class="traineroption" data-action="voiceopts channel 2" data-state="OFF">Channel 2</p>
+                    <p class="traineroption" data-action="voiceopts channel 3" data-state="OFF">Channel 3</p>
+                    <p class="traineroption" data-action="voiceopts channel 4" data-state="OFF">Channel 4</p>
+                    <p class="traineroption" data-action="voiceopts channel 5" data-state="OFF">Channel 5</p>
                 </div>
 
 
                 <!-- Voice Proximity Menu -->
                 <div id="voicesettingsmenuproximity" data-parent="voicesettingsmenu">
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Very Close</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Close</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Nearby</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Distant</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Far</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Very Far</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">All Players</p>    <!-- TODO -->
+                    <p class="traineroption" data-action="voiceopts distance 5" data-state="OFF">Extremely Close</p>
+                    <p class="traineroption" data-action="voiceopts distance 25" data-state="OFF">Very Close</p>
+                    <p class="traineroption" data-action="voiceopts distance 75" data-state="OFF">Close</p>
+                    <p class="traineroption" data-action="voiceopts distance 200" data-state="OFF">Nearby</p>
+                    <p class="traineroption" data-action="voiceopts distance 500" data-state="OFF">Distant</p>
+                    <p class="traineroption" data-action="voiceopts distance 2500" data-state="OFF">Far</p>
+                    <p class="traineroption" data-action="voiceopts distance 8000" data-state="OFF">Very Far</p>
+                    <p class="traineroption" data-action="voiceopts distance 0" data-state="OFF">All Players</p>
                 </div>
 
 
@@ -979,7 +984,7 @@
 
             <!-- About menu -->
             <div id="aboutmenu" data-parent="mainmenu">
-                <p class="traineroption">Mello Trainer Ver. 0.0.2</p>
+                <p class="traineroption">Mello Trainer Ver. 0.1.5</p>
                 <p class="traineroption">Made By TheStonedTurtle</p>
                 <p class="traineroption">Special Thanks To:</p>
                 <p class="traineroption">Scammer</p>

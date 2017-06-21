@@ -64,7 +64,7 @@ p {
 }
 
 .hidden{
-    display: none;
+    display: none !important;
 }
 
 
@@ -154,4 +154,31 @@ p {
     height: 145px;
     background-color:rgba(0, 0, 0, 0.85);
     border: 3px solid black;
+}
+
+
+
+#voicecontainer{
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    left: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+}
+
+.voiceHeader{
+    padding: 0;
+    margin: 0;
+    font-size: 25px;
+    color: red;
+    font-weight:bolder;
+}
+
+.voicename{
+    font-size: 16px;
+    color: red;
+    font-weight: bolder;
 }

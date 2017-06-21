@@ -1,11 +1,9 @@
---[[Vehicle Options
-featureCloseInstantly = false;
-featureSpeedometer = false;
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
-featureVehicleDespawnable = nil;
-featureSpawnInsideCar = nil;
-featureDeleteLastVehicle = nil;
-]]
 
 local function _SetEntityAsNoLongerNeeded(entity)
 	Citizen.InvokeNative(0xB736A491E64A32CF,Citizen.PointerValueIntInitialized(entity))
@@ -48,6 +46,7 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 		drawNotification("~g~Vehicle spawned!")
 		lastVehicle = veh
 		resetVehOptions()
+		toggleRadio(ped)
 	else
 		drawNotification("~r~Invalid Model!")
 	end
@@ -127,6 +126,8 @@ RegisterNUICallback("requirevehicle", function(data, cb)
 	-- Not in a vehicle
 	if playerVeh <= 0 then
 		drawNotification("~r~Not in a vehicle")
+	elseif(not(playerPed == (GetPedInVehicleSeat(playerVeh,-1))))then
+		drawNotification("~r~Not owner of vehicle")
 	else
 		local vehClass = GetVehicleClass(playerVeh)
 		if (vehClass == 14 or vehClass == 21) then

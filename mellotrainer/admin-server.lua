@@ -28,11 +28,15 @@ AddEventHandler('mellotrainer:firstJoinProper', function()
 			Users[source] = true -- Update to user object?
 		end
 	end
+
+
+	TriggerClientEvent('mellotrainer:playerJoined', -1, source)
 end)
 
 
 -- Remove User on playerDropped.
 AddEventHandler('playerDropped', function()
+	TriggerClientEvent('mellotrainer:playerLeft', -1, source)
 	if(Users[source])then
 		Users[source] = nil
 	end

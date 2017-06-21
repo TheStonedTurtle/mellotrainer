@@ -258,4 +258,34 @@ function resetTrainerMenus(message)
 end
 
 
+
+-- Check for ingame Events that should trigger trainer resets.
+Citizen.CreateThread(function()
+	local inVeh = false
+	
+	while true do
+		Wait(1)
+		local playerPed = GetPlayerPed(-1)
+		local playerVeh = GetVehiclePedIsUsing(playerPed)
+
+		if(IsPedInAnyVehicle(playerPed))then
+			if(playerPed == GetPedInVehicleSeat(playerVeh, -1))then
+				-- Only toggle on first find of new vehicle
+				if(not(inVeh))then
+					-- Toggle any vehicle settings
+					Citizen.Trace("Applying Vehicle Options")
+					TriggerEvent('mellotrainer:playerEnteredVehicle')
+				end
+
+				inVeh = true
+			end
+		else
+			inVeh = false
+		end
+
+	end
+end)
+
+
+
 initServerConfig()
