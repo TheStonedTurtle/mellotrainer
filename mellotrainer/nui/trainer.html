@@ -71,7 +71,7 @@
             -->
 
             <!-- Online Players menu -->
-            <div id="onlineplayersmenu" data-parent="mainmenu" data-dynamicmenu="other_players_menu" data-dynamicmenucallback="getonlineplayers">
+            <div id="onlineplayersmenu" data-parent="mainmenu" data-dynamicmenu="getonlineplayers">
             </div>
 
 
@@ -154,11 +154,11 @@
             </div>
 
             <!-- Player Skin Menu: Skins -->
-            <div id="playerskinmenuskins" data-parent="playerskinmenu" data-dynamicmenu="player_skins_skins" data-dynamicmenucallback="playerskinmodify">
+            <div id="playerskinmenuskins" data-parent="playerskinmenu" data-dynamicmenu="playerskinmodify">
             </div>
 
             <!-- Player Skin Menu: Props -->
-            <div id="playerskinmenuprops" data-parent="playerskinmenu" data-dynamicmenu="player_skins_props" data-dynamicmenucallback="playerpropmodify">
+            <div id="playerskinmenuprops" data-parent="playerskinmenu" data-dynamicmenu="playerpropmodify">
             </div>
 
 
@@ -451,7 +451,7 @@
             -->
             
             <!-- Vehicle Customization Menu -->
-            <div id="vehiclesmodmenu" data-parent="vehiclesmenu" data-dynamicmenu="vehiclesmodmenu" data-dynamicmenucallback="vehmods">
+            <div id="vehiclesmodmenu" data-parent="vehiclesmenu" data-dynamicmenu="vehmods">
                 <p class="traineroption" data-sub="vehiclesenginemenu">Engine (5)</p>
                 <p class="traineroption" data-sub="vehiclesbrakemenu">Brakes (5)</p>
                 <p class="traineroption" data-sub="vehiclestransmissionmenu">Transmission (4)</p>
@@ -837,8 +837,19 @@
             <div id="weaponitemmenuthrown" data-parent="weaponspawnmenu" data-staticmenu="weapon_thrown">
             </div>
 
+            <div id="weapontintsmenu">
+                <p class="traineroption" data-action="weapon tint 0">Normal</p>
+                <p class="traineroption" data-action="weapon tint 1">Green</p>
+                <p class="traineroption" data-action="weapon tint 2">Gold</p>
+                <p class="traineroption" data-action="weapon tint 3">Pink</p>
+                <p class="traineroption" data-action="weapon tint 4">Army</p>
+                <p class="traineroption" data-action="weapon tint 5">LSPD</p>
+                <p class="traineroption" data-action="weapon tint 6">Orange</p>
+                <p class="traineroption" data-action="weapon tint 7">Platinum</p>
+            </div>
 
-            <!-- 
+
+            <!--
                _____          _     _     _                           __  __                        
               / ____|        | |   | |   (_)                         |  \/  |                       
              | (___     ___  | |_  | |_   _   _ __     __ _   ___    | \  / |   ___   _ __    _   _ 
@@ -873,8 +884,8 @@
 
                 <!-- Voice Menu -->
                 <div id="voicesettingsmenu" data-parent="settingsmenu">
-                    <p class="traineroption" data-action="settingtoggle ">Voice Chat</p>    <!-- TODO -->
-                    <p class="traineroption" data-action="settingtoggle ">Show Voice Chat Speaker</p>    <!-- TODO -->
+                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Voice Chat</p>    <!-- TODO -->
+                    <p class="traineroption" data-action="settingtoggle " data-state="OFF">Show Voice Chat Speaker</p>    <!-- TODO -->
                     <p class="traineroption" data-sub="voicesettingsmenuchannel">Voice Channel</p>    <!-- TODO -->
                     <p class="traineroption" data-sub="voicesettingsmenuproximity">Voice Proximity</p>    <!-- TODO -->
                 </div>

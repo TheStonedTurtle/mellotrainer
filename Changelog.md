@@ -1,3 +1,26 @@
+<h1>V 0.1.0 (06-20-2017)</h1>
+
+This is part 2 of 2 of the Major Update which completely rewrote the menu creation JS and the JSON Format. This is a massive update and is considered unstable as it hasn't been thoroughly tested. All remaining updates should only fix existing trainer options or add in new trainer options.
+
+
+<h3>Changes</h3>
+<ul>
+	<li>Completely rewrote the trainer JS file for code simplification.</li>
+	<li>Updated JSON format to accompany JS rewrite for code simplification.</li>
+	<li>Removed the `data-dynamicmenucallback` attribute and moved the value to `data-dynamicmenu`</li>
+	<li>Updated some Key Trainer Functionality to function better</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+	<li>Added Weapons Tint Menu</li>
+</ul>
+
+
+
+
+
+
 <h1>V 0.0.5 (06-19-2017)</h1>
 
 This update includes massive changes to the trainer including new functionality, bug fixes, menu layout rework, and a massive code reworks. This is part 1 of 2 major updates to be pushed prior to V1.0.0 release.
@@ -18,13 +41,12 @@ This update includes massive changes to the trainer including new functionality,
 	<li>Added New Player Toggles</li>
 	<li>Added New Vehicle Menus</li>
 	<li>Added Notificaitons in some places</li>
-	<li></li>
 </ul>
 
 
 
 
-<h1> V 0.0.1 (06-16-2017) #2</h1>
+<h1> V 0.0.2 (06-16-2017)</h1>
 
 Added Vehicle Extra Toggles as well as Fixed Vehicle Livery Options.
 

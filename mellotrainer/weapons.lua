@@ -71,7 +71,7 @@ end
 
 -- Toggle a weapon component on/off for a weapon.
 function toggleWeaponComponent(weaponName,componentName)
-	Citizen.Trace(weaponName.." "..componentName)
+	--Citizen.Trace(weaponName.." "..componentName)
 	local weapon = GetHashKey(weaponName)
 	local component = GetHashKey(componentName)
 	if(HasPedGotWeaponComponent(playerPed,weapon,component))then
@@ -103,11 +103,15 @@ RegisterNUICallback("weapon", function(data)
 	end
 
 	if(action == "mod")then
-		local modName = data.data[4]
+		local modName = data.data[3]
+		local weaponString = data.data[4]
+
 		toggleWeaponComponent(weaponString, modName)
 
 	elseif(action == "ammo")then
-		local requestType = data.data[4]
+		local requestType = data.data[3]
+		local weaponString = data.data[4]
+		
 		if(requestType == "add")then
 			addWeaponClip(weaponString)
 		elseif(requestType == "max")then

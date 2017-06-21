@@ -151,6 +151,8 @@ function resetVehOptions()
 
 	windows = {false, false, false, false}
 	neons = {false, false, false, false}
+
+	resetTrainerMenus("vehmods")
 end
 
 
@@ -426,6 +428,7 @@ end)
 
 
 
+local defaultVehAction = "vehmodify"
 RegisterNUICallback("vehmodify", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local playerVeh = GetVehiclePedIsIn(playerPed, false)
@@ -516,28 +519,30 @@ RegisterNUICallback("vehmods", function(data, cb)
 		end
 
 		if #validComponents > 0 then
+			table.insert(validOptions,{
+				["menuName"] = keyName.." ("..#validComponents..")",
+				["data"] = {
+					["sub"] = value
+				},
+				["submenu"] = validComponents
 
-			validOptions[keyName] = validComponents
+			})
+
 			optCount = optCount + 1
 		end
 	end
-
+	local customJSON = "{}"
 	if (optCount > 0) then
-		local customJSON = json.encode(validOptions,{indent = true})
-
-		Citizen.Trace(customJSON);
-		SendNUIMessage({
-			createmenu = true,
-			name = "vehmods",
-			menudata = customJSON
-		})
-	else
-		SendNUIMessage({
-			createmenu = true,
-			name = "vehmods",
-			menudata = "{}"
-			})
+		customJSON = json.encode(validOptions,{indent = true})
 	end
+
+	--Citizen.Trace(customJSON);
+	
+	SendNUIMessage({
+		createmenu = true,
+		menuName = "vehmods",
+		menudata = customJSON
+	})
 	if(cb)then cb("ok") end
 end)
 
@@ -552,7 +557,7 @@ function createVariableData()
 	end
 
 	local data = json.encode({wheeltype=tostring(GetVehicleWheelType(playerVeh)),wheelindex=tostring(GetVehicleMod(playerVeh, wheelModID))}, {indent = true})
-	Citizen.Trace(data)
+	--Citizen.Trace(data)
 
 	return data
 end
@@ -572,7 +577,14 @@ function checkValidVehicleExtras()
 				text = "ON"
 				--Citizen.Trace(tostring(i).." is ON")
 			end
-			valid[i] = {name=realModName, modtype="extra",mod=i,state=text}
+			local realSpawnName = defaultVehAction.." extra "..tostring(i)
+			table.insert(valid, {
+				menuName=realModName,
+				data ={
+					["action"] = realSpawnName,
+					["state"] = text
+				}
+			})
 		end
 	end
 
@@ -591,29 +603,53 @@ function checkValidVehicleMods(modID)
 	-- Handle Liveries if they don't exist in modCount
 	if (modID == 48 and modCount == 0) then
 		--Citizen.Trace("Adding Non-mod Liveries")
-		modCount = GetVehicleLiveryCount(playerVeh)
+
+		-- Local to prevent below code running.
+		local modCount = GetVehicleLiveryCount(playerVeh)
 		for i=1, modCount, 1 do
 			local realIndex = i - 1
 			local modName = GetLiveryName(playerVeh, realIndex)
 			local realModName = GetLabelText(modName)
-			Citizen.Trace("modname:realModName "..tostring(modName)..":"..tostring(realModName))
-			valid[i] = {name=realModName, modtype=modID,mod=realIndex}
-		end
+			local realSpawnName = defaultVehAction.." "..tostring(modID).." "..tostring(realIndex)
 
-		return valid
+			--Citizen.Trace("modname:realModName "..tostring(modName)..":"..tostring(realModName))
+
+			valid[i] = {
+				menuName=realModName,
+				data = {
+					["action"] = realSpawnName
+				}
+			}
+		end
 	end
 
+
+	-- Handles all other mods
 	for i = 1, modCount, 1 do
 		local realIndex = i - 1
 		local modName = GetModTextLabel(playerVeh, modID, realIndex)
 		local realModName = GetLabelText(modName)
-		valid[i] = { name=realModName, modtype=modID,mod=realIndex }
+		local realSpawnName = defaultVehAction.." "..tostring(modID).." "..tostring(realIndex)
+
+
+		valid[i] = {
+			menuName=realModName,
+			data = {
+				["action"] = realSpawnName
+			}
+		}
 	end
 
 
 	-- Insert Stock Option for modifications
 	if(modCount > 0)then
-		table.insert(valid, 1, {name="Stock", modtype=modID,mod="clear"})
+		local realSpawnName = defaultVehAction.." "..tostring(modID).." clear"
+		table.insert(valid, 1, {
+			menuName="Stock",
+			data = {
+				["action"] = realSpawnName
+			}
+		})
 	end
 
 	return valid
@@ -625,7 +661,6 @@ end
 local torqueMultiplier = 1
 local powerMultiplier = 1
 local lowerForce = 0
-
 local lowerForces = {
 	[0] = 0.00,
 	[1] = -0.018,
@@ -635,6 +670,7 @@ local lowerForces = {
 	[5] = -0.11,
 	[6] = -0.15
 }
+
 
 RegisterNUICallback("vehopts", function(data, cb)
 	local playerPed = GetPlayerPed(-1)

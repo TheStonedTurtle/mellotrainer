@@ -5,46 +5,6 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 
--- Reset certain non-static menus.
-function resetOptions(message)
-	SendNUIMessage({
-		resetmenus = message
-	})
-end
-
-
--- Get all valid skin variations for the current skin.
-function checkValidComponents(componentID, componentName)
-	local playerPed = GetPlayerPed(-1)
-	local valid = {}
-	local pedCount = GetNumberOfPedDrawableVariations(playerPed, componentID)
-	for i = 1, pedCount, 1 do
-		--if IsPedComponentVariationValid(playerPed, componentID, i, -1) then
-		local textureCount = GetNumberOfPedTextureVariations(playerPed, componentID, i - 1)
-		valid[i] = { id=i, textureCount=textureCount }
-		--end
-	end
-	return valid
-end
-
-
--- Get all Valid Prop components for the current skin
-function checkValidPropComponents(propID)
-	local playerPed = GetPlayerPed(-1)
-	local valid = {}
-	local propCount = GetNumberOfPedPropDrawableVariations(playerPed, propID)
-	for i = 1, propCount, 1 do
-		local textureCount = GetNumberOfPedPropTextureVariations(playerPed, propID, i - 1)
-		if textureCount > 0 then
-			valid[i] = { id=i, textureCount=textureCount }
-		end
-	end
-
-	return valid
-end
-
-
-
 -- Skin DB
 local components = {
 	{ name = 'Head/Face', t = 0},
@@ -96,7 +56,7 @@ RegisterNUICallback("playerskin", function(data, cb)
 	SetPlayerModel(PlayerId(), model)
 	SetPedDefaultComponentVariation(GetPlayerPed(-1))
 	drawNotification("~g~Changed Player Model.")
-	resetOptions("playerskinmodify playerpropmodify")
+	resetTrainerMenus("playerskinmodify playerpropmodify")
 
 	if(cb)then cb("ok")end
 end)
@@ -112,14 +72,14 @@ RegisterNUICallback("playerskinmodify", function(data, cb)
 		local validComponents = checkValidComponents(components[i].t)
 
 		if #validComponents > 0 then
+			table.insert(validOptions, {
+				["menuName"] = components[i].name.." ("..#validComponents..")",
+				["data"] = {
+					["sub"] = components[i].t
+				},
+				["submenu"] = validComponents
+			})
 
-			validOptions[components[i].name] = validComponents
-
-			--Citizen.Trace("Component: "..tostring(components[i].name).." has "..tostring(#validComponents).." valid components.")
-
-			for t=1,#validComponents,1 do
-				--Citizen.Trace("Drawable Value: "..tostring(validComponents[t].value).." has "..tostring(validComponents[t].textureCount).." textures.")
-			end
 			optCount = optCount + 1
 		end
 	end
@@ -127,11 +87,10 @@ RegisterNUICallback("playerskinmodify", function(data, cb)
 	if (optCount > 0) then
 		local SkinJSON = json.encode(validOptions, {indent = true})
 
-		Citizen.Trace(SkinJSON);
+		--Citizen.Trace(SkinJSON);
 
 		SendNUIMessage({
 			createmenu = true,
-			name = "skinmenu",
 			menuName = "playerskinmodify",
 			menudata = SkinJSON
 		})
@@ -150,7 +109,14 @@ RegisterNUICallback("playerpropmodify", function(data, cb)
 		local validComponents = checkValidPropComponents(propComponents[i].t)
 
 		if #validComponents > 0 then
-			validOptions[propComponents[i].name] = validComponents
+			table.insert(validOptions, {
+				["menuName"] = propComponents[i].name.." ("..#validComponents..")",
+				["data"] = {
+					["sub"] = propComponents[i].t
+				},
+				["submenu"] = validComponents
+			})
+
 			optCount = optCount + 1
 		end
 	end
@@ -158,11 +124,10 @@ RegisterNUICallback("playerpropmodify", function(data, cb)
 	if (optCount > 0) then
 		local PropJSON = json.encode(validOptions, {indent = true})
 
-		Citizen.Trace(PropJSON);
+		--Citizen.Trace(PropJSON);
 
 		SendNUIMessage({
 			createmenu = true,
-			name = "propmenu",
 			menuName = "playerpropmodify",
 			menudata = PropJSON
 		})	
@@ -189,13 +154,7 @@ end)
 
 -- Remove Individual Props from the current skin.
 RegisterNUICallback("clearpropid", function(data, cb)
-	local componentText = tostring(data.action)
-	local componentID
-	for i,v in ipairs(propComponents) do
-		if(v.name == componentText) then
-			componentID = v.t
-		end
-	end
+	local componentID = tonumber(data.action)
 
 	ClearPedProp(GetPlayerPed(-1), componentID)
 
@@ -221,37 +180,117 @@ end)
 
 
 -- Changes the current component to the requested variation (Skin/Props)
+local defaultSkinAction = "changeskin skin"
+local defaultPropAction = "changeskin props"
 RegisterNUICallback("changeskin", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
-	local componentText = tostring(data.data[3])
+	local componentID = tonumber(data.data[3])
 	local drawableID = tonumber(data.data[4]) - 1
 	local textureID = tonumber(data.data[5])
 	if(textureID == nil)then
 		textureID = 0
 	end
 
-
-	local componentID
-
 	if(data.action == "skin") then
-		for i,v in ipairs(components) do
-			if(v.name == componentText) then
-				componentID = v.t
-			end
-		end
 		SetPedComponentVariation(playerPed, componentID, drawableID, textureID)
 
 	elseif(data.action == "props") then
-		for i,v in ipairs(propComponents) do
-			if(v.name == componentText) then
-				componentID = v.t
-			end
-		end
-
 		SetPedPropIndex(playerPed, componentID, drawableID, textureID, true)
+
 	end
-	Citizen.Trace("ComponentID: "..tostring(componentID)..", Drawable ID:"..tostring(drawableID)..", Texture ID:"..tostring(textureID))
+	--Citizen.Trace("ComponentID: "..tostring(componentID)..", Drawable ID:"..tostring(drawableID)..", Texture ID:"..tostring(textureID))
 
 
 	if(cb)then cb("ok")end
 end)
+
+
+
+
+
+
+
+
+-- Get all valid skin variations for the current skin.
+function checkValidComponents(componentID)
+	local playerPed = GetPlayerPed(-1)
+	local valid = {}
+	local pedCount = GetNumberOfPedDrawableVariations(playerPed, componentID)
+	for i = 1, pedCount, 1 do
+
+		local textureCount = GetNumberOfPedTextureVariations(playerPed, componentID, i - 1)
+		local textures = {}
+
+		for textureIndex=0,textureCount-1,1 do
+			local textureObj = {
+				["menuName"] = "Texture #"..tostring(textureIndex),
+				["data"] = {
+					["hover"] = defaultSkinAction.." "..tostring(componentID).." "..tostring(i).." "..tostring(textureIndex)
+				}
+			}
+
+			table.insert(textures, textureObj)
+		end
+
+
+		if(textureCount > 0)then
+			valid[i] = { 
+				["menuName"] = "Drawable #"..tostring(i),
+				["data"] = {
+					["hover"] = defaultSkinAction.." "..tostring(componentID).." "..tostring(i).." 0",
+					["sub"] = i
+				},
+				["submenu"] = textures
+			}
+		end
+	end
+	return valid
+end
+
+
+-- Get all Valid Prop components for the current skin
+function checkValidPropComponents(propID)
+	local playerPed = GetPlayerPed(-1)
+	local valid = {}
+	local propCount = GetNumberOfPedPropDrawableVariations(playerPed, propID)
+	for i = 1, propCount, 1 do
+		local textureCount = GetNumberOfPedPropTextureVariations(playerPed, propID, i - 1)
+		local textures = {}
+
+		for textureIndex=0,textureCount-1,1 do
+			local textureObj = {
+				["menuName"] = "Texture #"..tostring(textureIndex),
+				["data"] = {
+					["hover"] = defaultPropAction.." "..tostring(propID).." "..tostring(i).." "..tostring(textureIndex)
+				}
+			}
+
+			table.insert(textures, textureObj)
+		end
+
+		if(textureIndex ~= nil)then
+
+		end
+
+		if(textureCount > 0)then
+			table.insert(valid, { 
+				["menuName"] = "Drawable #"..tostring(i),
+				["data"] = {
+					["hover"] = defaultPropAction.." "..tostring(propID).." "..tostring(i).." 0",
+					["sub"] = i
+				},
+				["submenu"] = textures
+			})
+		end
+	end
+
+	if(propCount ~= nil)then
+		table.insert(valid, 1, {
+			["menuName"] = "Clear Prop",
+			["data"] = {
+				["hover"] = "clearpropid "..tostring(propID)
+			}
+		})	
+	end
+	return valid
+end

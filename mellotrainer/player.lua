@@ -265,7 +265,7 @@ Citizen.CreateThread(function()
 						Wait(1)
 					end
 
-					Citizen.Trace("Drunk Movement")
+					--Citizen.Trace("Drunk Movement")
 					SetPedMovementClipset(playerPed, "move_m@drunk@verydrunk", 0.0)
 				else
 					ResetPedMovementClipset(playerPed, 0.0)

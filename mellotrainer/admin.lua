@@ -35,7 +35,7 @@ end
 -- Update time
 RegisterNetEvent('mellotrainer:updateTime')
 AddEventHandler('mellotrainer:updateTime', function(h,m,s)
-	Citizen.Trace("Time Updated")
+	--Citizen.Trace("Time Updated")
 	NetworkOverrideClockTime(h,m,s)
 end)
 

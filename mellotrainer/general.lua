@@ -235,20 +235,27 @@ end)
 
 -- Callbacks from the trainer.
 RegisterNUICallback("debug", function(data, cb)
-	Citizen.Trace(tostring(data))
+	--Citizen.Trace(tostring(data))
 end)
 
 
 RegisterNUICallback("playsound", function(data, cb)
 	PlaySoundFrontend(-1, data.name, "HUD_FRONTEND_DEFAULT_SOUNDSET",  true)
-	cb("ok")
+	if cb then cb("ok") end
 end)
 
 
 RegisterNUICallback("trainerclose", function(data, cb)
 	showtrainer = false
-	cb("ok")
+	if cb then cb("ok") end
 end)
+
+-- Reset certain non-static menus.
+function resetTrainerMenus(message)
+	SendNUIMessage({
+		resetmenus = message
+	})
+end
 
 
 initServerConfig()

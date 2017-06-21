@@ -3,66 +3,67 @@ var resourcename = "mellotrainer";  // Resource Name
 var maxVisibleItems = 10;           // Max amount of items in 1 menu (before autopaging kicks in)
 
 
+// DO NOT TOUCH ANTYHING BELOW HERE!!! CONTACT THESTONEDTURTLE IF ANY ISSUES
+// DO NOT TOUCH ANTYHING BELOW HERE!!! CONTACT THESTONEDTURTLE IF ANY ISSUES
+// DO NOT TOUCH ANTYHING BELOW HERE!!! CONTACT THESTONEDTURTLE IF ANY ISSUES
+// DO NOT TOUCH ANTYHING BELOW HERE!!! CONTACT THESTONEDTURTLE IF ANY ISSUES
+// DO NOT TOUCH ANTYHING BELOW HERE!!! CONTACT THESTONEDTURTLE IF ANY ISSUES
 
 
-/** CODE **/
-
-// Page/Option Memory for the trainer.
-var pageMemory = [];
-var optionMemory = [];
-
-
-// Variable Declaration.
-var counter;
-var currentpage;
-var container;
-var speedContainer;
-var speedText;
-var content;
-var maxamount;
-
-// Holds deatched HTML elements of each menu (each div).
-var menus = [];
-
-// Dynamic menus currently loaded.
-var menuLoaded = [];
+/***
+ *     __      __                 _           _       _            _____                  _                          _     _                 
+ *     \ \    / /                (_)         | |     | |          |  __ \                | |                        | |   (_)                
+ *      \ \  / /    __ _   _ __   _    __ _  | |__   | |   ___    | |  | |   ___    ___  | |   __ _   _ __    __ _  | |_   _    ___    _ __  
+ *       \ \/ /    / _` | | '__| | |  / _` | | '_ \  | |  / _ \   | |  | |  / _ \  / __| | |  / _` | | '__|  / _` | | __| | |  / _ \  | '_ \ 
+ *        \  /    | (_| | | |    | | | (_| | | |_) | | | |  __/   | |__| | |  __/ | (__  | | | (_| | | |    | (_| | | |_  | | | (_) | | | | |
+ *         \/      \__,_| |_|    |_|  \__,_| |_.__/  |_|  \___|   |_____/   \___|  \___| |_|  \__,_| |_|     \__,_|  \__| |_|  \___/  |_| |_|
+ *                                                                                                                                           
+ *                                                                                                                                           
+ */
 
 
-/** Text/html variable templates **/
-var pageindicator = "<p id='pageindicator'></p>"
-var trainerOption = "<p class='traineroption'></p>"
-var drawableText = "Drawable #"
-var textureText = "Texture #"
+
+// Trainer Memory for pages & options. Only works backwards.
+var pageMemory = [];    // Holds memory of which page you were previously on
+var optionMemory = [];  // Holds memory of which option you were previously on
+var counter;            // Current Trainer Option
+var maxamount;          // Max Amount of Options for Current Menu
+var currentpage;        // Current Page Number
+var content;            // Current Menu Content (Shown Menu Information)
+var container;          // Trainer Container Div.
+var speedContainer;     // Speedometer Container Div
+var speedText;          // Speedometer Text Div
+var menus = {};         // Holds detached HTML elements of each menu (each div)
+var menuLoaded = [];    // Dynamic Menu IDs are added/removed from here to prevent excess server requests
+var dynamicIDs = {};    // Key:Value pair of action:menu created by JS
+var dynamicMenus = {};  // Holds the original version of all dynamicMenus.
 
 
-// Actions used in creating Dynamic Menus.
-var dynamicActions = {
-    "skinmenu" : "changeskin skin",
-    "propmenu" : "changeskin props",
-    "vehmods" : "vehmodify"
-}
 
-var dynamicIDs = {
-    "skinmenu" : "playerskinmenuskins",
-    "propmenu" : "playerskinmenuprops",
-    "vehmods" : "vehiclesmodmenu",
-    "onlineplayers" : "onlineplayersmenu"
-
-}
+// Text/html variable templates
+var trainerOption = "<p class='traineroption'></p>";    // Default traineroption p tag
 
 
-// IDs for containers created by JS
-var weaponTintID = "weapontintsmenu"
-var onlinePlayersSubID = "onlineplayersoptionmenu"
+
+// Variable to add to the `data-sub` attr to ensure you get the correct menu
+var variablesToAdd = {"wheeltype":0,"wheelindex":0};
 
 
-// Used for dynamicsubs
-var variablesToAdd = {
-    "wheeltype" : 0,
-    "wheelindex": 0
-}
 
-// Called as soon as the page is ready.
+
+/***
+ *      _____           _   _       _______                  _                       
+ *     |_   _|         (_) | |     |__   __|                (_)                      
+ *       | |    _ __    _  | |_       | |     _ __    __ _   _   _ __     ___   _ __ 
+ *       | |   | '_ \  | | | __|      | |    | '__|  / _` | | | | '_ \   / _ \ | '__|
+ *      _| |_  | | | | | | | |_       | |    | |    | (_| | | | | | | | |  __/ | |   
+ *     |_____| |_| |_| |_|  \__|      |_|    |_|     \__,_| |_| |_| |_|  \___| |_|   
+ *                                                                                   
+ *                                                                                   
+ */
+
+
+// Called as soon as the page is ready
 $(function() {
     // Update container variable for use throughout project.
     container = $("#trainercontainer");
@@ -79,78 +80,107 @@ $(function() {
     window.addEventListener("message", function(event) {
         var item = event.data;
         
-        // Trainer Navigiation
+        /***
+         *      _   _                _                _    _               
+         *     | \ | |              (_)              | |  (_)              
+         *     |  \| |  __ _ __   __ _   __ _   __ _ | |_  _   ___   _ __  
+         *     | . ` | / _` |\ \ / /| | / _` | / _` || __|| | / _ \ | '_ \ 
+         *     | |\  || (_| | \ V / | || (_| || (_| || |_ | || (_) || | | |
+         *     |_| \_| \__,_|  \_/  |_| \__, | \__,_| \__||_| \___/ |_| |_|
+         *                               __/ |                             
+         *                              |___/                              
+         */
+
+        //showtrainer
         if (item.showtrainer) {
-            resetTrainer();
+            resetTrainer();            
             container.show();
             playSound("YES");
         } 
 
+        // Hide Trainer
         if (item.hidetrainer) {
             container.hide();
             playSound("NO");
         }
         
+        // Select Options
         if (item.trainerenter) {
             handleSelectedOption(false);
         }
 
+        // Previous Menu
         if (item.trainerback) {
             trainerBack();
         }
         
+        // Up Option
         if (item.trainerup) {
             trainerUp();
         } 
 
+        // Down Option
         if (item.trainerdown) {
             trainerDown();
         }
         
+        // Previous Page
         if (item.trainerleft) {
             trainerPrevPage();
         } 
 
+        // Next Page
         if (item.trainerright) {
             trainerNextPage();
         }
 
-
-        // Create a menu with JSON Data from the server.
-        // This would be the Dynamic Menus.
-        if (item.createmenu){
-            var newObject = JSON.parse(item.menudata)
-            menuLoaded.push(item.menuName)
-            createDynamicMenu(newObject,item.name)
-        }
-
-        if(item.createonlineplayersmenu){
-            var newObject = JSON.parse(item.menudata)
-            menuLoaded.push(item.menuName)
-            createOnlinePlayersMenu(newObject, item.name)
-
-            // Remove from loaded menu array to always recreate menu
-            menuLoaded.splice(menuLoaded.indexOf(item.menuName), 1)
-        }
-
-
-        // Resets the required dynamic menus so they refresh on next request.
-        if (item.resetmenus){
-            var items = item.resetmenus.split(" ")
-            for(var i=0;i < items.length; i++){
-                menuLoaded.splice(menuLoaded.indexOf(items[i]), 1)
-            }
-        }
-
-
         // Flip the toggle back if there was an error executing.
         if (item.toggleerror){
-            toggleError()
+            toggleError();
         }
 
-        // If they passed the security check.
+        // If they passed the security check access the menu and skip the check
         if (item.vehicleaccess || item.adminaccess){
             handleSelectedOption(true);
+        }
+
+        // Update Speedometer Speed
+        if (item.showspeed) {
+            speedContainer.fadeIn();
+            speedText.text(item.speed.toString().split(".")[0]);
+        } 
+
+        // Hide Speedometer
+        if (item.hidespeed) {
+           speedContainer.fadeOut();
+        }
+
+        /***
+         *      __  __                             ____            _     _                       
+         *     |  \/  |                           / __ \          | |   (_)                      
+         *     | \  / |   ___   _ __    _   _    | |  | |  _ __   | |_   _    ___    _ __    ___ 
+         *     | |\/| |  / _ \ | '_ \  | | | |   | |  | | | '_ \  | __| | |  / _ \  | '_ \  / __|
+         *     | |  | | |  __/ | | | | | |_| |   | |__| | | |_) | | |_  | | | (_) | | | | | \__ \
+         *     |_|  |_|  \___| |_| |_|  \__,_|    \____/  | .__/   \__| |_|  \___/  |_| |_| |___/
+         *                                                | |                                    
+         *                                                |_|                                    
+         */
+
+        // Create a menu with JSON Data from the server.  // Dynamic Menus
+        if (item.createmenu){
+            var newObject = JSON.parse(item.menudata);
+            menuLoaded.push(item.menuName);
+            createDynamicMenu(newObject,item.menuName);
+        }
+
+        // Create the Online Players Menu
+        if(item.createonlineplayersmenu){
+            var newObject = JSON.parse(item.menudata);
+            menuLoaded.push(item.menuName);
+            createDynamicMenu(newObject, item.menuName);
+
+            // Remove from loaded menu array to always recreate menu
+            menuLoaded.splice(menuLoaded.indexOf(item.menuName), 1);
         }
 
         // Used to update the wheel categories for vehicles.
@@ -160,15 +190,14 @@ $(function() {
             variablesToAdd['wheelindex'] = Number(newObject.wheelindex);
         }
 
-
-        // Speedometer options.
-        if (item.showspeed) {
-            speedContainer.fadeIn()
-            speedText.text(item.speed.toString().split(".")[0]);
-        } 
-        if (item.hidespeed) {
-           speedContainer.fadeOut()
+        // Resets the required dynamic menus so they refresh on next request.
+        if (item.resetmenus){
+            var items = item.resetmenus.split(" ");
+            for(var i=0;i < items.length; i++){
+                menuLoaded.splice(menuLoaded.indexOf(items[i]), 1);
+            }
         }
+
     });
 });
 
@@ -189,7 +218,7 @@ $(function() {
 // Send data to lua for processing.
 function sendData(name, data) {
     $.post("http://" + resourcename + "/" + name, JSON.stringify(data), function(datab) {
-        if (datab !== "ok"){
+        if (datab != "ok"){
             console.log(datab);
         }            
     });
@@ -201,6 +230,24 @@ function playSound(sound) {
     sendData("playsound", {name: sound});
 }
 
+
+
+
+// Create the Trainer.
+function init() {
+    // Create all Necessary Static Menus before splitting the HTML into "Menus"
+    createStaticMenus();
+
+    // Add the Menu and State Classes to all necessary elements.
+    updateMenuClasses();
+    updateStateClasses();
+
+    // TODO: Apply user settings via state syncing
+
+
+    // Find all elements that should be turned into menus.
+    convertToMenus();
+}
 
 /***
  *      _______                  _                           _    _   _     _   _   _   _     _              
@@ -248,10 +295,26 @@ function updateStateClasses(){
 
 // Toggle error, revert state of a toggle to previous value.
 function toggleError(){
-    var item = $(".traineroption.selected")
+    var item = $(".traineroption.selected");
 
     if (item.attr("data-state") == "ON") {
-        newstate = false;
+        item.attr("data-state", "OFF");
+        item.removeClass("stateON");
+        item.addClass("stateOFF");
+    } else if (item.attr("data-state") == "OFF") {
+        item.attr("data-state", "ON");
+        item.removeClass("stateOFF");
+        item.addClass("stateON");
+    }
+}
+
+
+
+// Toggle error, revert state of a toggle to previous value.
+function toggleErrorIndex(){
+    var item = $(".traineroption.selected");
+
+    if (item.attr("data-state") == "ON") {
         item.attr("data-state", "OFF");
         item.removeClass("stateON");
         item.addClass("stateOFF");
@@ -265,7 +328,7 @@ function toggleError(){
 
 // Reset the trainer by showing the main menu.
 function resetTrainer() {
-    showMenu(menus["mainmenu"], false);
+    showMenu(menus["mainmenu"], true);
 
     // Reset trainer memory.
     pageMemory = [];
@@ -295,7 +358,7 @@ function pageExists(page) {
 
 // Move Up
 function trainerUp() {
-    $(".traineroption").eq(counter).removeClass("selected")
+    $(".traineroption").eq(counter).removeClass("selected");
     
     if (counter > 0) {
         counter -= 1;
@@ -303,9 +366,9 @@ function trainerUp() {
         counter = maxamount;
     }
 
-    $(".traineroption").eq(counter).addClass("selected")
+    $(".traineroption").eq(counter).addClass("selected");
 
-    checkHoverAction($(".traineroption").eq(counter))    
+    checkHoverAction($(".traineroption").eq(counter));
 
     playSound("NAV_UP_DOWN");
 }
@@ -313,7 +376,7 @@ function trainerUp() {
 
 // Move Down
 function trainerDown() {
-    $(".traineroption").eq(counter).removeClass("selected")
+    $(".traineroption").eq(counter).removeClass("selected");
     
     if (counter < maxamount) {
         counter += 1;
@@ -321,9 +384,9 @@ function trainerDown() {
         counter = 0;
     }
     
-    $(".traineroption").eq(counter).addClass("selected")
+    $(".traineroption").eq(counter).addClass("selected");
 
-    checkHoverAction($(".traineroption").eq(counter))    
+    checkHoverAction($(".traineroption").eq(counter));   
     
     playSound("NAV_UP_DOWN");
 }
@@ -339,6 +402,7 @@ function trainerPrevPage() {
     }
     
     showPage(newpage);
+    resetSelected();
     playSound("NAV_UP_DOWN");
 }
 
@@ -353,17 +417,17 @@ function trainerNextPage() {
     }
     
     showPage(newpage);
+    resetSelected();
     playSound("NAV_UP_DOWN");
 }
 
 
 // Back Menu
 function trainerBack() {
-	//sendData("debug","backmenu")
     // If at the "mainmenu" div then we will hide the trainer.
     if (content.menu == menus["mainmenu"].menu) {
         container.hide();
-        sendData("trainerclose", {})
+        sendData("trainerclose", {});
     } else {
         showBackMenu(menus[content.menu.attr("data-parent")]);
     }
@@ -376,65 +440,90 @@ function trainerBack() {
 function checkHoverAction(element){
     if (element.data('hover')){
         var data = element.data("hover").split(" ");
-        sendData(data[0], {action: data[1], data: data})
+
+        // If the parent has sharedinfo we need to add this to our hover.
+        if(element.parent().attr("data-sharedinfo")){
+            data = (element.data("hover") + " "+ element.parent().attr("data-sharedinfo"));
+            data = data.split(" ");
+            //sendData("debug",data.join(" "));
+        }
+        sendData(data[0], {action: data[1], newstate: true, data: data});
+        //sendData("debug","Hover Action: "+data.join(" "));
     }
 }
-
 
 
 // Select Option
 function handleSelectedOption(requireSkip) {
     var item = $(".traineroption").eq(counter);
+    var dataArray = Object.keys(item.data());   // Get all the data options on the element
 
-    // Change Menus
-     if (item.data("sub")) {
-        var targetID = item.data("sub")
+    // Change to sub menu
+    if(dataArray.indexOf("sub") > -1){
+        var targetID = item.data("sub");
 
-        // Does this sub-directory require any permissions?
-        if(item.data("require") && !requireSkip){
-            var requireString = "require"+item.data("require")
-            sendData(requireString, {})
+        //sendData("debug","changing to: "+targetID)
+
+        // Does this sub menu require anything?
+        if(dataArray.indexOf("require") > -1 && requireSkip != true){
+            var requireString = "require"+item.data("require");
+            sendData(requireString, {});
             playSound("SELECT");
-            return
+            return;
         }
 
-        // Grab variable from database if the sub is dynamic
-        if(item.data("dynamicsub")){
-            targetID = targetID + variablesToAdd[item.data("dynamicsub")]
+        // Does Sub Menu require a variable?
+        if(dataArray.indexOf("dynamicsub") > -1){
+            targetID = targetID + variablesToAdd[item.data("dynamicsub")];
         }
 
+
+        // Menu to Show
         var submenu = menus[targetID];
 
-        // Request data from server if the target is dynamic
+        // If Submenu is a Dynamic Menu then request information.
         if(submenu.menu.attr("data-dynamicmenu")){
-        	//sendData("debug","dynamic menu")
-        	var text = submenu.menu.attr("data-dynamicmenucallback")
-            if(menuLoaded.indexOf(text) === -1){
-                sendData(text)
-                playSound("SELECT")
-                return
+            // Get NUI Callback for this menu
+            var text = submenu.menu.attr("data-dynamicmenu");
+
+            // If the Menu needs to be loaded.
+            if(menuLoaded.indexOf(text) == -1){
+                sendData(text);
+                playSound("SELECT");
+                return;
             }
         }
 
-        // Share information with submenu.
-        if(item.data("share")){
-            var shareinfo = item.data("share")
-            var shareID = item.data("shareid")
-            //sendData("debug","shareinfo: "+shareinfo+" shareID:" + shareID)
-            submenu.menu.attr("data-sharedinfo",shareinfo)
-            submenu.menu.attr("data-parent",shareID)
-            //sendData("debug",submenu.menu.attr("data-parent"))
-            menus[targetID] = submenu
+        // Share information with submenu?
+        if(dataArray.indexOf("share") > -1){
+            var shareinfo = item.data("share") || "";
+            var shareID = item.data("shareid") || item.parent().attr("id");
+
+            //sendData("debug","shareinfo: "+shareinfo+" shareID:" + shareID);
+
+            submenu.menu.attr("data-sharedinfo",shareinfo);
+            submenu.menu.attr("data-parent",shareID);
+
+            //sendData("debug",submenu.menu.attr("data-parent"));
+
+            // Update the main reference of this menu with updated submenu.
+            menus[targetID] = submenu ;           
         }
 
-        showMenu(submenu, false)
 
-    } else if (item.data("action")) {
+        // Show new menu
+        showMenu(submenu, false);
 
-        var newstate = true;
-        if (item.data("state")) {
-            // Toggle Check.
+
+    }
+
+    // Action to take
+    if(dataArray.indexOf("action") > -1){
+        var newstate = true;     // Default the state to True
+
+        if (dataArray.indexOf("state") > -1) {
             // .attr() because .data() gives original values
+
             if (item.attr("data-state") == "ON") {
                 newstate = false;
                 item.attr("data-state", "OFF");
@@ -450,14 +539,16 @@ function handleSelectedOption(requireSkip) {
 
         
         var data = item.data("action").split(" ");
+
+        // If the parent has sharedinfo we need to add this to our action.
         if(item.parent().attr("data-sharedinfo")){
-            data = (item.data("action") + " "+ item.parent().attr("data-sharedinfo"))
+            data = (item.data("action") + " "+ item.parent().attr("data-sharedinfo"));
             data = data.split(" ");
-            //sendData("debug",data.join(" "))
+            //sendData("debug",data.join(" "));
         }
 
         sendData(data[0], {action: data[1], newstate: newstate, data: data});
-        //sendData("debug",data.join(" "))
+        //sendData("debug",data.join(" "));
     }
     playSound("SELECT");
 }
@@ -465,128 +556,98 @@ function handleSelectedOption(requireSkip) {
 
 
 
-
-// used to show a menu (adds back to container)
-function showMenu(menu, prevent) {
-    // Add the current page/option to memory.
-    if(prevent !== true){
-        pageMemory.push(currentpage)
-        optionMemory.push(counter)
-    }
-
-    // Show the new menu, page 0 option 0.
-    if (content != null) {
-        content.menu.detach();
-    }
-    
-    content = menu;
-    container.append(content.menu);
-
-    showPage(0);
-}
-
-
 // Used to show a specific page of the current menu.
 function showPage(page) {
+    // Remove all previous page options from the page
     if (currentpage != null) {
         content.menu.children().detach();
     }
     
+    // Update to new page information
     currentpage = page;
     
+    // Add page options to the menu
     for (var i = 0; i < content.pages[currentpage].length; ++i) {
         content.menu.append(content.pages[currentpage][i]);
     }
     
-    //content.menu.append(pageindicator);
-    
+    // Update the page indicator
     if (content.maxpages > 0) {
         $("#pageindicator").text("Page " + (currentpage + 1) + " / " + (content.maxpages + 1));
     } else {
-        $("#pageindicator").text("")
+        $("#pageindicator").text("");
     }
+}
+
+
+// select specific option of the page. doesn't submit data
+function selectOption(opt) {
+    $(".traineroption").removeClass("selected");
     
-    resetSelected();
+    counter = opt;
+    maxamount = $(".traineroption").length - 1;
+    $(".traineroption").eq(opt).addClass('selected');
 }
 
 
 // Reset the selector to top of page.
 function resetSelected() {
-    $(".traineroption").each(function(i, obj) {
-        $(this).removeClass("selected")
-    });
+    $(".traineroption").removeClass("selected");
     
     counter = 0;
     maxamount = $(".traineroption").length - 1;
-    $(".traineroption").eq(0).addClass('selected')
+
+    $(".traineroption").eq(0).addClass('selected');
+
+    checkHoverAction($(".traineroption.selected"))   ; 
+}
 
 
-    checkHoverAction($(".traineroption").eq(counter))    
+// used to show a menu (adds back to container);
+function showMenu(menu, memoryPrevention) {
+    // Add the current page/option to memory.
+    if(!memoryPrevention){
+        pageMemory.push(currentpage);
+        optionMemory.push(counter);
+    }
+
+    // Remove old menu div
+    if (content != null) {
+        content.menu.detach();
+    }
+    
+    // Add new menu div
+    content = menu;
+    container.append(content.menu);
+
+    showPage(0);
+    resetSelected();
 }
 
 
 // Used to show previous menu page, with memory
 function showBackMenu(menu) {
-    var newPage = pageMemory[pageMemory.length - 1] || 0
-    var newOption = optionMemory[optionMemory.length - 1] || 0
+    var newPage = pageMemory[pageMemory.length - 1] || 0;
+    var newOption = optionMemory[optionMemory.length - 1] || 0;
 
 
     // Remove the options from memory
-    pageMemory.pop()
-    optionMemory.pop()
+    pageMemory.pop();
+    optionMemory.pop();
 
+    // remove old menu
     if (content != null) {
         content.menu.detach();
     }
     
+    // add new menu
     content = menu;
     container.append(content.menu);
     
-    showPageOption(newPage, newOption);
-
+    // Show page with memory
+    showPage(newPage);
+    selectOption(newOption);
 }
-
-
-// select specific option of the page.
-function selectOption(opt) {
-    $(".traineroption").each(function(i, obj) {
-        $(this).removeClass("selected")
-    });
-    
-    counter = opt;
-    maxamount = $(".traineroption").length - 1;
-    $(".traineroption").eq(opt).addClass('selected')
-
-
-    //checkHoverAction($(".traineroption").eq(opt))    
-}
-
-
-
-// Used to show a Page & its Option. (calls selectOption)
-function showPageOption(page,option) {
-    if (currentpage != null) {
-        content.menu.children().detach();
-    }
-    
-    currentpage = page;
-    
-    for (var i = 0; i < content.pages[currentpage].length; ++i) {
-        content.menu.append(content.pages[currentpage][i]);
-    }
-
-    selectOption(option)
-    
-    //content.menu.append(pageindicator);
-    
-    if (content.maxpages > 0) {
-        $("#pageindicator").text("Page " + (currentpage + 1) + " / " + (content.maxpages + 1));
-    } else {
-        $("#pageindicator").text("")
-    }
-}
-
-
 
 
 /***
@@ -600,16 +661,17 @@ function showPageOption(page,option) {
  *                                                                                               
  */
 
+
 // Find any divs and create a menu page out of them.
 function refreshMenus(){
     updateMenuClasses();
     updateStateClasses();
-    convertToMenu();
+    convertToMenus();
 }
 
 
-
-function convertToMenu(){
+// Convert any divs on the page to a detached menu
+function convertToMenus(){
     $("div").each(function(i, obj) {
         // Skip Container elements.
         if ($(this).attr("data-container") == undefined){
@@ -621,7 +683,9 @@ function convertToMenu(){
 
             // Move all child elements to the pages array.
             $(this).children().each(function(i, obj) {
-                // send true state if it exists
+                
+                // TODO: Add better state syncing
+
                 if ($(this).data("state") == "ON") {
                     var statedata = $(this).data("action").split(" ");
                     sendData(statedata[0], {action: statedata[1], newstate: true});
@@ -639,149 +703,160 @@ function convertToMenu(){
             // Add data to the menu.
             menus[$(this).attr("id")] = data;
 
-            // Needed for recreating Vehicles Weehl Mod HTML
-            if($(this).attr("id") == vehicleWheelModID && vehicleModFlag == false){
-                vehicleWheelModMenuData = data
-                vehicleModFlag = true
+
+            // If this menu is dynamic then save the original versions
+            if($(this).attr("data-dynamicmenu")){
+                if(!dynamicIDs[$(this).attr("data-dynamicmenu")]){
+                    dynamicIDs[$(this).attr("data-dynamicmenu")] = $(this).attr("id");
+                    dynamicMenus[$(this).attr("id")] = data
+                }
             }
+
         }
     });
 }
 
 
 
-function createOnlinePlayersMenu(object, name){
-    var containerDiv
-    var targetID = dynamicIDs[name]
-    var objectArray = object[name]
+// Add Ammo Elements to the top of the menu
+function appendAmmoEles(containerDiv){
+    // Max Ammo
+    var maxEle = $(trainerOption);
+    maxEle.text("Max Ammo");
+    maxEle.attr("data-action","weapon ammo max");
+    maxEle.attr("data-hover","weapon holdweapon");
+    containerDiv.prepend(maxEle);
+     // Add Clip
+    var clipEle = $(trainerOption);
+    clipEle.text("Add Clip");
+    clipEle.attr("data-action","weapon ammo add");
+    clipEle.attr("data-hover","weapon holdweapon");
+    containerDiv.prepend(clipEle);
 
-    if($("#"+targetID).html() == undefined){
-        containerDiv = menus[targetID].menu.html("").detach()
-    } else {
-        containerDiv = $("#"+targetID).html("").detach()
-    }	
-
-    if(objectArray.length == 0){
-        var newEle = $(trainerOption)
-        newEle.text("No Online Players")
-
-    	containerDiv.append(newEle)
-    }
-
-    for (var i = 0; i < objectArray.length; i++) {
-    	var curObj = objectArray[i]
-
-        var newEle = $(trainerOption)
-        newEle.attr("data-sub",onlinePlayersSubID)
-        newEle.attr("data-share",curObj['spawnName'])
-        newEle.attr("data-shareid",targetID)
-        newEle.text(curObj['menuName'])
-
-        containerDiv.append(newEle)
-    }
-    container.append(containerDiv);
-
-    // Add all new menus to the menus object.
-    refreshMenus(targetID)
-
-    // Show the requested menu.
-    showMenu(menus[targetID], false)
-
+    return containerDiv;
 }
 
 
-// Used to sub menus from JSON.
-function createNewMenu(object, newID, oldID, oldSpawnName, oldMenuName, action){
-    var newDiv = $("<div></div>")
-    newDiv.attr("id",newID)
-    newDiv.attr("data-parent",oldID)
+// Add Weapon Spawn Element to top of the menu
+function appendWeaponSpawnEle(containerDiv,menuName){
+    // Spawn Weapon
+    var spawnEle = $(trainerOption);
+    spawnEle.text(menuName);
+    spawnEle.attr("data-action","weapon spawn");
+    spawnEle.attr("data-hover","weapon holdweapon");
+    spawnEle.attr("data-state","OFF")
+    containerDiv.prepend(spawnEle);
 
-    var objectArray = object['options']
-
-    //sendData("debug","creating new menu: "+newID)
-
-
-    // Add options before the main options
-
-    // Weapon
-    if(object["weapon"] == true){
-        // Create the option to spawn/remove the weapon.
-        var newEle = $(trainerOption)
-        newEle.attr("data-action",action + " spawn " +oldSpawnName)
-        newEle.attr("data-state","OFF")
-        newEle.attr("data-hover",action + " holdweapon " + oldSpawnName)
-        newEle.text(oldMenuName)
-
-        newDiv.append(newEle)
-
-
-    	//sendData("debug","creating weapon menu")
-
-
-        if(object["ammo"] == true){
-            // Add Clip
-            var clipEle = $(trainerOption)
-            clipEle.text("Add Clip")
-            clipEle.attr("data-action","weapon ammo " + oldSpawnName + " add")
-            newDiv.append(clipEle)
-            // Max Ammo
-            var maxEle = $(trainerOption)
-            maxEle.text("Max Ammo")
-            maxEle.attr("data-action","weapon ammo " + oldSpawnName + " max")
-            newDiv.append(maxEle)
-        }
-        
-        // All other option for weapons are weapon modifications.
-        action = action + " mod"
-    }
-
-    // Add all options to the menu.
-    for (var index = 0; index < objectArray.length; index++) {
-        var curObject = objectArray[index]
-
-        var optEle = $(trainerOption)
-        optEle.attr("data-action",action+" "+oldSpawnName+" "+curObject['spawnName'])
-        optEle.text(curObject['menuName'])
-        // Figure if this is a toggle?
-
-        //Add to container div
-        newDiv.append(optEle)
-    }
-
-    // Add options after the main options
-
-    if(object["weapon"] == true){
-        // Check for tintable weapons menu to be added.
-        if(tintable_weapons.indexOf(oldSpawnName) > -1){
-            var newEle = $(trainerOption)
-            newEle.attr("data-sub",weaponTintID)
-            newEle.attr("data-share",oldSpawnName)
-            newEle.attr("data-shareid",newID)
-            newEle.text("Weapon Tints")
-
-            newDiv.append(newEle)  
-        }
-    }
-
-    container.append(newDiv)
+    return containerDiv;
 }
 
 
-// Weapon Tint Management.
-var weapon_tints = ["Normal","Green","Gold","Pink","Army","LSPD","Orange","Platinum"];
-var tintable_weapons = ["WEAPON_STINGER", "WEAPON_MARKSMANPISTOL", "WEAPON_COMBATPDW", "WEAPON_PISTOL", "WEAPON_COMBATPISTOL", "WEAPON_APPISTOL", "WEAPON_PISTOL50", "WEAPON_SNSPISTOL", "WEAPON_HEAVYPISTOL", "WEAPON_VINTAGEPISTOL", "WEAPON_STUNGUN", "WEAPON_FLAREGUN", "WEAPON_MICROSMG", "WEAPON_SMG", "WEAPON_ASSAULTSMG", "WEAPON_MG", "WEAPON_COMBATMG", "WEAPON_GUSENBERG", "WEAPON_ASSAULTRIFLE", "WEAPON_CARBINERIFLE", "WEAPON_ADVANCEDRIFLE", "WEAPON_SPECIALCARBINE", "WEAPON_BULLPUPRIFLE", "WEAPON_PUMPSHOTGUN", "WEAPON_SAWNOFFSHOTGUN", "WEAPON_BULLPUPSHOTGUN", "WEAPON_ASSAULTSHOTGUN", "WEAPON_MUSKET", "WEAPON_HEAVYSHOTGUN", "WEAPON_SNIPERRIFLE", "WEAPON_HEAVYSNIPER", "WEAPON_MARKSMANRIFLE", "WEAPON_GRENADELAUNCHER", "WEAPON_RPG", "WEAPON_MINIGUN", "WEAPON_FIREWORK", "WEAPON_RAILGUN", "WEAPON_HOMINGLAUNCHER", "WEAPON_MACHINEPISTOL", "WEAPON_DBSHOTGUN", "WEAPON_COMPACTRIFLE", "WEAPON_MINISMG", "WEAPON_AUTOSHOTGUN", "WEAPON_COMPACTLAUNCHER" ];
-function createWeaponTintsMenu(){
-    var newMenu = $("<div></div>")
-    newMenu.attr("id",weaponTintID)
-    for (var i = 0; i < weapon_tints.length; i++) {
-        var newEle = $(trainerOption)
-        newEle.text(weapon_tints[i])
-        newEle.attr("data-action","weapon tint "+i)
+// Add the tintable menu element to the container
+function addWeaponTintMenu(containerDiv,spawnName,idName){
+    // Add to end of container.
+    var newEle = $(trainerOption);
+    newEle.text("Weapon Tints");
+    newEle.attr("data-sub","weapontintsmenu");
+    newEle.attr("data-share",spawnName);
+    newEle.attr("data-shareid",idName);
+    containerDiv.append(newEle);
 
-        newMenu.append(newEle)
+    return containerDiv;
+}
+
+
+
+// Adds new attributes for the specified element. Recursive call to handle linking to sub-menu
+function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction){
+    // defaultAction is used for static menus
+    if(!defaultAction){
+        defaultAction = "";
     }
 
-    container.append(newMenu);
+    // Add all necessary attributes to the element.
+    for(var objectKey in currentObject){
+        var curValue = currentObject[objectKey];
+
+        switch(objectKey){
+            // Add all data attributes
+            case "data":
+                for(var dataKey in curValue){
+                    var curDataValue = curValue[dataKey];
+
+                    // Ensure unique IDs by using parent ID as starting point.
+                    if(dataKey == "sub" || dataKey == "shareid"){
+                        curDataValue = idName+curDataValue;
+                        //sendData("debug","data-"+dataKey+" "+curDataValue)
+                    }
+
+                    if(dataKey == "action" || dataKey == "hover"){
+                        if(defaultAction){
+                            curDataValue = defaultAction+" "+curDataValue
+                        } else {
+                            curDataValue = curDataValue
+                        }
+                    }
+
+                    newEle.attr("data-"+dataKey,curDataValue);
+                }
+
+                // Share weaponName with weapon sub menu option
+                if(Object.keys(currentObject).indexOf("weapon") > -1){
+                    newEle.attr("data-share",currentObject['weaponName'])
+                }
+                break;
+
+            // Add submenu (accompanies by data-sub)
+            case "submenu":
+                var newID = idName+currentObject["data"]["sub"];
+
+                //sendData("debug","creating submenu: "+newID)
+
+                //Create Submenu Container Div
+                var containerDiv = $("<div></div>");
+                containerDiv.attr("id", newID);
+                containerDiv.attr("data-parent",idName);
+
+
+                // Loop over each subMenu and create the menu
+                for(var subMenuI=0;subMenuI<curValue.length;subMenuI++){
+                    var subObject = curValue[subMenuI];
+                    var newSubEle = $(trainerOption);
+
+                    newSubEle = addNewTrainerOptions(newSubEle,subObject,subMenuI,newID,defaultAction);
+                    containerDiv.append(newSubEle);
+                }
+
+
+                // Add Weapon Spawn Option to trainer
+                if(Object.keys(currentObject).indexOf("weapon") > -1){
+                    var weaponName = currentObject["weaponName"];
+
+                    // Add Ammo Options to trainer
+                    if(Object.keys(currentObject).indexOf("ammo") > -1){
+                        containerDiv = appendAmmoEles(containerDiv);
+                    }
+
+                    // Add trainer option to actually spawn weapon
+                    containerDiv = appendWeaponSpawnEle(containerDiv,currentObject['menuName']);
+                    
+
+                    // Add Tintable Weapon Menu if weapon is tintable
+                    if(tintable_weapons.indexOf(weaponName) > -1){
+                        containerDiv = addWeaponTintMenu(containerDiv,weaponName,newID);
+                    }
+                }
+
+                //sendData("debug","Appending containerDiv: "+containerDiv.attr("id"))
+                container.append(containerDiv);
+                break;
+
+            // Option Name for the trainer
+            case "menuName":
+                newEle.text(curValue);
+        }
+    }
+    return newEle
 }
 
 
@@ -789,258 +864,84 @@ function createWeaponTintsMenu(){
 function createStaticMenus(){
     $("div").each(function(i,obj){
         if( $(this).attr("data-staticmenu")){
+
             // Grab data from JSON.
-            var requestKey = $(this).attr("data-staticmenu")
-            var requestedObj = requestObjects[requestKey] || modObjects[requestKey];
-
-            var requestedAction = requestAction[requestKey] || dynamicActions["vehmods"];
-
-            var objectLength = requestedObj.length
+            var requestKey = $(this).attr("data-staticmenu");
+            var requestedObj = requestObjects[requestKey];
+            var requestedAction = requestAction[requestKey];
+            var objectLength = requestedObj.length;
 
             //sendData("debug","Creating Static Menu... "+requestKey)
 
+            // Loop over requestedObj and add each new option
             for(var index=0; index < objectLength; index++){
-                var curObj = requestedObj[index]
+                var curObj = requestedObj[index];
 
-
-
-                var newEle = $(trainerOption)
-                newEle.text( (curObj['menuName'] || curObj['name']) )
+                var newEle = $(trainerOption);
                 
+                // Add any necessary options for the static JSON
+                newEle = addNewTrainerOptions(newEle,curObj,index,$(this).attr("id"),requestedAction);
 
-                if(curObj.subOptions !== undefined){
-                	var oldID = $(this).attr("id")
-                    var newID = oldID + curObj.menuName.toLowerCase().replace(" ","");
-                    newEle.attr("data-sub",newID)
-
-                    var subOptions = curObj.subOptions
-                    // createNewMenu(subObject,newID,oldID,oldSpawnName)
-                    // Custom Options handled in createNewMenu
-                    
-
-                    //sendData("debug","Creating suboptions for: "+curObj.spawnName)
-                    createNewMenu(subOptions,newID,oldID,curObj.spawnName,curObj.menuName, requestedAction)
-
-                    //createNewMenu(subOption Data, newID, oldID, oldSpawnName, oldMenuName, action)
-                    //sendData("debug","request Key" + requestKey)
-
-
-
-                } else {
-                    newEle.attr("data-action",requestedAction+" "+(curObj.spawnName || (curObj.modtype+" "+curObj.mod)) )
-                }
-
-                $(this).append(newEle)                
+                // Add new option to container div
+                $(this).append(newEle);               
             }
         }
     });
 }
 
 
-// Hold the Data for the Vehicles Mod Menu so we can Recreate it when necessary.
-var vehicleWheelModMenuData = {}
-var vehicleWheelModID = "vehiclesmodmenu" // Find better way or retreiving this?
-var vehicleModFlag = false
-
-// Recreate Vehicle Wheel Mod Menu
-function recreateVehicleWheelModMenuHTML(){
-    sendData("debug","recreating mod menu.")
-    // Remove the menu if it exists since we are re-creating based off original template.
-    showMenu(menus[vehicleWheelModID])
-    $("#"+vehicleWheelModID).html("").remove()
-
-    // Readd menu to page.
-    var menu = jQuery.extend(true, {}, vehicleWheelModMenuData.menu)
-    var pages = jQuery.extend(true, [], vehicleWheelModMenuData.pages)
-    for (var i = 0; i < pages.length; i++) {
-        for (var index = 0; index < pages[i].length; index++) {
-            menu.append(pages[i][index])
-        }
-    }
-    container.append(menu)
-}
-
-
-
-
-// Create the Trainer.
-function init() {
-    // Create all Necessary Static Menus before splitting the HTML into "Menus"
-    createWeaponTintsMenu();
-    //sendData("debug","Weapon Tint Menu Created.");
-    createStaticMenus();
-    //sendData("Static Menus Created.");
-
-
-    // Add the Menu and State Classes to all necessary elements.
-    updateMenuClasses();
-    //sendData("debug","Menu Classes Added");
-    updateStateClasses();
-    //sendData("debug","Toggle States Updated");
-
-
-    //TODO: Request the user preferences before going through all toggle options and applying the true toggles.
-
-
-    // Find all elements that should be turned into menus.
-    convertToMenu()
-    //sendData("debug", "Converted to menus.")
-}
-
-
-
-// used to show a menu (adds back to container)
-function showMenuOnly(menu) {
-    // Show the new menu, page 0 option 0.
-    if (content != null) {
-        content.menu.detach();
-    }
-    
-    content = menu;
-    sendData("debug","show menu only:" + Object.keys(menu).join(" "))
-    //container.append(content.menu)
-
-    if (currentpage != null) {
-        content.menu.children().detach();
-    } 
-    sendData("debug","show menu only:" + content.pages)
-    currentpage = 0;
-    for (var i = 0; i < content.pages[currentpage].length; ++i) {
-        content.menu.append(content.pages[currentpage][i]);
-    }
-
-    sendData("debug","show menu only3")
-    container.append(content.menu);
-}
-
-
 
 // Create a Dynamic Menu
-function createDynamicMenu(object,name){
-	//sendData("debug","Creating Dynamic Menu.")
-    var idName = dynamicIDs[name]
-    var choiceDiv
+function createDynamicMenu(menuArray,name){
+    // Get necesarry information and recreate original menu
+    // sendData("debug", "creating dynamic menu")
+    var idName = dynamicIDs[name];
+    var data = jQuery.extend(true, {}, dynamicMenus[idName]);
+    var choiceMenu = data.menu;
+    var pages = jQuery.extend(true, [], data.pages)
 
-    if(name == "vehmods"){
-        recreateVehicleWheelModMenuHTML()
-        choiceDiv = $("#"+idName).detach()
-    } else {
-        if($("#"+idName).html() == undefined){
-            choiceDiv = menus[idName].menu.detach()
-        } else {
-	        choiceDiv = $("#"+idName).html("").detach()
-	    }
+    // Remove any children element to ensure blank page.
+    choiceMenu.children().detach();
+
+    // Readd menu to page.
+    for (var i = 0; i < pages.length; i++) {
+        for (var index = 0; index < pages[i].length; index++) {
+            choiceMenu.append(pages[i][index])
+        }
     }
 
-    var objectOrderedKeys = Object.keys(object).sort()
-    if(objectOrderedKeys.length == 0 && (name !== "vehmods") ){
-        var newEle = $(trainerOption).text("Nothing to Modify.")
-        choiceDiv.append(newEle)
+
+    // If nothing to add and no placeholder elements add element
+    if(menuArray.length == 0 && pages.length == 0){
+        var noEle = $(trainerOption).text("Nothing to show.");
+        choiceMenu.append(noEle);
     }
 
-    for (var curIndex = 0; curIndex < objectOrderedKeys.length; curIndex++){
-        var key = objectOrderedKeys[curIndex]
-        var newID = idName + key.toLowerCase()
 
-        // Create the option to select the Feature (with numbers).
-        var newEle = $(trainerOption)
-        newEle.attr("data-sub", newID)
-        newEle.text(key + " (" + object[key].length.toString() + ")")
+    // Add each option to the menu.
+    for (var curIndex = 0; curIndex < menuArray.length; curIndex++){
+        var currentObject = menuArray[curIndex];
 
+        // Create the option to select the Feature.
+        var newEle = $(trainerOption);
+        newEle.text(currentObject['menuName'])
 
-        if(name == "vehmods"){
-            choiceDiv.prepend(newEle)
-        } else {
-            choiceDiv.append(newEle)
-        }
+        // Adds options for menu option including submenus (recursive calls)
+        newEle = addNewTrainerOptions(newEle,currentObject,curIndex,idName);
 
-
-        // Create the div that contains all the options.
-        var containerDiv = $("<div></div>")
-        containerDiv.attr("id", newID)
-        containerDiv.attr("data-parent",idName)
-
-        var defaultAction = dynamicActions[name] + " "
-
-        if(name == "propmenu"){
-            // Add reset option for props
-            var resetOption = $(trainerOption)
-            resetOption.attr("data-hover","clearpropid " + key)
-            resetOption.text("Nothing")
-
-            containerDiv.append(resetOption)            
-        }
-
-        for (var i = 0; i < object[key].length; i++) {
-            
-            var currentObject = object[key][i]
-            var textureCount = parseInt((currentObject['textureCount'] || 0)) 
-            var textureID = currentObject['id']
-
-
-            // Create the option to select the texture container div.
-            var choiceEle = $(trainerOption)
-
-            if(name == "propmenu" || name == "skinmenu"){
-                var Action = defaultAction + key + " " + textureID + " 0"
-                choiceEle.attr("data-hover", Action)
-                choiceEle.text(drawableText + textureID + " (" + textureCount + ")")
-            } else if(name == "vehmods"){
-                var Action = defaultAction + currentObject.modtype + " " + currentObject.mod
-                choiceEle.text(currentObject.name)
-                choiceEle.attr("data-action", Action)
-                if(currentObject.modtype == "extra"){
-                    choiceEle.attr("data-state", currentObject.state)
-                }
-            }
-            
-
-            if(textureCount > 1){
-                choiceEle.attr("data-sub", newID + i.toString())
-            }
-            // Append the drawable option to its container div.
-            containerDiv.append(choiceEle)
-
-
-            // Only add texture options if more than 1 texture
-            if(textureCount > 1){
-
-                // Create the texture container div.
-                var textureDivID = newID + i.toString()
-                var textureDiv = $("<div></div>")
-                textureDiv.attr('id', textureDivID)
-                textureDiv.attr("data-parent",newID)
-
-                for(var d = 0; d < textureCount; d++){
-                    var textureChoice = $(trainerOption)
-                    var curAction = defaultAction + key + " " + currentObject['id'] + " " + d.toString()
-                    textureChoice.text(textureText + d.toString())
-                    textureChoice.attr("data-hover",curAction)
-
-                    textureDiv.append(textureChoice)
-                }
-
-                // Append the textureDiv to the container.
-                container.append(textureDiv)
-            }
-
-        }
-
-        container.append(containerDiv);
+        // Add new option to menu
+        choiceMenu.prepend(newEle);
     }
- 
-
-    container.append(choiceDiv);
+    container.append(choiceMenu);
 
     // Add all new menus to the menus object.
-    refreshMenus(idName)
+    refreshMenus();
 
     // Show the requested menu.
-    showMenu(menus[idName], false)
-	//sendData("debug","Created Menu")
+    showMenu(menus[idName], false);
+    //sendData("debug","Created Menu");
+
 }
-
-
 
 
 
@@ -1059,66 +960,96 @@ function createDynamicMenu(object,name){
  *                                                                                                    
  */
 
-// All Static JSON should have a menuName and a spawnName attribute.
+
+// Used to determine which weapon menus should get the tintable menu added.
+var tintable_weapons = ["WEAPON_STINGER", "WEAPON_MARKSMANPISTOL", "WEAPON_COMBATPDW", "WEAPON_PISTOL", "WEAPON_COMBATPISTOL", "WEAPON_APPISTOL", "WEAPON_PISTOL50", "WEAPON_SNSPISTOL", "WEAPON_HEAVYPISTOL", "WEAPON_VINTAGEPISTOL", "WEAPON_STUNGUN", "WEAPON_FLAREGUN", "WEAPON_MICROSMG", "WEAPON_SMG", "WEAPON_ASSAULTSMG", "WEAPON_MG", "WEAPON_COMBATMG", "WEAPON_GUSENBERG", "WEAPON_ASSAULTRIFLE", "WEAPON_CARBINERIFLE", "WEAPON_ADVANCEDRIFLE", "WEAPON_SPECIALCARBINE", "WEAPON_BULLPUPRIFLE", "WEAPON_PUMPSHOTGUN", "WEAPON_SAWNOFFSHOTGUN", "WEAPON_BULLPUPSHOTGUN", "WEAPON_ASSAULTSHOTGUN", "WEAPON_MUSKET", "WEAPON_HEAVYSHOTGUN", "WEAPON_SNIPERRIFLE", "WEAPON_HEAVYSNIPER", "WEAPON_MARKSMANRIFLE", "WEAPON_GRENADELAUNCHER", "WEAPON_RPG", "WEAPON_MINIGUN", "WEAPON_FIREWORK", "WEAPON_RAILGUN", "WEAPON_HOMINGLAUNCHER", "WEAPON_MACHINEPISTOL", "WEAPON_DBSHOTGUN", "WEAPON_COMPACTRIFLE", "WEAPON_MINISMG", "WEAPON_AUTOSHOTGUN", "WEAPON_COMPACTLAUNCHER" ];
 
 
 // Ped Spawning Lists.
-var playerList = [{'menuName' : "Michael",'spawnName' : "player_zero"},{'menuName' : "Franklin", 'spawnName' : "player_one"},{'menuName' : "Trevor", 'spawnName' : "player_two"}, {'menuName': "MP Male", 'spawnName': "mp_m_freemode_01"}, {'menuName': "MP Female", 'spawnName': "mp_f_freemode_01"}]
-var AnimalList = [{'menuName': "Boar", 'spawnName' : "a_c_boar"},{'menuName': "Cat", 'spawnName' : "a_c_cat_01"},{'menuName': "Chimp", 'spawnName' : "a_c_chimp"},{'menuName': "Chop-BROKEN", 'spawnName' : "a_c_chop"},{'menuName': "Cormorant", 'spawnName' : "a_c_cormorant"},{'menuName': "Cow", 'spawnName' : "a_c_cow"},{'menuName': "Coyote", 'spawnName' : "a_c_coyote"},{'menuName': "Crow", 'spawnName' : "a_c_crow"},{'menuName': "Deer", 'spawnName' : "a_c_deer"},{'menuName': "Dolphin", 'spawnName' : "a_c_dolphin"},{'menuName': "Fish", 'spawnName' : "a_c_fish"},{'menuName': "Hawk", 'spawnName' : "a_c_chickenhawk"},{'menuName': "Hen", 'spawnName' : "a_c_hen"},{'menuName': "Humpback", 'spawnName' : "a_c_humpback"},{'menuName': "Husky-BROKEN", 'spawnName' : "a_c_husky"},{'menuName': "Mtlion-BROKEN", 'spawnName' : "a_c_mtlion"},{'menuName': "Pig", 'spawnName' : "a_c_pig"},{'menuName': "Pigeon", 'spawnName' : "a_c_pigeon"},{'menuName': "Rat", 'spawnName' : "a_c_rat"},{'menuName': "Retriever-BROKEN", 'spawnName' : "a_c_retriever"},{'menuName': "Rhesus", 'spawnName' : "a_c_rhesus"},{'menuName': "Seagull", 'spawnName' : "a_c_seagull"},{'menuName': "Sharkhammer", 'spawnName' : "a_c_sharkhammer"},{'menuName': "Sharktiger-BROKEN", 'spawnName' : "a_c_sharktiger"},{'menuName': "Shepherd-BROKEN", 'spawnName' : "a_c_shepherd"},{'menuName': "Whale", 'spawnName' : "a_c_killerwhale"}]
-var NPCList = [{'menuName': "Abigail", 'spawnName' : "ig_abigail"},{'menuName': "Abigail Mathers", 'spawnName' : "csb_abigail"},{'menuName': "Abner", 'spawnName' : "u_m_y_abner"},{'menuName': "African American Male", 'spawnName' : "a_m_m_afriamer_01"},{'menuName': "Airhostess", 'spawnName' : "s_f_y_airhostess_01"},{'menuName': "Airworker", 'spawnName' : "s_m_y_airworker"},{'menuName': "Aldinapoli", 'spawnName' : "u_m_m_aldinapoli"},{'menuName': "Alien", 'spawnName' : "s_m_m_movalien_01"},{'menuName': "Altruist Cult Old Male", 'spawnName' : "a_m_o_acult_01"},{'menuName': "Altruist Cult Old Male 2", 'spawnName' : "a_m_o_acult_02"},{'menuName': "Altruist Cult Young Male", 'spawnName' : "a_m_y_acult_01"},{'menuName': "Altruist Cult Young Male 2", 'spawnName' : "a_m_y_acult_02"},{'menuName': "Altruist cult Mid-Age Male", 'spawnName' : "a_m_m_acult_01"},{'menuName': "Amandatownley", 'spawnName' : "ig_amandatownley"},{'menuName': "Amandatownley-BROKEN", 'spawnName' : "cs_amandatownley"},{'menuName': "Ammucity", 'spawnName' : "s_m_y_ammucity_01"},{'menuName': "Ammucountry", 'spawnName' : "s_m_m_ammucountry"},{'menuName': "Andreas", 'spawnName' : "ig_andreas"},{'menuName': "Andreas-BROKEN", 'spawnName' : "cs_andreas"},{'menuName': "Anita Mendoza", 'spawnName' : "csb_anita"},{'menuName': "Anton Beaudelaire", 'spawnName' : "csb_anton"},{'menuName': "Antonb", 'spawnName' : "u_m_y_antonb"},{'menuName': "Armboss", 'spawnName' : "g_m_m_armboss_01"},{'menuName': "Armgoon", 'spawnName' : "g_m_m_armgoon_01"},{'menuName': "Armgoon", 'spawnName' : "g_m_y_armgoon_02"},{'menuName': "Armlieut", 'spawnName' : "g_m_m_armlieut_01"},{'menuName': "Armoured", 'spawnName' : "mp_s_m_armoured_01"},{'menuName': "Armoured", 'spawnName' : "s_m_m_armoured_01"},{'menuName': "Armoured", 'spawnName' : "s_m_m_armoured_02"},{'menuName': "Armymech", 'spawnName' : "s_m_y_armymech_01"},{'menuName': "Ashley", 'spawnName' : "ig_ashley"},{'menuName': "Ashley-BROKEN", 'spawnName' : "cs_ashley"},{'menuName': "Autopsy", 'spawnName' : "s_m_y_autopsy_01"},{'menuName': "Autoshop", 'spawnName' : "s_m_m_autoshop_01"},{'menuName': "Autoshop", 'spawnName' : "s_m_m_autoshop_02"},{'menuName': "Azteca", 'spawnName' : "g_m_y_azteca_01"},{'menuName': "Babyd", 'spawnName' : "u_m_y_babyd"},{'menuName': "Ballaeast", 'spawnName' : "g_m_y_ballaeast_01"},{'menuName': "Ballaorig", 'spawnName' : "g_m_y_ballaorig_01"},{'menuName': "Ballas", 'spawnName' : "g_f_y_ballas_01"},{'menuName': "Ballas OG", 'spawnName' : "csb_ballasog"},{'menuName': "Ballasog", 'spawnName' : "ig_ballasog"},{'menuName': "Ballasout", 'spawnName' : "g_m_y_ballasout_01"},{'menuName': "Bankman", 'spawnName' : "ig_bankman"},{'menuName': "Bankman", 'spawnName' : "u_m_m_bankman"},{'menuName': "Bankman-BROKEN", 'spawnName' : "cs_bankman"},{'menuName': "Barman", 'spawnName' : "s_m_y_barman_01"},{'menuName': "Barry", 'spawnName' : "ig_barry"},{'menuName': "Barry-BROKEN", 'spawnName' : "cs_barry"},{'menuName': "Barry_P", 'spawnName' : "ig_barry_p"},{'menuName': "Barry_P-BROKEN", 'spawnName' : "cs_barry_p"},{'menuName': "Bartender", 'spawnName' : "s_f_y_bartender_01"},{'menuName': "Baygor", 'spawnName' : "u_m_y_baygor"},{'menuName': "Baywatch", 'spawnName' : "s_f_y_baywatch_01"},{'menuName': "Baywatch", 'spawnName' : "s_m_y_baywatch_01"},{'menuName': "Beach Female", 'spawnName' : "a_f_m_beach_01"},{'menuName': "Beach Male", 'spawnName' : "a_m_m_beach_01"},{'menuName': "Beach Male 2", 'spawnName' : "a_m_m_beach_02"},{'menuName': "Beach Muscle Male", 'spawnName' : "a_m_y_musclbeac_01"},{'menuName': "Beach Muscle Male 2", 'spawnName' : "a_m_y_musclbeac_02"},{'menuName': "Beach Old Male", 'spawnName' : "a_m_o_beach_01"},{'menuName': "Beach Tramp Female", 'spawnName' : "a_f_m_trampbeac_01"},{'menuName': "Beach Tramp Male", 'spawnName' : "a_m_m_trampbeac_01"},{'menuName': "Beach Young Female", 'spawnName' : "a_f_y_beach_01"},{'menuName': "Beach Young Male", 'spawnName' : "a_m_y_beach_01"},{'menuName': "Beach Young Male 2", 'spawnName' : "a_m_y_beach_02"},{'menuName': "Beach Young Male 3", 'spawnName' : "a_m_y_beach_03"},{'menuName': "Bestmen", 'spawnName' : "ig_bestmen"},{'menuName': "Beverly", 'spawnName' : "ig_beverly"},{'menuName': "Beverly Hills Female", 'spawnName' : "a_f_m_bevhills_01"},{'menuName': "Beverly Hills Female 2", 'spawnName' : "a_f_m_bevhills_02"},{'menuName': "Beverly Hills Male", 'spawnName' : "a_m_m_bevhills_01"},{'menuName': "Beverly Hills Male 2", 'spawnName' : "a_m_m_bevhills_02"},{'menuName': "Beverly Hills Young Female", 'spawnName' : "a_f_y_bevhills_01"},{'menuName': "Beverly Hills Young Female 2", 'spawnName' : "a_f_y_bevhills_02"},{'menuName': "Beverly Hills Young Female 3", 'spawnName' : "a_f_y_bevhills_03"},{'menuName': "Beverly Hills Young Female 4", 'spawnName' : "a_f_y_bevhills_04"},{'menuName': "Beverly Hills Young Male", 'spawnName' : "a_m_y_bevhills_01"},{'menuName': "Beverly Hills Young Male 2", 'spawnName' : "a_m_y_bevhills_02"},{'menuName': "Beverly-BROKEN", 'spawnName' : "cs_beverly"},{'menuName': "Beverly_P", 'spawnName' : "ig_beverly_p"},{'menuName': "Beverly_P-BROKEN", 'spawnName' : "cs_beverly_p"},{'menuName': "Bikehire", 'spawnName' : "u_m_m_bikehire_01"},{'menuName': "Bikerchic", 'spawnName' : "u_f_y_bikerchic"},{'menuName': "Black Street Male", 'spawnName' : "a_m_y_stbla_01"},{'menuName': "Black Street Male 2", 'spawnName' : "a_m_y_stbla_02"},{'menuName': "Blackops", 'spawnName' : "s_m_y_blackops_01"},{'menuName': "Blackops", 'spawnName' : "s_m_y_blackops_02"},{'menuName': "Bodybuilder Female", 'spawnName' : "a_f_m_bodybuild_01"},{'menuName': "Bouncer", 'spawnName' : "s_m_m_bouncer_01"},{'menuName': "Brad", 'spawnName' : "ig_brad"},{'menuName': "Brad-BROKEN", 'spawnName' : "cs_brad"},{'menuName': "Bradcadaver-BROKEN", 'spawnName' : "cs_bradcadaver"},{'menuName': "Breakdancer Male", 'spawnName' : "a_m_y_breakdance_01"},{'menuName': "Bride", 'spawnName' : "ig_bride"},{'menuName': "Bride-BROKEN", 'spawnName' : "csb_bride"},{'menuName': "Burger Drug Worker", 'spawnName' : "csb_burgerdrug"},{'menuName': "Burgerdrug", 'spawnName' : "u_m_y_burgerdrug_01"},{'menuName': "Busboy", 'spawnName' : "s_m_y_busboy_01"},{'menuName': "Business Casual", 'spawnName' : "a_m_y_busicas_01"},{'menuName': "Business Female 2", 'spawnName' : "a_f_m_business_02"},{'menuName': "Business Male", 'spawnName' : "a_m_m_business_01"},{'menuName': "Business Young Female", 'spawnName' : "a_f_y_business_01"},{'menuName': "Business Young Female 2", 'spawnName' : "a_f_y_business_02"},{'menuName': "Business Young Female 3", 'spawnName' : "a_f_y_business_03"},{'menuName': "Business Young Female 4", 'spawnName' : "a_f_y_business_04"},{'menuName': "Business Young Male", 'spawnName' : "a_m_y_business_01"},{'menuName': "Business Young Male 2", 'spawnName' : "a_m_y_business_02"},{'menuName': "Business Young Male 3", 'spawnName' : "a_m_y_business_03"},{'menuName': "Busker", 'spawnName' : "s_m_o_busker_01"},{'menuName': "Car 3 Guy 1", 'spawnName' : "csb_car3guy1"},{'menuName': "Car 3 Guy 2", 'spawnName' : "csb_car3guy2"},{'menuName': "Car3Guy1", 'spawnName' : "ig_car3guy1"},{'menuName': "Car3Guy2", 'spawnName' : "ig_car3guy2"},{'menuName': "Carbuyer-BROKEN", 'spawnName' : "cs_carbuyer"},{'menuName': "Casey", 'spawnName' : "ig_casey"},{'menuName': "Casey-BROKEN", 'spawnName' : "cs_casey"},{'menuName': "Chef", 'spawnName' : "ig_chef"},{'menuName': "Chef", 'spawnName' : "s_m_y_chef_01"},{'menuName': "Chemsec", 'spawnName' : "s_m_m_chemsec_01"},{'menuName': "Chemwork", 'spawnName' : "g_m_m_chemwork_01"},{'menuName': "Chemwork_P", 'spawnName' : "g_m_m_chemwork_01_p"},{'menuName': "Chengsr", 'spawnName' : "ig_chengsr"},{'menuName': "Chengsr-BROKEN", 'spawnName' : "cs_chengsr"},{'menuName': "Chiboss", 'spawnName' : "g_m_m_chiboss_01"},{'menuName': "Chiboss_P", 'spawnName' : "g_m_m_chiboss_01_p"},{'menuName': "Chicold", 'spawnName' : "g_m_m_chicold_01"},{'menuName': "Chicold_P", 'spawnName' : "g_m_m_chicold_01_p"},{'menuName': "Chigoon", 'spawnName' : "g_m_m_chigoon_01"},{'menuName': "Chigoon", 'spawnName' : "g_m_m_chigoon_02"},{'menuName': "Chigoon_P", 'spawnName' : "g_m_m_chigoon_01_p"},{'menuName': "Chinese Goon", 'spawnName' : "csb_chin_goon"},{'menuName': "Chip", 'spawnName' : "u_m_y_chip"},{'menuName': "Chrisformage", 'spawnName' : "ig_chrisformage"},{'menuName': "Chrisformage-BROKEN", 'spawnName' : "cs_chrisformage"},{'menuName': "Ciasec", 'spawnName' : "s_m_m_ciasec_01"},{'menuName': "Claude", 'spawnName' : "mp_m_claude_01"},{'menuName': "Clay", 'spawnName' : "ig_clay"},{'menuName': "Clay-BROKEN", 'spawnName' : "cs_clay"},{'menuName': "Claypain", 'spawnName' : "ig_claypain"},{'menuName': "Cletus", 'spawnName' : "csb_cletus"},{'menuName': "Cletus", 'spawnName' : "ig_cletus"},{'menuName': "Clown", 'spawnName' : "s_m_y_clown_01"},{'menuName': "Cntrybar", 'spawnName' : "s_m_m_cntrybar_01"},{'menuName': "Comjane", 'spawnName' : "u_f_y_comjane"},{'menuName': "Construct", 'spawnName' : "s_m_y_construct_01"},{'menuName': "Construct", 'spawnName' : "s_m_y_construct_02"},{'menuName': "Cooker", 'spawnName' : "csb_chef"},{'menuName': "Cop", 'spawnName' : "csb_cop"},{'menuName': "Cop", 'spawnName' : "s_f_y_cop_01"},{'menuName': "Cop", 'spawnName' : "s_m_y_cop_01"},{'menuName': "Corpse", 'spawnName' : "u_f_m_corpse_01"},{'menuName': "Corpse", 'spawnName' : "u_f_y_corpse_01"},{'menuName': "Corpse", 'spawnName' : "u_f_y_corpse_02"},{'menuName': "Customer", 'spawnName' : "csb_customer"},{'menuName': "Cyclist", 'spawnName' : "u_m_y_cyclist_01"},{'menuName': "Cyclist Male", 'spawnName' : "a_m_y_cyclist_01"},{'menuName': "Cyclist Sport", 'spawnName' : "a_m_y_roadcyc_01"},{'menuName': "Dale", 'spawnName' : "ig_dale"},{'menuName': "Dale-BROKEN", 'spawnName' : "cs_dale"},{'menuName': "Davenorton", 'spawnName' : "ig_davenorton"},{'menuName': "Davenorton-BROKEN", 'spawnName' : "cs_davenorton"},{'menuName': "Deadhooker", 'spawnName' : "mp_f_deadhooker"},{'menuName': "Dealer", 'spawnName' : "s_m_y_dealer_01"},{'menuName': "Debra-BROKEN", 'spawnName' : "cs_debra"},{'menuName': "Denise", 'spawnName' : "ig_denise"},{'menuName': "Denise's Friend", 'spawnName' : "csb_denise_friend"},{'menuName': "Denise-BROKEN", 'spawnName' : "cs_denise"},{'menuName': "Devin", 'spawnName' : "ig_devin"},{'menuName': "Devin-BROKEN", 'spawnName' : "cs_devin"},{'menuName': "Devinsec", 'spawnName' : "s_m_y_devinsec_01"},{'menuName': "Dockwork", 'spawnName' : "s_m_m_dockwork_01"},{'menuName': "Dockwork", 'spawnName' : "s_m_y_dockwork_01"},{'menuName': "Doctor", 'spawnName' : "s_m_m_doctor_01"},{'menuName': "Dom", 'spawnName' : "ig_dom"},{'menuName': "Dom-BROKEN", 'spawnName' : "cs_dom"},{'menuName': "Doorman", 'spawnName' : "s_m_y_doorman_01"},{'menuName': "Downtown Female", 'spawnName' : "a_f_m_downtown_01"},{'menuName': "Downtown Male", 'spawnName' : "a_m_y_downtown_01"},{'menuName': "Dreyfuss", 'spawnName' : "ig_dreyfuss"},{'menuName': "Dreyfuss-BROKEN", 'spawnName' : "cs_dreyfuss"},{'menuName': "Drfriedlander", 'spawnName' : "ig_drfriedlander"},{'menuName': "Drfriedlander-BROKEN", 'spawnName' : "cs_drfriedlander"},{'menuName': "Dwservice", 'spawnName' : "s_m_y_dwservice_01"},{'menuName': "Dwservice", 'spawnName' : "s_m_y_dwservice_02"},{'menuName': "East SA Male", 'spawnName' : "a_m_m_eastsa_01"},{'menuName': "East SA Male", 'spawnName' : "a_m_m_eastsa_02"},{'menuName': "East SA Young Female", 'spawnName' : "a_f_y_eastsa_01"},{'menuName': "East SA Young Female 2", 'spawnName' : "a_f_y_eastsa_02"},{'menuName': "East SA Young Female 3", 'spawnName' : "a_f_y_eastsa_03"},{'menuName': "East SA Young Male", 'spawnName' : "a_m_y_eastsa_01"},{'menuName': "East SA Young Male", 'spawnName' : "a_m_y_eastsa_02"},{'menuName': "Eastsa SA Female", 'spawnName' : "a_f_m_eastsa_01"},{'menuName': "Eastsa SA Female 2", 'spawnName' : "a_f_m_eastsa_02"},{'menuName': "Epsilon Female", 'spawnName' : "a_f_y_epsilon_01"},{'menuName': "Epsilon Male", 'spawnName' : "a_m_y_epsilon_01"},{'menuName': "Epsilon Male 2", 'spawnName' : "a_m_y_epsilon_02"},{'menuName': "Exarmy", 'spawnName' : "mp_m_exarmy_01"},{'menuName': "Fabien", 'spawnName' : "ig_fabien"},{'menuName': "Fabien-BROKEN", 'spawnName' : "cs_fabien"},{'menuName': "Factory", 'spawnName' : "s_f_y_factory_01"},{'menuName': "Factory", 'spawnName' : "s_m_y_factory_01"},{'menuName': "Famca", 'spawnName' : "g_m_y_famca_01"},{'menuName': "Famdd", 'spawnName' : "mp_m_famdd_01"},{'menuName': "Famdnf", 'spawnName' : "g_m_y_famdnf_01"},{'menuName': "Famfor", 'spawnName' : "g_m_y_famfor_01"},{'menuName': "Families", 'spawnName' : "g_f_y_families_01"},{'menuName': "Families Gang Member", 'spawnName' : "csb_ramp_gang"},{'menuName': "Farmer", 'spawnName' : "a_m_m_farmer_01"},{'menuName': "Fat Black Female", 'spawnName' : "a_f_m_fatbla_01"},{'menuName': "Fat Cult Female", 'spawnName' : "a_f_m_fatcult_01"},{'menuName': "Fat Latino Male", 'spawnName' : "a_m_m_fatlatin_01"},{'menuName': "Fat white Female", 'spawnName' : "a_f_m_fatwhite_01"},{'menuName': "Fbisuit", 'spawnName' : "ig_fbisuit_01"},{'menuName': "Fbisuit-BROKEN", 'spawnName' : "cs_fbisuit_01"},{'menuName': "Fembarber", 'spawnName' : "s_f_m_fembarber"},{'menuName': "Fibarchitect", 'spawnName' : "u_m_m_fibarchitect"},{'menuName': "Fibmugger", 'spawnName' : "u_m_y_fibmugger_01"},{'menuName': "Fiboffice", 'spawnName' : "s_m_m_fiboffice_01"},{'menuName': "Fiboffice", 'spawnName' : "s_m_m_fiboffice_02"},{'menuName': "Fibsec", 'spawnName' : "mp_m_fibsec_01"},{'menuName': "Filmdirector", 'spawnName' : "u_m_m_filmdirector"},{'menuName': "Finguru", 'spawnName' : "u_m_o_finguru_01"},{'menuName': "Fireman", 'spawnName' : "s_m_y_fireman_01"},{'menuName': "Fitness Female", 'spawnName' : "a_f_y_fitness_01"},{'menuName': "Fitness Female 2", 'spawnName' : "a_f_y_fitness_02"},{'menuName': "Floyd", 'spawnName' : "ig_floyd"},{'menuName': "Floyd-BROKEN", 'spawnName' : "cs_floyd"},{'menuName': "Fos Rep", 'spawnName' : "csb_fos_rep"},{'menuName': "Gaffer", 'spawnName' : "s_m_m_gaffer_01"},{'menuName': "Gang", 'spawnName' : "ig_ramp_gang"},{'menuName': "Garbage", 'spawnName' : "s_m_y_garbage"},{'menuName': "Gardener", 'spawnName' : "s_m_m_gardener_01"},{'menuName': "Gay Male", 'spawnName' : "a_m_y_gay_01"},{'menuName': "Gay Male 2", 'spawnName' : "a_m_y_gay_02"},{'menuName': "General Fat Male", 'spawnName' : "a_m_m_genfat_01"},{'menuName': "General Fat Male 2", 'spawnName' : "a_m_m_genfat_02"},{'menuName': "General Hot Young Female", 'spawnName' : "a_f_y_genhot_01"},{'menuName': "General Street Old Female", 'spawnName' : "a_f_o_genstreet_01"},{'menuName': "General Street Old Male", 'spawnName' : "a_m_o_genstreet_01"},{'menuName': "General Street Young Male", 'spawnName' : "a_m_y_genstreet_01"},{'menuName': "General Street Young Male 2", 'spawnName' : "a_m_y_genstreet_02"},{'menuName': "Gentransport", 'spawnName' : "s_m_m_gentransport"},{'menuName': "Gerald", 'spawnName' : "csb_g"},{'menuName': "Glenstank", 'spawnName' : "u_m_m_glenstank_01"},{'menuName': "Golfer Male", 'spawnName' : "a_m_m_golfer_01"},{'menuName': "Golfer Young Female", 'spawnName' : "a_f_y_golfer_01"},{'menuName': "Golfer Young Male", 'spawnName' : "a_m_y_golfer_01"},{'menuName': "Griff", 'spawnName' : "u_m_m_griff_01"},{'menuName': "Grip", 'spawnName' : "s_m_y_grip_01"},{'menuName': "Groom", 'spawnName' : "ig_groom"},{'menuName': "Groom-BROKEN", 'spawnName' : "csb_groom"},{'menuName': "Grove Street Dealer", 'spawnName' : "csb_grove_str_dlr"},{'menuName': "Guadalope-BROKEN", 'spawnName' : "cs_guadalope"},{'menuName': "Guido", 'spawnName' : "u_m_y_guido_01"},{'menuName': "Gunvend", 'spawnName' : "u_m_y_gunvend_01"},{'menuName': "Gurk-BROKEN", 'spawnName' : "cs_gurk"},{'menuName': "Hairdress", 'spawnName' : "s_m_m_hairdress_01"},{'menuName': "Hao", 'spawnName' : "csb_hao"},{'menuName': "Hao", 'spawnName' : "ig_hao"},{'menuName': "Hasidic Jew Male", 'spawnName' : "a_m_m_hasjew_01"},{'menuName': "Hasidic Jew Young Male", 'spawnName' : "a_m_y_hasjew_01"},{'menuName': "Hc_Driver", 'spawnName' : "hc_driver"},{'menuName': "Hc_Gunman", 'spawnName' : "hc_gunman"},{'menuName': "Hc_Hacker", 'spawnName' : "hc_hacker"},{'menuName': "Hic", 'spawnName' : "ig_ramp_hic"},{'menuName': "Hick", 'spawnName' : "csb_ramp_hic"},{'menuName': "Highsec", 'spawnName' : "s_m_m_highsec_01"},{'menuName': "Highsec", 'spawnName' : "s_m_m_highsec_02"},{'menuName': "Hiker Female", 'spawnName' : "a_f_y_hiker_01"},{'menuName': "Hiker Male", 'spawnName' : "a_m_y_hiker_01"},{'menuName': "Hillbilly Male", 'spawnName' : "a_m_m_hillbilly_01"},{'menuName': "Hillbilly Male 2", 'spawnName' : "a_m_m_hillbilly_02"},{'menuName': "Hippie", 'spawnName' : "u_m_y_hippie_01"},{'menuName': "Hippie Female", 'spawnName' : "a_f_y_hippie_01"},{'menuName': "Hippie Male", 'spawnName' : "a_m_y_hippy_01"},{'menuName': "Hipster", 'spawnName' : "csb_ramp_hipster"},{'menuName': "Hipster", 'spawnName' : "ig_ramp_hipster"},{'menuName': "Hipster Female", 'spawnName' : "a_f_y_hipster_01"},{'menuName': "Hipster Female 2", 'spawnName' : "a_f_y_hipster_02"},{'menuName': "Hipster Female 3", 'spawnName' : "a_f_y_hipster_03"},{'menuName': "Hipster Female 4", 'spawnName' : "a_f_y_hipster_04"},{'menuName': "Hipster Male", 'spawnName' : "a_m_y_hipster_01"},{'menuName': "Hipster Male 2", 'spawnName' : "a_m_y_hipster_02"},{'menuName': "Hipster Male 3", 'spawnName' : "a_m_y_hipster_03"},{'menuName': "Hooker", 'spawnName' : "s_f_y_hooker_01"},{'menuName': "Hooker", 'spawnName' : "s_f_y_hooker_02"},{'menuName': "Hooker", 'spawnName' : "s_f_y_hooker_03"},{'menuName': "Hotposh", 'spawnName' : "u_f_y_hotposh_01"},{'menuName': "Hugh Welsh", 'spawnName' : "csb_hugh"},{'menuName': "Hunter", 'spawnName' : "ig_hunter"},{'menuName': "Hunter-BROKEN", 'spawnName' : "cs_hunter"},{'menuName': "Hwaycop", 'spawnName' : "s_m_y_hwaycop_01"},{'menuName': "Imporage", 'spawnName' : "u_m_y_imporage"},{'menuName': "Imran Shinowa", 'spawnName' : "csb_imran"},{'menuName': "Indian Male", 'spawnName' : "a_m_m_indian_01"},{'menuName': "Indian Old Female", 'spawnName' : "a_f_o_indian_01"},{'menuName': "Indian Young Female", 'spawnName' : "a_f_y_indian_01"},{'menuName': "Indian Young Male", 'spawnName' : "a_m_y_indian_01"},{'menuName': "Janet", 'spawnName' : "ig_janet"},{'menuName': "Janet-BROKEN", 'spawnName' : "cs_janet"},{'menuName': "Janitor", 'spawnName' : "csb_janitor"},{'menuName': "Janitor", 'spawnName' : "s_m_m_janitor"},{'menuName': "Jay_Norris", 'spawnName' : "ig_jay_norris"},{'menuName': "Jesus", 'spawnName' : "u_m_m_jesus_01"},{'menuName': "Jetskier", 'spawnName' : "a_m_y_jetski_01"},{'menuName': "Jewelass", 'spawnName' : "ig_jewelass"},{'menuName': "Jewelass", 'spawnName' : "u_f_y_jewelass_01"},{'menuName': "Jewelass-BROKEN", 'spawnName' : "cs_jewelass"},{'menuName': "Jewelsec", 'spawnName' : "u_m_m_jewelsec_01"},{'menuName': "Jewelthief", 'spawnName' : "u_m_m_jewelthief"},{'menuName': "Jimmyboston", 'spawnName' : "ig_jimmyboston"},{'menuName': "Jimmyboston-BROKEN", 'spawnName' : "cs_jimmyboston"},{'menuName': "Jimmydisanto", 'spawnName' : "ig_jimmydisanto"},{'menuName': "Jimmydisanto-BROKEN", 'spawnName' : "cs_jimmydisanto"},{'menuName': "Joeminuteman", 'spawnName' : "ig_joeminuteman"},{'menuName': "Joeminuteman-BROKEN", 'spawnName' : "cs_joeminuteman"},{'menuName': "Jogger Female", 'spawnName' : "a_f_y_runner_01"},{'menuName': "Jogger Male", 'spawnName' : "a_m_y_runner_01"},{'menuName': "Jogger Male 2", 'spawnName' : "a_m_y_runner_02"},{'menuName': "Johnnyklebitz", 'spawnName' : "ig_johnnyklebitz"},{'menuName': "Johnnyklebitz-BROKEN", 'spawnName' : "cs_johnnyklebitz"},{'menuName': "Josef", 'spawnName' : "ig_josef"},{'menuName': "Josef-BROKEN", 'spawnName' : "cs_josef"},{'menuName': "Josh", 'spawnName' : "ig_josh"},{'menuName': "Josh-BROKEN", 'spawnName' : "cs_josh"},{'menuName': "Juggalo Female", 'spawnName' : "a_f_y_juggalo_01"},{'menuName': "Juggalo Male", 'spawnName' : "a_m_y_juggalo_01"},{'menuName': "Justin", 'spawnName' : "u_m_y_justin"},{'menuName': "Kerrymcintosh", 'spawnName' : "ig_kerrymcintosh"},{'menuName': "Korboss", 'spawnName' : "g_m_m_korboss_01"},{'menuName': "Korean", 'spawnName' : "g_m_y_korean_01"},{'menuName': "Korean", 'spawnName' : "g_m_y_korean_02"},{'menuName': "Korean Female", 'spawnName' : "a_f_m_ktown_01"},{'menuName': "Korean Female 2", 'spawnName' : "a_f_m_ktown_02"},{'menuName': "Korean Male", 'spawnName' : "a_m_m_ktown_01"},{'menuName': "Korean Old Female", 'spawnName' : "a_f_o_ktown_01"},{'menuName': "Korean Old Male", 'spawnName' : "a_m_o_ktown_01"},{'menuName': "Korean Young Male 3", 'spawnName' : "a_m_y_ktown_01"},{'menuName': "Korean Young Male 4", 'spawnName' : "a_m_y_ktown_02"},{'menuName': "Korlieut", 'spawnName' : "g_m_y_korlieut_01"},{'menuName': "Lamardavis", 'spawnName' : "ig_lamardavis"},{'menuName': "Lamardavis-BROKEN", 'spawnName' : "cs_lamardavis"},{'menuName': "Lathandy", 'spawnName' : "s_m_m_lathandy_01"},{'menuName': "Latino Street Male 2", 'spawnName' : "a_m_m_stlat_02"},{'menuName': "Latino Street Young Male", 'spawnName' : "a_m_y_stlat_01"},{'menuName': "Latino Young Male", 'spawnName' : "a_m_y_latino_01"},{'menuName': "Lazlow", 'spawnName' : "ig_lazlow"},{'menuName': "Lazlow-BROKEN", 'spawnName' : "cs_lazlow"},{'menuName': "Lestercrest", 'spawnName' : "ig_lestercrest"},{'menuName': "Lestercrest-BROKEN", 'spawnName' : "cs_lestercrest"},{'menuName': "Lifeinvad", 'spawnName' : "ig_lifeinvad_01"},{'menuName': "Lifeinvad", 'spawnName' : "ig_lifeinvad_02"},{'menuName': "Lifeinvad", 'spawnName' : "s_m_m_lifeinvad_01"},{'menuName': "Lifeinvad-BROKEN", 'spawnName' : "cs_lifeinvad_01"},{'menuName': "Linecook", 'spawnName' : "s_m_m_linecook"},{'menuName': "Lost", 'spawnName' : "g_f_y_lost_01"},{'menuName': "Lost", 'spawnName' : "g_m_y_lost_01"},{'menuName': "Lost", 'spawnName' : "g_m_y_lost_02"},{'menuName': "Lost", 'spawnName' : "g_m_y_lost_03"},{'menuName': "Lsmetro", 'spawnName' : "s_m_m_lsmetro_01"},{'menuName': "Magenta", 'spawnName' : "ig_magenta"},{'menuName': "Magenta-BROKEN", 'spawnName' : "cs_magenta"},{'menuName': "Maid", 'spawnName' : "s_f_m_maid_01"},{'menuName': "Malibu Male", 'spawnName' : "a_m_m_malibu_01"},{'menuName': "Mani", 'spawnName' : "u_m_y_mani"},{'menuName': "Manuel", 'spawnName' : "ig_manuel"},{'menuName': "Manuel-BROKEN", 'spawnName' : "cs_manuel"},{'menuName': "Mariachi", 'spawnName' : "s_m_m_mariachi_01"},{'menuName': "Marine", 'spawnName' : "csb_ramp_marine"},{'menuName': "Marine", 'spawnName' : "s_m_m_marine_01"},{'menuName': "Marine", 'spawnName' : "s_m_m_marine_02"},{'menuName': "Marine", 'spawnName' : "s_m_y_marine_01"},{'menuName': "Marine", 'spawnName' : "s_m_y_marine_02"},{'menuName': "Marine", 'spawnName' : "s_m_y_marine_03"},{'menuName': "Markfost", 'spawnName' : "u_m_m_markfost"},{'menuName': "Marnie", 'spawnName' : "ig_marnie"},{'menuName': "Marnie-BROKEN", 'spawnName' : "cs_marnie"},{'menuName': "Marston", 'spawnName' : "mp_m_marston_01"},{'menuName': "Martinmadrazo-BROKEN", 'spawnName' : "cs_martinmadrazo"},{'menuName': "Maryan-BROKEN", 'spawnName' : "cs_maryann"},{'menuName': "Maryann", 'spawnName' : "ig_maryann"},{'menuName': "Maude", 'spawnName' : "csb_maude"},{'menuName': "Maude", 'spawnName' : "ig_maude"},{'menuName': "Merryweather Merc", 'spawnName' : "csb_mweather"},{'menuName': "Meth Addict", 'spawnName' : "a_m_y_methhead_01"},{'menuName': "Mex", 'spawnName' : "ig_ramp_mex"},{'menuName': "Mexboss", 'spawnName' : "g_m_m_mexboss_01"},{'menuName': "Mexboss", 'spawnName' : "g_m_m_mexboss_02"},{'menuName': "Mexgang", 'spawnName' : "g_m_y_mexgang_01"},{'menuName': "Mexgoon", 'spawnName' : "g_m_y_mexgoon_01"},{'menuName': "Mexgoon", 'spawnName' : "g_m_y_mexgoon_02"},{'menuName': "Mexgoon", 'spawnName' : "g_m_y_mexgoon_03"},{'menuName': "Mexgoon_P", 'spawnName' : "g_m_y_mexgoon_03_p"},{'menuName': "Mexican", 'spawnName' : "csb_ramp_mex"},{'menuName': "Mexican Rural", 'spawnName' : "a_m_m_mexcntry_01"},{'menuName': "Mexican Thug", 'spawnName' : "a_m_y_mexthug_01"},{'menuName': "Mexican labourer", 'spawnName' : "a_m_m_mexlabor_01"},{'menuName': "Michelle", 'spawnName' : "ig_michelle"},{'menuName': "Michelle-BROKEN", 'spawnName' : "cs_michelle"},{'menuName': "Migrant", 'spawnName' : "s_f_y_migrant_01"},{'menuName': "Migrant", 'spawnName' : "s_m_m_migrant_01"},{'menuName': "Militarybum", 'spawnName' : "u_m_y_militarybum"},{'menuName': "Milton", 'spawnName' : "ig_milton"},{'menuName': "Milton-BROKEN", 'spawnName' : "cs_milton"},{'menuName': "Mime", 'spawnName' : "s_m_y_mime"},{'menuName': "Miranda", 'spawnName' : "u_f_m_miranda"},{'menuName': "Mistress", 'spawnName' : "u_f_y_mistress"},{'menuName': "Misty", 'spawnName' : "mp_f_misty_01"},{'menuName': "Molly", 'spawnName' : "ig_molly"},{'menuName': "Molly-BROKEN", 'spawnName' : "cs_molly"},{'menuName': "Motorcross Biker", 'spawnName' : "a_m_y_motox_01"},{'menuName': "Motorcross Biker 2x", 'spawnName' : "a_m_y_motox_02"},{'menuName': "Mountainbiker", 'spawnName' : "a_m_y_dhill_01"},{'menuName': "Moviestar", 'spawnName' : "u_f_o_moviestar"},{'menuName': "Movprem", 'spawnName' : "s_f_y_movprem_01"},{'menuName': "Movprem", 'spawnName' : "s_m_m_movprem_01"},{'menuName': "Movpremf-BROKEN", 'spawnName' : "cs_movpremf_01"},{'menuName': "Movpremmale-BROKEN", 'spawnName' : "cs_movpremmale"},{'menuName': "Movspace", 'spawnName' : "s_m_m_movspace_01"},{'menuName': "Mp_Headtargets", 'spawnName' : "mp_headtargets"},{'menuName': "Mrk", 'spawnName' : "ig_mrk"},{'menuName': "Mrk-BROKEN", 'spawnName' : "cs_mrk"},{'menuName': "Mrs_Thornhill", 'spawnName' : "ig_mrs_thornhill"},{'menuName': "Mrs_Thornhill-BROKEN", 'spawnName' : "cs_mrs_thornhill"},{'menuName': "Mrsphillips", 'spawnName' : "ig_mrsphillips"},{'menuName': "Mrsphillips-BROKEN", 'spawnName' : "cs_mrsphillips"},{'menuName': "Natalia", 'spawnName' : "ig_natalia"},{'menuName': "Natalia-BROKEN", 'spawnName' : "cs_natalia"},{'menuName': "Nervousron", 'spawnName' : "ig_nervousron"},{'menuName': "Nervousron-BROKEN", 'spawnName' : "cs_nervousron"},{'menuName': "Nigel", 'spawnName' : "ig_nigel"},{'menuName': "Nigel-BROKEN", 'spawnName' : "cs_nigel"},{'menuName': "Niko", 'spawnName' : "mp_m_niko_01"},{'menuName': "OG Boss", 'spawnName' : "a_m_m_og_boss_01"},{'menuName': "Old_Man1A", 'spawnName' : "ig_old_man1a"},{'menuName': "Old_Man1A-BROKEN", 'spawnName' : "cs_old_man1a"},{'menuName': "Old_Man2", 'spawnName' : "ig_old_man2"},{'menuName': "Old_Man2-BROKEN", 'spawnName' : "cs_old_man2"},{'menuName': "Omega", 'spawnName' : "ig_omega"},{'menuName': "Omega-BROKEN", 'spawnName' : "cs_omega"},{'menuName': "Oneil", 'spawnName' : "ig_oneil"},{'menuName': "Orleans", 'spawnName' : "ig_orleans"},{'menuName': "Orleans-BROKEN", 'spawnName' : "cs_orleans"},{'menuName': "Ortega", 'spawnName' : "csb_ortega"},{'menuName': "Ortega", 'spawnName' : "ig_ortega"},{'menuName': "Oscar", 'spawnName' : "csb_oscar"},{'menuName': "Paparazzi", 'spawnName' : "u_m_y_paparazzi"},{'menuName': "Paparazzi Male", 'spawnName' : "a_m_m_paparazzi_01"},{'menuName': "Paper", 'spawnName' : "ig_paper"},{'menuName': "Paper-BROKEN", 'spawnName' : "cs_paper"},{'menuName': "Paper_P-BROKEN", 'spawnName' : "cs_paper_p"},{'menuName': "Paramedic", 'spawnName' : "s_m_m_paramedic_01"},{'menuName': "Party", 'spawnName' : "u_m_y_party_01"},{'menuName': "Partytarget", 'spawnName' : "u_m_m_partytarget"},{'menuName': "Patricia", 'spawnName' : "ig_patricia"},{'menuName': "Patricia-BROKEN", 'spawnName' : "cs_patricia"},{'menuName': "Pestcont", 'spawnName' : "s_m_y_pestcont_01"},{'menuName': "Pilot", 'spawnName' : "s_m_m_pilot_01"},{'menuName': "Pilot", 'spawnName' : "s_m_m_pilot_02"},{'menuName': "Pilot", 'spawnName' : "s_m_y_pilot_01"},{'menuName': "Pogo", 'spawnName' : "u_m_y_pogo_01"},{'menuName': "Pologoon", 'spawnName' : "g_m_y_pologoon_01"},{'menuName': "Pologoon", 'spawnName' : "g_m_y_pologoon_02"},{'menuName': "Pologoon_P", 'spawnName' : "g_m_y_pologoon_01_p"},{'menuName': "Pologoon_P", 'spawnName' : "g_m_y_pologoon_02_p"},{'menuName': "Polynesian", 'spawnName' : "a_m_m_polynesian_01"},{'menuName': "Polynesian Young", 'spawnName' : "a_m_y_polynesian_01"},{'menuName': "Poppymich", 'spawnName' : "u_f_y_poppymich"},{'menuName': "Porn Dude", 'spawnName' : "csb_porndudes"},{'menuName': "Porndudes_P-BROKEN", 'spawnName' : "csb_porndudes_p"},{'menuName': "Postal", 'spawnName' : "s_m_m_postal_01"},{'menuName': "Postal", 'spawnName' : "s_m_m_postal_02"},{'menuName': "Priest", 'spawnName' : "ig_priest"},{'menuName': "Priest-BROKEN", 'spawnName' : "cs_priest"},{'menuName': "Princess", 'spawnName' : "u_f_y_princess"},{'menuName': "Prisguard", 'spawnName' : "s_m_m_prisguard_01"},{'menuName': "Prismuscl", 'spawnName' : "s_m_y_prismuscl_01"},{'menuName': "Prisoner", 'spawnName' : "s_m_y_prisoner_01"},{'menuName': "Prisoner", 'spawnName' : "u_m_y_prisoner_01"},{'menuName': "Prolhost", 'spawnName' : "u_f_o_prolhost_01"},{'menuName': "Prologue Driver", 'spawnName' : "u_m_y_proldriver_01"},{'menuName': "Prologue Driver", 'spawnName' : "csb_prologuedriver"},{'menuName': "Prologue Host Female", 'spawnName' : "a_f_m_prolhost_01"},{'menuName': "Prologue Host Male", 'spawnName' : "a_m_m_prolhost_01"},{'menuName': "Prologue Security", 'spawnName' : "csb_prolsec"},{'menuName': "Prolsec", 'spawnName' : "ig_prolsec_02"},{'menuName': "Prolsec", 'spawnName' : "u_m_m_prolsec_01"},{'menuName': "Prolsec-BROKEN", 'spawnName' : "cs_prolsec_02"},{'menuName': "Promourn", 'spawnName' : "u_f_m_promourn_01"},{'menuName': "Promourn", 'spawnName' : "u_m_m_promourn_01"},{'menuName': "Pros", 'spawnName' : "mp_g_m_pros_01"},{'menuName': "Ranger", 'spawnName' : "s_f_y_ranger_01"},{'menuName': "Ranger", 'spawnName' : "s_m_y_ranger_01"},{'menuName': "Reporter", 'spawnName' : "csb_reporter"},{'menuName': "Republican Space Ranger", 'spawnName' : "u_m_y_rsranger_01"},{'menuName': "Rivalpap", 'spawnName' : "u_m_m_rivalpap"},{'menuName': "Robber", 'spawnName' : "s_m_y_robber_01"},{'menuName': "Rocco Pelosi", 'spawnName' : "csb_roccopelosi"},{'menuName': "Roccopelosi", 'spawnName' : "ig_roccopelosi"},{'menuName': "Rural Meth Addict Female", 'spawnName' : "a_f_y_rurmeth_01"},{'menuName': "Rural meth Addict Male", 'spawnName' : "a_m_m_rurmeth_01"},{'menuName': "Russiandrunk", 'spawnName' : "ig_russiandrunk"},{'menuName': "Russiandrunk-BROKEN", 'spawnName' : "cs_russiandrunk"},{'menuName': "Salton Female", 'spawnName' : "a_f_m_salton_01"},{'menuName': "Salton Male", 'spawnName' : "a_m_m_salton_01"},{'menuName': "Salton Male 2", 'spawnName' : "a_m_m_salton_02"},{'menuName': "Salton Male 3", 'spawnName' : "a_m_m_salton_03"},{'menuName': "Salton Male 4", 'spawnName' : "a_m_m_salton_04"},{'menuName': "Salton Old Female", 'spawnName' : "a_f_o_salton_01"},{'menuName': "Salton Old Male", 'spawnName' : "a_m_o_salton_01"},{'menuName': "Salton Young Male", 'spawnName' : "a_m_y_salton_01"},{'menuName': "Salvaboss", 'spawnName' : "g_m_y_salvaboss_01"},{'menuName': "Salvagoon", 'spawnName' : "g_m_y_salvagoon_01"},{'menuName': "Salvagoon", 'spawnName' : "g_m_y_salvagoon_02"},{'menuName': "Salvagoon", 'spawnName' : "g_m_y_salvagoon_03"},{'menuName': "Salvagoon_P", 'spawnName' : "g_m_y_salvagoon_03_p"},{'menuName': "Scientist", 'spawnName' : "s_m_m_scientist_01"},{'menuName': "Screen_Writer", 'spawnName' : "ig_screen_writer"},{'menuName': "Screenwriter", 'spawnName' : "csb_screen_writer"},{'menuName': "Scrubs", 'spawnName' : "s_f_y_scrubs_01"},{'menuName': "Security", 'spawnName' : "s_m_m_security_01"},{'menuName': "Sheriff", 'spawnName' : "s_f_y_sheriff_01"},{'menuName': "Sheriff", 'spawnName' : "s_m_y_sheriff_01"},{'menuName': "Shop_High", 'spawnName' : "s_f_m_shop_high"},{'menuName': "Shop_Low", 'spawnName' : "s_f_y_shop_low"},{'menuName': "Shop_Mask", 'spawnName' : "s_m_y_shop_mask"},{'menuName': "Shop_Mid", 'spawnName' : "s_f_y_shop_mid"},{'menuName': "Shopkeep", 'spawnName' : "mp_m_shopkeep_01"},{'menuName': "Siemonyetarian", 'spawnName' : "ig_siemonyetarian"},{'menuName': "Siemonyetarian-BROKEN", 'spawnName' : "cs_siemonyetarian"},{'menuName': "Skater Female", 'spawnName' : "a_f_y_skater_01"},{'menuName': "Skater Male", 'spawnName' : "a_m_m_skater_01"},{'menuName': "Skater Young Male", 'spawnName' : "a_m_y_skater_01"},{'menuName': "Skater Young Male 2", 'spawnName' : "a_m_y_skater_02"},{'menuName': "Skid Row Female", 'spawnName' : "a_f_m_skidrow_01"},{'menuName': "Skid Row Male", 'spawnName' : "a_m_m_skidrow_01"},{'menuName': "Snowcop", 'spawnName' : "s_m_m_snowcop_01"},{'menuName': "Solomon", 'spawnName' : "ig_solomon"},{'menuName': "Solomon-BROKEN", 'spawnName' : "cs_solomon"},{'menuName': "South Central Female", 'spawnName' : "a_f_m_soucent_01"},{'menuName': "South Central Female 2", 'spawnName' : "a_f_m_soucent_02"},{'menuName': "South Central Female Dressy", 'spawnName' : "a_f_y_scdressy_01"},{'menuName': "South Central Latino Male", 'spawnName' : "a_m_m_socenlat_01"},{'menuName': "South Central MC Female", 'spawnName' : "a_f_m_soucentmc_01"},{'menuName': "South Central Male", 'spawnName' : "a_m_m_soucent_01"},{'menuName': "South Central Male 2", 'spawnName' : "a_m_m_soucent_02"},{'menuName': "South Central Male 3", 'spawnName' : "a_m_m_soucent_03"},{'menuName': "South Central Male 4", 'spawnName' : "a_m_m_soucent_04"},{'menuName': "South Central Old Female", 'spawnName' : "a_f_o_soucent_01"},{'menuName': "South Central Old Female 2", 'spawnName' : "a_f_o_soucent_02"},{'menuName': "South Central Old Male", 'spawnName' : "a_m_o_soucent_01"},{'menuName': "South Central Old Male 2", 'spawnName' : "a_m_o_soucent_02"},{'menuName': "South Central Old Male 3", 'spawnName' : "a_m_o_soucent_03"},{'menuName': "South Central Young Female", 'spawnName' : "a_f_y_soucent_01"},{'menuName': "South Central Young Female 2", 'spawnName' : "a_f_y_soucent_02"},{'menuName': "South Central Young Female 3", 'spawnName' : "a_f_y_soucent_03"},{'menuName': "South Central Young Male", 'spawnName' : "a_m_y_soucent_01"},{'menuName': "South Central Young Male 2", 'spawnName' : "a_m_y_soucent_02"},{'menuName': "South Central Young Male 3", 'spawnName' : "a_m_y_soucent_03"},{'menuName': "South Central Young Male 4", 'spawnName' : "a_m_y_soucent_04"},{'menuName': "Sports Biker", 'spawnName' : "u_m_y_sbike"},{'menuName': "Spyactor", 'spawnName' : "u_m_m_spyactor"},{'menuName': "Spyactress", 'spawnName' : "u_f_y_spyactress"},{'menuName': "Stag Party Groom", 'spawnName' : "u_m_y_staggrm_01"},{'menuName': "Stevehains", 'spawnName' : "ig_stevehains"},{'menuName': "Stevehains-BROKEN", 'spawnName' : "cs_stevehains"},{'menuName': "Stretch", 'spawnName' : "ig_stretch"},{'menuName': "Stretch-BROKEN", 'spawnName' : "cs_stretch"},{'menuName': "Stripper", 'spawnName' : "csb_stripper_01"},{'menuName': "Stripper", 'spawnName' : "s_f_y_stripper_01"},{'menuName': "Stripper", 'spawnName' : "s_f_y_stripper_02"},{'menuName': "Stripper 2", 'spawnName' : "csb_stripper_02"},{'menuName': "Stripperlite", 'spawnName' : "mp_f_stripperlite"},{'menuName': "Stripperlite", 'spawnName' : "s_f_y_stripperlite"},{'menuName': "Strperf", 'spawnName' : "s_m_m_strperf_01"},{'menuName': "Strpreach", 'spawnName' : "s_m_m_strpreach_01"},{'menuName': "Strpunk", 'spawnName' : "g_m_y_strpunk_01"},{'menuName': "Strpunk", 'spawnName' : "g_m_y_strpunk_02"},{'menuName': "Strvend", 'spawnName' : "s_m_m_strvend_01"},{'menuName': "Strvend", 'spawnName' : "s_m_y_strvend_01"},{'menuName': "Sunbather Male", 'spawnName' : "a_m_y_sunbathe_01"},{'menuName': "Surfer", 'spawnName' : "a_m_y_surfer_01"},{'menuName': "Swat", 'spawnName' : "s_m_y_swat_01"},{'menuName': "Sweatshop", 'spawnName' : "s_f_m_sweatshop_01"},{'menuName': "Sweatshop", 'spawnName' : "s_f_y_sweatshop_01"},{'menuName': "Talina", 'spawnName' : "ig_talina"},{'menuName': "Tanisha", 'spawnName' : "ig_tanisha"},{'menuName': "Tanisha-BROKEN", 'spawnName' : "cs_tanisha"},{'menuName': "Taocheng", 'spawnName' : "ig_taocheng"},{'menuName': "Taocheng-BROKEN", 'spawnName' : "cs_taocheng"},{'menuName': "Taostranslator", 'spawnName' : "ig_taostranslator"},{'menuName': "Taostranslator-BROKEN", 'spawnName' : "cs_taostranslator"},{'menuName': "Taostranslator_P", 'spawnName' : "ig_taostranslator_p"},{'menuName': "Taphillbilly", 'spawnName' : "u_m_o_taphillbilly"},{'menuName': "Tattoo Artist", 'spawnName' : "u_m_y_tattoo_01"},{'menuName': "Tennis Player Female", 'spawnName' : "a_f_y_tennis_01"},{'menuName': "Tennis Player Male", 'spawnName' : "a_m_m_tennis_01"},{'menuName': "Tenniscoach", 'spawnName' : "ig_tenniscoach"},{'menuName': "Tenniscoach-BROKEN", 'spawnName' : "cs_tenniscoach"},{'menuName': "Terry", 'spawnName' : "ig_terry"},{'menuName': "Terry-BROKEN", 'spawnName' : "cs_terry"},{'menuName': "Tom-BROKEN", 'spawnName' : "cs_tom"},{'menuName': "Tomepsilon", 'spawnName' : "ig_tomepsilon"},{'menuName': "Tomepsilon-BROKEN", 'spawnName' : "cs_tomepsilon"},{'menuName': "Tonya", 'spawnName' : "csb_tonya"},{'menuName': "Tonya", 'spawnName' : "ig_tonya"},{'menuName': "Topless", 'spawnName' : "a_f_y_topless_01"},{'menuName': "Tourist Female", 'spawnName' : "a_f_m_tourist_01"},{'menuName': "Tourist Male", 'spawnName' : "a_m_m_tourist_01"},{'menuName': "Tourist Young Female", 'spawnName' : "a_f_y_tourist_01"},{'menuName': "Tourist Young Female 2", 'spawnName' : "a_f_y_tourist_02"},{'menuName': "Tracydisanto", 'spawnName' : "ig_tracydisanto"},{'menuName': "Tracydisanto-BROKEN", 'spawnName' : "cs_tracydisanto"},{'menuName': "Traffic Warden", 'spawnName' : "csb_trafficwarden"},{'menuName': "Trafficwarden", 'spawnName' : "ig_trafficwarden"},{'menuName': "Tramp", 'spawnName' : "u_m_o_tramp_01"},{'menuName': "Tramp Female", 'spawnName' : "a_f_m_tramp_01"},{'menuName': "Tramp Male", 'spawnName' : "a_m_m_tramp_01"},{'menuName': "Tramp Old Male", 'spawnName' : "a_m_o_tramp_01"},{'menuName': "Tranvestite Male", 'spawnName' : "a_m_m_tranvest_01"},{'menuName': "Tranvestite Male 2", 'spawnName' : "a_m_m_tranvest_02"},{'menuName': "Trucker", 'spawnName' : "s_m_m_trucker_01"},{'menuName': "Tylerdix", 'spawnName' : "ig_tylerdix"},{'menuName': "Ups", 'spawnName' : "s_m_m_ups_01"},{'menuName': "Ups", 'spawnName' : "s_m_m_ups_02"},{'menuName': "Uscg", 'spawnName' : "s_m_y_uscg_01"},{'menuName': "Vagos", 'spawnName' : "g_f_y_vagos_01"},{'menuName': "Valet", 'spawnName' : "s_m_y_valet_01"},{'menuName': "Vespucci Beach Male", 'spawnName' : "a_m_y_beachvesp_01"},{'menuName': "Vespucci Beach Male", 'spawnName' : "a_m_y_beachvesp_02"},{'menuName': "Vinewood Douche", 'spawnName' : "a_m_y_vindouche_01"},{'menuName': "Vinewood Female", 'spawnName' : "a_f_y_vinewood_01"},{'menuName': "Vinewood Female 2", 'spawnName' : "a_f_y_vinewood_02"},{'menuName': "Vinewood Female 3", 'spawnName' : "a_f_y_vinewood_03"},{'menuName': "Vinewood Female 4", 'spawnName' : "a_f_y_vinewood_04"},{'menuName': "Vinewood Male", 'spawnName' : "a_m_y_vinewood_01"},{'menuName': "Vinewood Male 2", 'spawnName' : "a_m_y_vinewood_02"},{'menuName': "Vinewood Male 3", 'spawnName' : "a_m_y_vinewood_03"},{'menuName': "Vinewood Male 4", 'spawnName' : "a_m_y_vinewood_04"},{'menuName': "Wade", 'spawnName' : "ig_wade"},{'menuName': "Wade-BROKEN", 'spawnName' : "cs_wade"},{'menuName': "Waiter", 'spawnName' : "s_m_y_waiter_01"},{'menuName': "White Street Male", 'spawnName' : "a_m_y_stwhi_01"},{'menuName': "White Street Male", 'spawnName' : "a_m_y_stwhi_02"},{'menuName': "Willyfist", 'spawnName' : "u_m_m_willyfist"},{'menuName': "Winclean", 'spawnName' : "s_m_y_winclean_01"},{'menuName': "Xmech", 'spawnName' : "s_m_y_xmech_01"},{'menuName': "Xmech", 'spawnName' : "s_m_y_xmech_02"},{'menuName': "Yoga Female", 'spawnName' : "a_f_y_yoga_01"},{'menuName': "Yoga Male", 'spawnName' : "a_m_y_yoga_01"},{'menuName': "Zimbor", 'spawnName' : "ig_zimbor"},{'menuName': "Zimbor-BROKEN", 'spawnName' : "cs_zimbor"},{'menuName': "Zombie", 'spawnName' : "u_m_y_zombie_01"}]
+var playerList = [{"menuName" : "Michael","data":{"action": "player_zero"}},{"menuName" : "Franklin","data":{"action": "player_one"}},{"menuName" : "Trevor","data":{"action": "player_two"}}, {"menuName": "MP Male","data":{"action": "mp_m_freemode_01"}}, {"menuName": "MP Female","data":{"action": "mp_f_freemode_01"}}];
+var AnimalList = [{"menuName": "Boar","data":{"action": "a_c_boar"}},{"menuName": "Cat","data":{"action": "a_c_cat_01"}},{"menuName": "Chimp","data":{"action": "a_c_chimp"}},{"menuName": "Chop-BROKEN","data":{"action": "a_c_chop"}},{"menuName": "Cormorant","data":{"action": "a_c_cormorant"}},{"menuName": "Cow","data":{"action": "a_c_cow"}},{"menuName": "Coyote","data":{"action": "a_c_coyote"}},{"menuName": "Crow","data":{"action": "a_c_crow"}},{"menuName": "Deer","data":{"action": "a_c_deer"}},{"menuName": "Dolphin","data":{"action": "a_c_dolphin"}},{"menuName": "Fish","data":{"action": "a_c_fish"}},{"menuName": "Hawk","data":{"action": "a_c_chickenhawk"}},{"menuName": "Hen","data":{"action": "a_c_hen"}},{"menuName": "Humpback","data":{"action": "a_c_humpback"}},{"menuName": "Husky-BROKEN","data":{"action": "a_c_husky"}},{"menuName": "Mtlion-BROKEN","data":{"action": "a_c_mtlion"}},{"menuName": "Pig","data":{"action": "a_c_pig"}},{"menuName": "Pigeon","data":{"action": "a_c_pigeon"}},{"menuName": "Rat","data":{"action": "a_c_rat"}},{"menuName": "Retriever-BROKEN","data":{"action": "a_c_retriever"}},{"menuName": "Rhesus","data":{"action": "a_c_rhesus"}},{"menuName": "Seagull","data":{"action": "a_c_seagull"}},{"menuName": "Sharkhammer","data":{"action": "a_c_sharkhammer"}},{"menuName": "Sharktiger-BROKEN","data":{"action": "a_c_sharktiger"}},{"menuName": "Shepherd-BROKEN","data":{"action": "a_c_shepherd"}},{"menuName": "Whale","data":{"action": "a_c_killerwhale"}}];
+var NPCList = [{"menuName": "Abigail","data":{"action": "ig_abigail"}},{"menuName": "Abigail Mathers","data":{"action": "csb_abigail"}},{"menuName": "Abner","data":{"action": "u_m_y_abner"}},{"menuName": "African American Male","data":{"action": "a_m_m_afriamer_01"}},{"menuName": "Airhostess","data":{"action": "s_f_y_airhostess_01"}},{"menuName": "Airworker","data":{"action": "s_m_y_airworker"}},{"menuName": "Aldinapoli","data":{"action": "u_m_m_aldinapoli"}},{"menuName": "Alien","data":{"action": "s_m_m_movalien_01"}},{"menuName": "Altruist Cult Old Male","data":{"action": "a_m_o_acult_01"}},{"menuName": "Altruist Cult Old Male 2","data":{"action": "a_m_o_acult_02"}},{"menuName": "Altruist Cult Young Male","data":{"action": "a_m_y_acult_01"}},{"menuName": "Altruist Cult Young Male 2","data":{"action": "a_m_y_acult_02"}},{"menuName": "Altruist cult Mid-Age Male","data":{"action": "a_m_m_acult_01"}},{"menuName": "Amandatownley","data":{"action": "ig_amandatownley"}},{"menuName": "Amandatownley-BROKEN","data":{"action": "cs_amandatownley"}},{"menuName": "Ammucity","data":{"action": "s_m_y_ammucity_01"}},{"menuName": "Ammucountry","data":{"action": "s_m_m_ammucountry"}},{"menuName": "Andreas","data":{"action": "ig_andreas"}},{"menuName": "Andreas-BROKEN","data":{"action": "cs_andreas"}},{"menuName": "Anita Mendoza","data":{"action": "csb_anita"}},{"menuName": "Anton Beaudelaire","data":{"action": "csb_anton"}},{"menuName": "Antonb","data":{"action": "u_m_y_antonb"}},{"menuName": "Armboss","data":{"action": "g_m_m_armboss_01"}},{"menuName": "Armgoon","data":{"action": "g_m_m_armgoon_01"}},{"menuName": "Armgoon","data":{"action": "g_m_y_armgoon_02"}},{"menuName": "Armlieut","data":{"action": "g_m_m_armlieut_01"}},{"menuName": "Armoured","data":{"action": "mp_s_m_armoured_01"}},{"menuName": "Armoured","data":{"action": "s_m_m_armoured_01"}},{"menuName": "Armoured","data":{"action": "s_m_m_armoured_02"}},{"menuName": "Armymech","data":{"action": "s_m_y_armymech_01"}},{"menuName": "Ashley","data":{"action": "ig_ashley"}},{"menuName": "Ashley-BROKEN","data":{"action": "cs_ashley"}},{"menuName": "Autopsy","data":{"action": "s_m_y_autopsy_01"}},{"menuName": "Autoshop","data":{"action": "s_m_m_autoshop_01"}},{"menuName": "Autoshop","data":{"action": "s_m_m_autoshop_02"}},{"menuName": "Azteca","data":{"action": "g_m_y_azteca_01"}},{"menuName": "Babyd","data":{"action": "u_m_y_babyd"}},{"menuName": "Ballaeast","data":{"action": "g_m_y_ballaeast_01"}},{"menuName": "Ballaorig","data":{"action": "g_m_y_ballaorig_01"}},{"menuName": "Ballas","data":{"action": "g_f_y_ballas_01"}},{"menuName": "Ballas OG","data":{"action": "csb_ballasog"}},{"menuName": "Ballasog","data":{"action": "ig_ballasog"}},{"menuName": "Ballasout","data":{"action": "g_m_y_ballasout_01"}},{"menuName": "Bankman","data":{"action": "ig_bankman"}},{"menuName": "Bankman","data":{"action": "u_m_m_bankman"}},{"menuName": "Bankman-BROKEN","data":{"action": "cs_bankman"}},{"menuName": "Barman","data":{"action": "s_m_y_barman_01"}},{"menuName": "Barry","data":{"action": "ig_barry"}},{"menuName": "Barry-BROKEN","data":{"action": "cs_barry"}},{"menuName": "Barry_P","data":{"action": "ig_barry_p"}},{"menuName": "Barry_P-BROKEN","data":{"action": "cs_barry_p"}},{"menuName": "Bartender","data":{"action": "s_f_y_bartender_01"}},{"menuName": "Baygor","data":{"action": "u_m_y_baygor"}},{"menuName": "Baywatch","data":{"action": "s_f_y_baywatch_01"}},{"menuName": "Baywatch","data":{"action": "s_m_y_baywatch_01"}},{"menuName": "Beach Female","data":{"action": "a_f_m_beach_01"}},{"menuName": "Beach Male","data":{"action": "a_m_m_beach_01"}},{"menuName": "Beach Male 2","data":{"action": "a_m_m_beach_02"}},{"menuName": "Beach Muscle Male","data":{"action": "a_m_y_musclbeac_01"}},{"menuName": "Beach Muscle Male 2","data":{"action": "a_m_y_musclbeac_02"}},{"menuName": "Beach Old Male","data":{"action": "a_m_o_beach_01"}},{"menuName": "Beach Tramp Female","data":{"action": "a_f_m_trampbeac_01"}},{"menuName": "Beach Tramp Male","data":{"action": "a_m_m_trampbeac_01"}},{"menuName": "Beach Young Female","data":{"action": "a_f_y_beach_01"}},{"menuName": "Beach Young Male","data":{"action": "a_m_y_beach_01"}},{"menuName": "Beach Young Male 2","data":{"action": "a_m_y_beach_02"}},{"menuName": "Beach Young Male 3","data":{"action": "a_m_y_beach_03"}},{"menuName": "Bestmen","data":{"action": "ig_bestmen"}},{"menuName": "Beverly","data":{"action": "ig_beverly"}},{"menuName": "Beverly Hills Female","data":{"action": "a_f_m_bevhills_01"}},{"menuName": "Beverly Hills Female 2","data":{"action": "a_f_m_bevhills_02"}},{"menuName": "Beverly Hills Male","data":{"action": "a_m_m_bevhills_01"}},{"menuName": "Beverly Hills Male 2","data":{"action": "a_m_m_bevhills_02"}},{"menuName": "Beverly Hills Young Female","data":{"action": "a_f_y_bevhills_01"}},{"menuName": "Beverly Hills Young Female 2","data":{"action": "a_f_y_bevhills_02"}},{"menuName": "Beverly Hills Young Female 3","data":{"action": "a_f_y_bevhills_03"}},{"menuName": "Beverly Hills Young Female 4","data":{"action": "a_f_y_bevhills_04"}},{"menuName": "Beverly Hills Young Male","data":{"action": "a_m_y_bevhills_01"}},{"menuName": "Beverly Hills Young Male 2","data":{"action": "a_m_y_bevhills_02"}},{"menuName": "Beverly-BROKEN","data":{"action": "cs_beverly"}},{"menuName": "Beverly_P","data":{"action": "ig_beverly_p"}},{"menuName": "Beverly_P-BROKEN","data":{"action": "cs_beverly_p"}},{"menuName": "Bikehire","data":{"action": "u_m_m_bikehire_01"}},{"menuName": "Bikerchic","data":{"action": "u_f_y_bikerchic"}},{"menuName": "Black Street Male","data":{"action": "a_m_y_stbla_01"}},{"menuName": "Black Street Male 2","data":{"action": "a_m_y_stbla_02"}},{"menuName": "Blackops","data":{"action": "s_m_y_blackops_01"}},{"menuName": "Blackops","data":{"action": "s_m_y_blackops_02"}},{"menuName": "Bodybuilder Female","data":{"action": "a_f_m_bodybuild_01"}},{"menuName": "Bouncer","data":{"action": "s_m_m_bouncer_01"}},{"menuName": "Brad","data":{"action": "ig_brad"}},{"menuName": "Brad-BROKEN","data":{"action": "cs_brad"}},{"menuName": "Bradcadaver-BROKEN","data":{"action": "cs_bradcadaver"}},{"menuName": "Breakdancer Male","data":{"action": "a_m_y_breakdance_01"}},{"menuName": "Bride","data":{"action": "ig_bride"}},{"menuName": "Bride-BROKEN","data":{"action": "csb_bride"}},{"menuName": "Burger Drug Worker","data":{"action": "csb_burgerdrug"}},{"menuName": "Burgerdrug","data":{"action": "u_m_y_burgerdrug_01"}},{"menuName": "Busboy","data":{"action": "s_m_y_busboy_01"}},{"menuName": "Business Casual","data":{"action": "a_m_y_busicas_01"}},{"menuName": "Business Female 2","data":{"action": "a_f_m_business_02"}},{"menuName": "Business Male","data":{"action": "a_m_m_business_01"}},{"menuName": "Business Young Female","data":{"action": "a_f_y_business_01"}},{"menuName": "Business Young Female 2","data":{"action": "a_f_y_business_02"}},{"menuName": "Business Young Female 3","data":{"action": "a_f_y_business_03"}},{"menuName": "Business Young Female 4","data":{"action": "a_f_y_business_04"}},{"menuName": "Business Young Male","data":{"action": "a_m_y_business_01"}},{"menuName": "Business Young Male 2","data":{"action": "a_m_y_business_02"}},{"menuName": "Business Young Male 3","data":{"action": "a_m_y_business_03"}},{"menuName": "Busker","data":{"action": "s_m_o_busker_01"}},{"menuName": "Car 3 Guy 1","data":{"action": "csb_car3guy1"}},{"menuName": "Car 3 Guy 2","data":{"action": "csb_car3guy2"}},{"menuName": "Car3Guy1","data":{"action": "ig_car3guy1"}},{"menuName": "Car3Guy2","data":{"action": "ig_car3guy2"}},{"menuName": "Carbuyer-BROKEN","data":{"action": "cs_carbuyer"}},{"menuName": "Casey","data":{"action": "ig_casey"}},{"menuName": "Casey-BROKEN","data":{"action": "cs_casey"}},{"menuName": "Chef","data":{"action": "ig_chef"}},{"menuName": "Chef","data":{"action": "s_m_y_chef_01"}},{"menuName": "Chemsec","data":{"action": "s_m_m_chemsec_01"}},{"menuName": "Chemwork","data":{"action": "g_m_m_chemwork_01"}},{"menuName": "Chemwork_P","data":{"action": "g_m_m_chemwork_01_p"}},{"menuName": "Chengsr","data":{"action": "ig_chengsr"}},{"menuName": "Chengsr-BROKEN","data":{"action": "cs_chengsr"}},{"menuName": "Chiboss","data":{"action": "g_m_m_chiboss_01"}},{"menuName": "Chiboss_P","data":{"action": "g_m_m_chiboss_01_p"}},{"menuName": "Chicold","data":{"action": "g_m_m_chicold_01"}},{"menuName": "Chicold_P","data":{"action": "g_m_m_chicold_01_p"}},{"menuName": "Chigoon","data":{"action": "g_m_m_chigoon_01"}},{"menuName": "Chigoon","data":{"action": "g_m_m_chigoon_02"}},{"menuName": "Chigoon_P","data":{"action": "g_m_m_chigoon_01_p"}},{"menuName": "Chinese Goon","data":{"action": "csb_chin_goon"}},{"menuName": "Chip","data":{"action": "u_m_y_chip"}},{"menuName": "Chrisformage","data":{"action": "ig_chrisformage"}},{"menuName": "Chrisformage-BROKEN","data":{"action": "cs_chrisformage"}},{"menuName": "Ciasec","data":{"action": "s_m_m_ciasec_01"}},{"menuName": "Claude","data":{"action": "mp_m_claude_01"}},{"menuName": "Clay","data":{"action": "ig_clay"}},{"menuName": "Clay-BROKEN","data":{"action": "cs_clay"}},{"menuName": "Claypain","data":{"action": "ig_claypain"}},{"menuName": "Cletus","data":{"action": "csb_cletus"}},{"menuName": "Cletus","data":{"action": "ig_cletus"}},{"menuName": "Clown","data":{"action": "s_m_y_clown_01"}},{"menuName": "Cntrybar","data":{"action": "s_m_m_cntrybar_01"}},{"menuName": "Comjane","data":{"action": "u_f_y_comjane"}},{"menuName": "Construct","data":{"action": "s_m_y_construct_01"}},{"menuName": "Construct","data":{"action": "s_m_y_construct_02"}},{"menuName": "Cooker","data":{"action": "csb_chef"}},{"menuName": "Cop","data":{"action": "csb_cop"}},{"menuName": "Cop","data":{"action": "s_f_y_cop_01"}},{"menuName": "Cop","data":{"action": "s_m_y_cop_01"}},{"menuName": "Corpse","data":{"action": "u_f_m_corpse_01"}},{"menuName": "Corpse","data":{"action": "u_f_y_corpse_01"}},{"menuName": "Corpse","data":{"action": "u_f_y_corpse_02"}},{"menuName": "Customer","data":{"action": "csb_customer"}},{"menuName": "Cyclist","data":{"action": "u_m_y_cyclist_01"}},{"menuName": "Cyclist Male","data":{"action": "a_m_y_cyclist_01"}},{"menuName": "Cyclist Sport","data":{"action": "a_m_y_roadcyc_01"}},{"menuName": "Dale","data":{"action": "ig_dale"}},{"menuName": "Dale-BROKEN","data":{"action": "cs_dale"}},{"menuName": "Davenorton","data":{"action": "ig_davenorton"}},{"menuName": "Davenorton-BROKEN","data":{"action": "cs_davenorton"}},{"menuName": "Deadhooker","data":{"action": "mp_f_deadhooker"}},{"menuName": "Dealer","data":{"action": "s_m_y_dealer_01"}},{"menuName": "Debra-BROKEN","data":{"action": "cs_debra"}},{"menuName": "Denise","data":{"action": "ig_denise"}},{"menuName": "Denise's Friend","data":{"action": "csb_denise_friend"}},{"menuName": "Denise-BROKEN","data":{"action": "cs_denise"}},{"menuName": "Devin","data":{"action": "ig_devin"}},{"menuName": "Devin-BROKEN","data":{"action": "cs_devin"}},{"menuName": "Devinsec","data":{"action": "s_m_y_devinsec_01"}},{"menuName": "Dockwork","data":{"action": "s_m_m_dockwork_01"}},{"menuName": "Dockwork","data":{"action": "s_m_y_dockwork_01"}},{"menuName": "Doctor","data":{"action": "s_m_m_doctor_01"}},{"menuName": "Dom","data":{"action": "ig_dom"}},{"menuName": "Dom-BROKEN","data":{"action": "cs_dom"}},{"menuName": "Doorman","data":{"action": "s_m_y_doorman_01"}},{"menuName": "Downtown Female","data":{"action": "a_f_m_downtown_01"}},{"menuName": "Downtown Male","data":{"action": "a_m_y_downtown_01"}},{"menuName": "Dreyfuss","data":{"action": "ig_dreyfuss"}},{"menuName": "Dreyfuss-BROKEN","data":{"action": "cs_dreyfuss"}},{"menuName": "Drfriedlander","data":{"action": "ig_drfriedlander"}},{"menuName": "Drfriedlander-BROKEN","data":{"action": "cs_drfriedlander"}},{"menuName": "Dwservice","data":{"action": "s_m_y_dwservice_01"}},{"menuName": "Dwservice","data":{"action": "s_m_y_dwservice_02"}},{"menuName": "East SA Male","data":{"action": "a_m_m_eastsa_01"}},{"menuName": "East SA Male","data":{"action": "a_m_m_eastsa_02"}},{"menuName": "East SA Young Female","data":{"action": "a_f_y_eastsa_01"}},{"menuName": "East SA Young Female 2","data":{"action": "a_f_y_eastsa_02"}},{"menuName": "East SA Young Female 3","data":{"action": "a_f_y_eastsa_03"}},{"menuName": "East SA Young Male","data":{"action": "a_m_y_eastsa_01"}},{"menuName": "East SA Young Male","data":{"action": "a_m_y_eastsa_02"}},{"menuName": "Eastsa SA Female","data":{"action": "a_f_m_eastsa_01"}},{"menuName": "Eastsa SA Female 2","data":{"action": "a_f_m_eastsa_02"}},{"menuName": "Epsilon Female","data":{"action": "a_f_y_epsilon_01"}},{"menuName": "Epsilon Male","data":{"action": "a_m_y_epsilon_01"}},{"menuName": "Epsilon Male 2","data":{"action": "a_m_y_epsilon_02"}},{"menuName": "Exarmy","data":{"action": "mp_m_exarmy_01"}},{"menuName": "Fabien","data":{"action": "ig_fabien"}},{"menuName": "Fabien-BROKEN","data":{"action": "cs_fabien"}},{"menuName": "Factory","data":{"action": "s_f_y_factory_01"}},{"menuName": "Factory","data":{"action": "s_m_y_factory_01"}},{"menuName": "Famca","data":{"action": "g_m_y_famca_01"}},{"menuName": "Famdd","data":{"action": "mp_m_famdd_01"}},{"menuName": "Famdnf","data":{"action": "g_m_y_famdnf_01"}},{"menuName": "Famfor","data":{"action": "g_m_y_famfor_01"}},{"menuName": "Families","data":{"action": "g_f_y_families_01"}},{"menuName": "Families Gang Member","data":{"action": "csb_ramp_gang"}},{"menuName": "Farmer","data":{"action": "a_m_m_farmer_01"}},{"menuName": "Fat Black Female","data":{"action": "a_f_m_fatbla_01"}},{"menuName": "Fat Cult Female","data":{"action": "a_f_m_fatcult_01"}},{"menuName": "Fat Latino Male","data":{"action": "a_m_m_fatlatin_01"}},{"menuName": "Fat white Female","data":{"action": "a_f_m_fatwhite_01"}},{"menuName": "Fbisuit","data":{"action": "ig_fbisuit_01"}},{"menuName": "Fbisuit-BROKEN","data":{"action": "cs_fbisuit_01"}},{"menuName": "Fembarber","data":{"action": "s_f_m_fembarber"}},{"menuName": "Fibarchitect","data":{"action": "u_m_m_fibarchitect"}},{"menuName": "Fibmugger","data":{"action": "u_m_y_fibmugger_01"}},{"menuName": "Fiboffice","data":{"action": "s_m_m_fiboffice_01"}},{"menuName": "Fiboffice","data":{"action": "s_m_m_fiboffice_02"}},{"menuName": "Fibsec","data":{"action": "mp_m_fibsec_01"}},{"menuName": "Filmdirector","data":{"action": "u_m_m_filmdirector"}},{"menuName": "Finguru","data":{"action": "u_m_o_finguru_01"}},{"menuName": "Fireman","data":{"action": "s_m_y_fireman_01"}},{"menuName": "Fitness Female","data":{"action": "a_f_y_fitness_01"}},{"menuName": "Fitness Female 2","data":{"action": "a_f_y_fitness_02"}},{"menuName": "Floyd","data":{"action": "ig_floyd"}},{"menuName": "Floyd-BROKEN","data":{"action": "cs_floyd"}},{"menuName": "Fos Rep","data":{"action": "csb_fos_rep"}},{"menuName": "Gaffer","data":{"action": "s_m_m_gaffer_01"}},{"menuName": "Gang","data":{"action": "ig_ramp_gang"}},{"menuName": "Garbage","data":{"action": "s_m_y_garbage"}},{"menuName": "Gardener","data":{"action": "s_m_m_gardener_01"}},{"menuName": "Gay Male","data":{"action": "a_m_y_gay_01"}},{"menuName": "Gay Male 2","data":{"action": "a_m_y_gay_02"}},{"menuName": "General Fat Male","data":{"action": "a_m_m_genfat_01"}},{"menuName": "General Fat Male 2","data":{"action": "a_m_m_genfat_02"}},{"menuName": "General Hot Young Female","data":{"action": "a_f_y_genhot_01"}},{"menuName": "General Street Old Female","data":{"action": "a_f_o_genstreet_01"}},{"menuName": "General Street Old Male","data":{"action": "a_m_o_genstreet_01"}},{"menuName": "General Street Young Male","data":{"action": "a_m_y_genstreet_01"}},{"menuName": "General Street Young Male 2","data":{"action": "a_m_y_genstreet_02"}},{"menuName": "Gentransport","data":{"action": "s_m_m_gentransport"}},{"menuName": "Gerald","data":{"action": "csb_g"}},{"menuName": "Glenstank","data":{"action": "u_m_m_glenstank_01"}},{"menuName": "Golfer Male","data":{"action": "a_m_m_golfer_01"}},{"menuName": "Golfer Young Female","data":{"action": "a_f_y_golfer_01"}},{"menuName": "Golfer Young Male","data":{"action": "a_m_y_golfer_01"}},{"menuName": "Griff","data":{"action": "u_m_m_griff_01"}},{"menuName": "Grip","data":{"action": "s_m_y_grip_01"}},{"menuName": "Groom","data":{"action": "ig_groom"}},{"menuName": "Groom-BROKEN","data":{"action": "csb_groom"}},{"menuName": "Grove Street Dealer","data":{"action": "csb_grove_str_dlr"}},{"menuName": "Guadalope-BROKEN","data":{"action": "cs_guadalope"}},{"menuName": "Guido","data":{"action": "u_m_y_guido_01"}},{"menuName": "Gunvend","data":{"action": "u_m_y_gunvend_01"}},{"menuName": "Gurk-BROKEN","data":{"action": "cs_gurk"}},{"menuName": "Hairdress","data":{"action": "s_m_m_hairdress_01"}},{"menuName": "Hao","data":{"action": "csb_hao"}},{"menuName": "Hao","data":{"action": "ig_hao"}},{"menuName": "Hasidic Jew Male","data":{"action": "a_m_m_hasjew_01"}},{"menuName": "Hasidic Jew Young Male","data":{"action": "a_m_y_hasjew_01"}},{"menuName": "Hc_Driver","data":{"action": "hc_driver"}},{"menuName": "Hc_Gunman","data":{"action": "hc_gunman"}},{"menuName": "Hc_Hacker","data":{"action": "hc_hacker"}},{"menuName": "Hic","data":{"action": "ig_ramp_hic"}},{"menuName": "Hick","data":{"action": "csb_ramp_hic"}},{"menuName": "Highsec","data":{"action": "s_m_m_highsec_01"}},{"menuName": "Highsec","data":{"action": "s_m_m_highsec_02"}},{"menuName": "Hiker Female","data":{"action": "a_f_y_hiker_01"}},{"menuName": "Hiker Male","data":{"action": "a_m_y_hiker_01"}},{"menuName": "Hillbilly Male","data":{"action": "a_m_m_hillbilly_01"}},{"menuName": "Hillbilly Male 2","data":{"action": "a_m_m_hillbilly_02"}},{"menuName": "Hippie","data":{"action": "u_m_y_hippie_01"}},{"menuName": "Hippie Female","data":{"action": "a_f_y_hippie_01"}},{"menuName": "Hippie Male","data":{"action": "a_m_y_hippy_01"}},{"menuName": "Hipster","data":{"action": "csb_ramp_hipster"}},{"menuName": "Hipster","data":{"action": "ig_ramp_hipster"}},{"menuName": "Hipster Female","data":{"action": "a_f_y_hipster_01"}},{"menuName": "Hipster Female 2","data":{"action": "a_f_y_hipster_02"}},{"menuName": "Hipster Female 3","data":{"action": "a_f_y_hipster_03"}},{"menuName": "Hipster Female 4","data":{"action": "a_f_y_hipster_04"}},{"menuName": "Hipster Male","data":{"action": "a_m_y_hipster_01"}},{"menuName": "Hipster Male 2","data":{"action": "a_m_y_hipster_02"}},{"menuName": "Hipster Male 3","data":{"action": "a_m_y_hipster_03"}},{"menuName": "Hooker","data":{"action": "s_f_y_hooker_01"}},{"menuName": "Hooker","data":{"action": "s_f_y_hooker_02"}},{"menuName": "Hooker","data":{"action": "s_f_y_hooker_03"}},{"menuName": "Hotposh","data":{"action": "u_f_y_hotposh_01"}},{"menuName": "Hugh Welsh","data":{"action": "csb_hugh"}},{"menuName": "Hunter","data":{"action": "ig_hunter"}},{"menuName": "Hunter-BROKEN","data":{"action": "cs_hunter"}},{"menuName": "Hwaycop","data":{"action": "s_m_y_hwaycop_01"}},{"menuName": "Imporage","data":{"action": "u_m_y_imporage"}},{"menuName": "Imran Shinowa","data":{"action": "csb_imran"}},{"menuName": "Indian Male","data":{"action": "a_m_m_indian_01"}},{"menuName": "Indian Old Female","data":{"action": "a_f_o_indian_01"}},{"menuName": "Indian Young Female","data":{"action": "a_f_y_indian_01"}},{"menuName": "Indian Young Male","data":{"action": "a_m_y_indian_01"}},{"menuName": "Janet","data":{"action": "ig_janet"}},{"menuName": "Janet-BROKEN","data":{"action": "cs_janet"}},{"menuName": "Janitor","data":{"action": "csb_janitor"}},{"menuName": "Janitor","data":{"action": "s_m_m_janitor"}},{"menuName": "Jay_Norris","data":{"action": "ig_jay_norris"}},{"menuName": "Jesus","data":{"action": "u_m_m_jesus_01"}},{"menuName": "Jetskier","data":{"action": "a_m_y_jetski_01"}},{"menuName": "Jewelass","data":{"action": "ig_jewelass"}},{"menuName": "Jewelass","data":{"action": "u_f_y_jewelass_01"}},{"menuName": "Jewelass-BROKEN","data":{"action": "cs_jewelass"}},{"menuName": "Jewelsec","data":{"action": "u_m_m_jewelsec_01"}},{"menuName": "Jewelthief","data":{"action": "u_m_m_jewelthief"}},{"menuName": "Jimmyboston","data":{"action": "ig_jimmyboston"}},{"menuName": "Jimmyboston-BROKEN","data":{"action": "cs_jimmyboston"}},{"menuName": "Jimmydisanto","data":{"action": "ig_jimmydisanto"}},{"menuName": "Jimmydisanto-BROKEN","data":{"action": "cs_jimmydisanto"}},{"menuName": "Joeminuteman","data":{"action": "ig_joeminuteman"}},{"menuName": "Joeminuteman-BROKEN","data":{"action": "cs_joeminuteman"}},{"menuName": "Jogger Female","data":{"action": "a_f_y_runner_01"}},{"menuName": "Jogger Male","data":{"action": "a_m_y_runner_01"}},{"menuName": "Jogger Male 2","data":{"action": "a_m_y_runner_02"}},{"menuName": "Johnnyklebitz","data":{"action": "ig_johnnyklebitz"}},{"menuName": "Johnnyklebitz-BROKEN","data":{"action": "cs_johnnyklebitz"}},{"menuName": "Josef","data":{"action": "ig_josef"}},{"menuName": "Josef-BROKEN","data":{"action": "cs_josef"}},{"menuName": "Josh","data":{"action": "ig_josh"}},{"menuName": "Josh-BROKEN","data":{"action": "cs_josh"}},{"menuName": "Juggalo Female","data":{"action": "a_f_y_juggalo_01"}},{"menuName": "Juggalo Male","data":{"action": "a_m_y_juggalo_01"}},{"menuName": "Justin","data":{"action": "u_m_y_justin"}},{"menuName": "Kerrymcintosh","data":{"action": "ig_kerrymcintosh"}},{"menuName": "Korboss","data":{"action": "g_m_m_korboss_01"}},{"menuName": "Korean","data":{"action": "g_m_y_korean_01"}},{"menuName": "Korean","data":{"action": "g_m_y_korean_02"}},{"menuName": "Korean Female","data":{"action": "a_f_m_ktown_01"}},{"menuName": "Korean Female 2","data":{"action": "a_f_m_ktown_02"}},{"menuName": "Korean Male","data":{"action": "a_m_m_ktown_01"}},{"menuName": "Korean Old Female","data":{"action": "a_f_o_ktown_01"}},{"menuName": "Korean Old Male","data":{"action": "a_m_o_ktown_01"}},{"menuName": "Korean Young Male 3","data":{"action": "a_m_y_ktown_01"}},{"menuName": "Korean Young Male 4","data":{"action": "a_m_y_ktown_02"}},{"menuName": "Korlieut","data":{"action": "g_m_y_korlieut_01"}},{"menuName": "Lamardavis","data":{"action": "ig_lamardavis"}},{"menuName": "Lamardavis-BROKEN","data":{"action": "cs_lamardavis"}},{"menuName": "Lathandy","data":{"action": "s_m_m_lathandy_01"}},{"menuName": "Latino Street Male 2","data":{"action": "a_m_m_stlat_02"}},{"menuName": "Latino Street Young Male","data":{"action": "a_m_y_stlat_01"}},{"menuName": "Latino Young Male","data":{"action": "a_m_y_latino_01"}},{"menuName": "Lazlow","data":{"action": "ig_lazlow"}},{"menuName": "Lazlow-BROKEN","data":{"action": "cs_lazlow"}},{"menuName": "Lestercrest","data":{"action": "ig_lestercrest"}},{"menuName": "Lestercrest-BROKEN","data":{"action": "cs_lestercrest"}},{"menuName": "Lifeinvad","data":{"action": "ig_lifeinvad_01"}},{"menuName": "Lifeinvad","data":{"action": "ig_lifeinvad_02"}},{"menuName": "Lifeinvad","data":{"action": "s_m_m_lifeinvad_01"}},{"menuName": "Lifeinvad-BROKEN","data":{"action": "cs_lifeinvad_01"}},{"menuName": "Linecook","data":{"action": "s_m_m_linecook"}},{"menuName": "Lost","data":{"action": "g_f_y_lost_01"}},{"menuName": "Lost","data":{"action": "g_m_y_lost_01"}},{"menuName": "Lost","data":{"action": "g_m_y_lost_02"}},{"menuName": "Lost","data":{"action": "g_m_y_lost_03"}},{"menuName": "Lsmetro","data":{"action": "s_m_m_lsmetro_01"}},{"menuName": "Magenta","data":{"action": "ig_magenta"}},{"menuName": "Magenta-BROKEN","data":{"action": "cs_magenta"}},{"menuName": "Maid","data":{"action": "s_f_m_maid_01"}},{"menuName": "Malibu Male","data":{"action": "a_m_m_malibu_01"}},{"menuName": "Mani","data":{"action": "u_m_y_mani"}},{"menuName": "Manuel","data":{"action": "ig_manuel"}},{"menuName": "Manuel-BROKEN","data":{"action": "cs_manuel"}},{"menuName": "Mariachi","data":{"action": "s_m_m_mariachi_01"}},{"menuName": "Marine","data":{"action": "csb_ramp_marine"}},{"menuName": "Marine","data":{"action": "s_m_m_marine_01"}},{"menuName": "Marine","data":{"action": "s_m_m_marine_02"}},{"menuName": "Marine","data":{"action": "s_m_y_marine_01"}},{"menuName": "Marine","data":{"action": "s_m_y_marine_02"}},{"menuName": "Marine","data":{"action": "s_m_y_marine_03"}},{"menuName": "Markfost","data":{"action": "u_m_m_markfost"}},{"menuName": "Marnie","data":{"action": "ig_marnie"}},{"menuName": "Marnie-BROKEN","data":{"action": "cs_marnie"}},{"menuName": "Marston","data":{"action": "mp_m_marston_01"}},{"menuName": "Martinmadrazo-BROKEN","data":{"action": "cs_martinmadrazo"}},{"menuName": "Maryan-BROKEN","data":{"action": "cs_maryann"}},{"menuName": "Maryann","data":{"action": "ig_maryann"}},{"menuName": "Maude","data":{"action": "csb_maude"}},{"menuName": "Maude","data":{"action": "ig_maude"}},{"menuName": "Merryweather Merc","data":{"action": "csb_mweather"}},{"menuName": "Meth Addict","data":{"action": "a_m_y_methhead_01"}},{"menuName": "Mex","data":{"action": "ig_ramp_mex"}},{"menuName": "Mexboss","data":{"action": "g_m_m_mexboss_01"}},{"menuName": "Mexboss","data":{"action": "g_m_m_mexboss_02"}},{"menuName": "Mexgang","data":{"action": "g_m_y_mexgang_01"}},{"menuName": "Mexgoon","data":{"action": "g_m_y_mexgoon_01"}},{"menuName": "Mexgoon","data":{"action": "g_m_y_mexgoon_02"}},{"menuName": "Mexgoon","data":{"action": "g_m_y_mexgoon_03"}},{"menuName": "Mexgoon_P","data":{"action": "g_m_y_mexgoon_03_p"}},{"menuName": "Mexican","data":{"action": "csb_ramp_mex"}},{"menuName": "Mexican Rural","data":{"action": "a_m_m_mexcntry_01"}},{"menuName": "Mexican Thug","data":{"action": "a_m_y_mexthug_01"}},{"menuName": "Mexican labourer","data":{"action": "a_m_m_mexlabor_01"}},{"menuName": "Michelle","data":{"action": "ig_michelle"}},{"menuName": "Michelle-BROKEN","data":{"action": "cs_michelle"}},{"menuName": "Migrant","data":{"action": "s_f_y_migrant_01"}},{"menuName": "Migrant","data":{"action": "s_m_m_migrant_01"}},{"menuName": "Militarybum","data":{"action": "u_m_y_militarybum"}},{"menuName": "Milton","data":{"action": "ig_milton"}},{"menuName": "Milton-BROKEN","data":{"action": "cs_milton"}},{"menuName": "Mime","data":{"action": "s_m_y_mime"}},{"menuName": "Miranda","data":{"action": "u_f_m_miranda"}},{"menuName": "Mistress","data":{"action": "u_f_y_mistress"}},{"menuName": "Misty","data":{"action": "mp_f_misty_01"}},{"menuName": "Molly","data":{"action": "ig_molly"}},{"menuName": "Molly-BROKEN","data":{"action": "cs_molly"}},{"menuName": "Motorcross Biker","data":{"action": "a_m_y_motox_01"}},{"menuName": "Motorcross Biker 2x","data":{"action": "a_m_y_motox_02"}},{"menuName": "Mountainbiker","data":{"action": "a_m_y_dhill_01"}},{"menuName": "Moviestar","data":{"action": "u_f_o_moviestar"}},{"menuName": "Movprem","data":{"action": "s_f_y_movprem_01"}},{"menuName": "Movprem","data":{"action": "s_m_m_movprem_01"}},{"menuName": "Movpremf-BROKEN","data":{"action": "cs_movpremf_01"}},{"menuName": "Movpremmale-BROKEN","data":{"action": "cs_movpremmale"}},{"menuName": "Movspace","data":{"action": "s_m_m_movspace_01"}},{"menuName": "Mp_Headtargets","data":{"action": "mp_headtargets"}},{"menuName": "Mrk","data":{"action": "ig_mrk"}},{"menuName": "Mrk-BROKEN","data":{"action": "cs_mrk"}},{"menuName": "Mrs_Thornhill","data":{"action": "ig_mrs_thornhill"}},{"menuName": "Mrs_Thornhill-BROKEN","data":{"action": "cs_mrs_thornhill"}},{"menuName": "Mrsphillips","data":{"action": "ig_mrsphillips"}},{"menuName": "Mrsphillips-BROKEN","data":{"action": "cs_mrsphillips"}},{"menuName": "Natalia","data":{"action": "ig_natalia"}},{"menuName": "Natalia-BROKEN","data":{"action": "cs_natalia"}},{"menuName": "Nervousron","data":{"action": "ig_nervousron"}},{"menuName": "Nervousron-BROKEN","data":{"action": "cs_nervousron"}},{"menuName": "Nigel","data":{"action": "ig_nigel"}},{"menuName": "Nigel-BROKEN","data":{"action": "cs_nigel"}},{"menuName": "Niko","data":{"action": "mp_m_niko_01"}},{"menuName": "OG Boss","data":{"action": "a_m_m_og_boss_01"}},{"menuName": "Old_Man1A","data":{"action": "ig_old_man1a"}},{"menuName": "Old_Man1A-BROKEN","data":{"action": "cs_old_man1a"}},{"menuName": "Old_Man2","data":{"action": "ig_old_man2"}},{"menuName": "Old_Man2-BROKEN","data":{"action": "cs_old_man2"}},{"menuName": "Omega","data":{"action": "ig_omega"}},{"menuName": "Omega-BROKEN","data":{"action": "cs_omega"}},{"menuName": "Oneil","data":{"action": "ig_oneil"}},{"menuName": "Orleans","data":{"action": "ig_orleans"}},{"menuName": "Orleans-BROKEN","data":{"action": "cs_orleans"}},{"menuName": "Ortega","data":{"action": "csb_ortega"}},{"menuName": "Ortega","data":{"action": "ig_ortega"}},{"menuName": "Oscar","data":{"action": "csb_oscar"}},{"menuName": "Paparazzi","data":{"action": "u_m_y_paparazzi"}},{"menuName": "Paparazzi Male","data":{"action": "a_m_m_paparazzi_01"}},{"menuName": "Paper","data":{"action": "ig_paper"}},{"menuName": "Paper-BROKEN","data":{"action": "cs_paper"}},{"menuName": "Paper_P-BROKEN","data":{"action": "cs_paper_p"}},{"menuName": "Paramedic","data":{"action": "s_m_m_paramedic_01"}},{"menuName": "Party","data":{"action": "u_m_y_party_01"}},{"menuName": "Partytarget","data":{"action": "u_m_m_partytarget"}},{"menuName": "Patricia","data":{"action": "ig_patricia"}},{"menuName": "Patricia-BROKEN","data":{"action": "cs_patricia"}},{"menuName": "Pestcont","data":{"action": "s_m_y_pestcont_01"}},{"menuName": "Pilot","data":{"action": "s_m_m_pilot_01"}},{"menuName": "Pilot","data":{"action": "s_m_m_pilot_02"}},{"menuName": "Pilot","data":{"action": "s_m_y_pilot_01"}},{"menuName": "Pogo","data":{"action": "u_m_y_pogo_01"}},{"menuName": "Pologoon","data":{"action": "g_m_y_pologoon_01"}},{"menuName": "Pologoon","data":{"action": "g_m_y_pologoon_02"}},{"menuName": "Pologoon_P","data":{"action": "g_m_y_pologoon_01_p"}},{"menuName": "Pologoon_P","data":{"action": "g_m_y_pologoon_02_p"}},{"menuName": "Polynesian","data":{"action": "a_m_m_polynesian_01"}},{"menuName": "Polynesian Young","data":{"action": "a_m_y_polynesian_01"}},{"menuName": "Poppymich","data":{"action": "u_f_y_poppymich"}},{"menuName": "Porn Dude","data":{"action": "csb_porndudes"}},{"menuName": "Porndudes_P-BROKEN","data":{"action": "csb_porndudes_p"}},{"menuName": "Postal","data":{"action": "s_m_m_postal_01"}},{"menuName": "Postal","data":{"action": "s_m_m_postal_02"}},{"menuName": "Priest","data":{"action": "ig_priest"}},{"menuName": "Priest-BROKEN","data":{"action": "cs_priest"}},{"menuName": "Princess","data":{"action": "u_f_y_princess"}},{"menuName": "Prisguard","data":{"action": "s_m_m_prisguard_01"}},{"menuName": "Prismuscl","data":{"action": "s_m_y_prismuscl_01"}},{"menuName": "Prisoner","data":{"action": "s_m_y_prisoner_01"}},{"menuName": "Prisoner","data":{"action": "u_m_y_prisoner_01"}},{"menuName": "Prolhost","data":{"action": "u_f_o_prolhost_01"}},{"menuName": "Prologue Driver","data":{"action": "u_m_y_proldriver_01"}},{"menuName": "Prologue Driver","data":{"action": "csb_prologuedriver"}},{"menuName": "Prologue Host Female","data":{"action": "a_f_m_prolhost_01"}},{"menuName": "Prologue Host Male","data":{"action": "a_m_m_prolhost_01"}},{"menuName": "Prologue Security","data":{"action": "csb_prolsec"}},{"menuName": "Prolsec","data":{"action": "ig_prolsec_02"}},{"menuName": "Prolsec","data":{"action": "u_m_m_prolsec_01"}},{"menuName": "Prolsec-BROKEN","data":{"action": "cs_prolsec_02"}},{"menuName": "Promourn","data":{"action": "u_f_m_promourn_01"}},{"menuName": "Promourn","data":{"action": "u_m_m_promourn_01"}},{"menuName": "Pros","data":{"action": "mp_g_m_pros_01"}},{"menuName": "Ranger","data":{"action": "s_f_y_ranger_01"}},{"menuName": "Ranger","data":{"action": "s_m_y_ranger_01"}},{"menuName": "Reporter","data":{"action": "csb_reporter"}},{"menuName": "Republican Space Ranger","data":{"action": "u_m_y_rsranger_01"}},{"menuName": "Rivalpap","data":{"action": "u_m_m_rivalpap"}},{"menuName": "Robber","data":{"action": "s_m_y_robber_01"}},{"menuName": "Rocco Pelosi","data":{"action": "csb_roccopelosi"}},{"menuName": "Roccopelosi","data":{"action": "ig_roccopelosi"}},{"menuName": "Rural Meth Addict Female","data":{"action": "a_f_y_rurmeth_01"}},{"menuName": "Rural meth Addict Male","data":{"action": "a_m_m_rurmeth_01"}},{"menuName": "Russiandrunk","data":{"action": "ig_russiandrunk"}},{"menuName": "Russiandrunk-BROKEN","data":{"action": "cs_russiandrunk"}},{"menuName": "Salton Female","data":{"action": "a_f_m_salton_01"}},{"menuName": "Salton Male","data":{"action": "a_m_m_salton_01"}},{"menuName": "Salton Male 2","data":{"action": "a_m_m_salton_02"}},{"menuName": "Salton Male 3","data":{"action": "a_m_m_salton_03"}},{"menuName": "Salton Male 4","data":{"action": "a_m_m_salton_04"}},{"menuName": "Salton Old Female","data":{"action": "a_f_o_salton_01"}},{"menuName": "Salton Old Male","data":{"action": "a_m_o_salton_01"}},{"menuName": "Salton Young Male","data":{"action": "a_m_y_salton_01"}},{"menuName": "Salvaboss","data":{"action": "g_m_y_salvaboss_01"}},{"menuName": "Salvagoon","data":{"action": "g_m_y_salvagoon_01"}},{"menuName": "Salvagoon","data":{"action": "g_m_y_salvagoon_02"}},{"menuName": "Salvagoon","data":{"action": "g_m_y_salvagoon_03"}},{"menuName": "Salvagoon_P","data":{"action": "g_m_y_salvagoon_03_p"}},{"menuName": "Scientist","data":{"action": "s_m_m_scientist_01"}},{"menuName": "Screen_Writer","data":{"action": "ig_screen_writer"}},{"menuName": "Screenwriter","data":{"action": "csb_screen_writer"}},{"menuName": "Scrubs","data":{"action": "s_f_y_scrubs_01"}},{"menuName": "Security","data":{"action": "s_m_m_security_01"}},{"menuName": "Sheriff","data":{"action": "s_f_y_sheriff_01"}},{"menuName": "Sheriff","data":{"action": "s_m_y_sheriff_01"}},{"menuName": "Shop_High","data":{"action": "s_f_m_shop_high"}},{"menuName": "Shop_Low","data":{"action": "s_f_y_shop_low"}},{"menuName": "Shop_Mask","data":{"action": "s_m_y_shop_mask"}},{"menuName": "Shop_Mid","data":{"action": "s_f_y_shop_mid"}},{"menuName": "Shopkeep","data":{"action": "mp_m_shopkeep_01"}},{"menuName": "Siemonyetarian","data":{"action": "ig_siemonyetarian"}},{"menuName": "Siemonyetarian-BROKEN","data":{"action": "cs_siemonyetarian"}},{"menuName": "Skater Female","data":{"action": "a_f_y_skater_01"}},{"menuName": "Skater Male","data":{"action": "a_m_m_skater_01"}},{"menuName": "Skater Young Male","data":{"action": "a_m_y_skater_01"}},{"menuName": "Skater Young Male 2","data":{"action": "a_m_y_skater_02"}},{"menuName": "Skid Row Female","data":{"action": "a_f_m_skidrow_01"}},{"menuName": "Skid Row Male","data":{"action": "a_m_m_skidrow_01"}},{"menuName": "Snowcop","data":{"action": "s_m_m_snowcop_01"}},{"menuName": "Solomon","data":{"action": "ig_solomon"}},{"menuName": "Solomon-BROKEN","data":{"action": "cs_solomon"}},{"menuName": "South Central Female","data":{"action": "a_f_m_soucent_01"}},{"menuName": "South Central Female 2","data":{"action": "a_f_m_soucent_02"}},{"menuName": "South Central Female Dressy","data":{"action": "a_f_y_scdressy_01"}},{"menuName": "South Central Latino Male","data":{"action": "a_m_m_socenlat_01"}},{"menuName": "South Central MC Female","data":{"action": "a_f_m_soucentmc_01"}},{"menuName": "South Central Male","data":{"action": "a_m_m_soucent_01"}},{"menuName": "South Central Male 2","data":{"action": "a_m_m_soucent_02"}},{"menuName": "South Central Male 3","data":{"action": "a_m_m_soucent_03"}},{"menuName": "South Central Male 4","data":{"action": "a_m_m_soucent_04"}},{"menuName": "South Central Old Female","data":{"action": "a_f_o_soucent_01"}},{"menuName": "South Central Old Female 2","data":{"action": "a_f_o_soucent_02"}},{"menuName": "South Central Old Male","data":{"action": "a_m_o_soucent_01"}},{"menuName": "South Central Old Male 2","data":{"action": "a_m_o_soucent_02"}},{"menuName": "South Central Old Male 3","data":{"action": "a_m_o_soucent_03"}},{"menuName": "South Central Young Female","data":{"action": "a_f_y_soucent_01"}},{"menuName": "South Central Young Female 2","data":{"action": "a_f_y_soucent_02"}},{"menuName": "South Central Young Female 3","data":{"action": "a_f_y_soucent_03"}},{"menuName": "South Central Young Male","data":{"action": "a_m_y_soucent_01"}},{"menuName": "South Central Young Male 2","data":{"action": "a_m_y_soucent_02"}},{"menuName": "South Central Young Male 3","data":{"action": "a_m_y_soucent_03"}},{"menuName": "South Central Young Male 4","data":{"action": "a_m_y_soucent_04"}},{"menuName": "Sports Biker","data":{"action": "u_m_y_sbike"}},{"menuName": "Spyactor","data":{"action": "u_m_m_spyactor"}},{"menuName": "Spyactress","data":{"action": "u_f_y_spyactress"}},{"menuName": "Stag Party Groom","data":{"action": "u_m_y_staggrm_01"}},{"menuName": "Stevehains","data":{"action": "ig_stevehains"}},{"menuName": "Stevehains-BROKEN","data":{"action": "cs_stevehains"}},{"menuName": "Stretch","data":{"action": "ig_stretch"}},{"menuName": "Stretch-BROKEN","data":{"action": "cs_stretch"}},{"menuName": "Stripper","data":{"action": "csb_stripper_01"}},{"menuName": "Stripper","data":{"action": "s_f_y_stripper_01"}},{"menuName": "Stripper","data":{"action": "s_f_y_stripper_02"}},{"menuName": "Stripper 2","data":{"action": "csb_stripper_02"}},{"menuName": "Stripperlite","data":{"action": "mp_f_stripperlite"}},{"menuName": "Stripperlite","data":{"action": "s_f_y_stripperlite"}},{"menuName": "Strperf","data":{"action": "s_m_m_strperf_01"}},{"menuName": "Strpreach","data":{"action": "s_m_m_strpreach_01"}},{"menuName": "Strpunk","data":{"action": "g_m_y_strpunk_01"}},{"menuName": "Strpunk","data":{"action": "g_m_y_strpunk_02"}},{"menuName": "Strvend","data":{"action": "s_m_m_strvend_01"}},{"menuName": "Strvend","data":{"action": "s_m_y_strvend_01"}},{"menuName": "Sunbather Male","data":{"action": "a_m_y_sunbathe_01"}},{"menuName": "Surfer","data":{"action": "a_m_y_surfer_01"}},{"menuName": "Swat","data":{"action": "s_m_y_swat_01"}},{"menuName": "Sweatshop","data":{"action": "s_f_m_sweatshop_01"}},{"menuName": "Sweatshop","data":{"action": "s_f_y_sweatshop_01"}},{"menuName": "Talina","data":{"action": "ig_talina"}},{"menuName": "Tanisha","data":{"action": "ig_tanisha"}},{"menuName": "Tanisha-BROKEN","data":{"action": "cs_tanisha"}},{"menuName": "Taocheng","data":{"action": "ig_taocheng"}},{"menuName": "Taocheng-BROKEN","data":{"action": "cs_taocheng"}},{"menuName": "Taostranslator","data":{"action": "ig_taostranslator"}},{"menuName": "Taostranslator-BROKEN","data":{"action": "cs_taostranslator"}},{"menuName": "Taostranslator_P","data":{"action": "ig_taostranslator_p"}},{"menuName": "Taphillbilly","data":{"action": "u_m_o_taphillbilly"}},{"menuName": "Tattoo Artist","data":{"action": "u_m_y_tattoo_01"}},{"menuName": "Tennis Player Female","data":{"action": "a_f_y_tennis_01"}},{"menuName": "Tennis Player Male","data":{"action": "a_m_m_tennis_01"}},{"menuName": "Tenniscoach","data":{"action": "ig_tenniscoach"}},{"menuName": "Tenniscoach-BROKEN","data":{"action": "cs_tenniscoach"}},{"menuName": "Terry","data":{"action": "ig_terry"}},{"menuName": "Terry-BROKEN","data":{"action": "cs_terry"}},{"menuName": "Tom-BROKEN","data":{"action": "cs_tom"}},{"menuName": "Tomepsilon","data":{"action": "ig_tomepsilon"}},{"menuName": "Tomepsilon-BROKEN","data":{"action": "cs_tomepsilon"}},{"menuName": "Tonya","data":{"action": "csb_tonya"}},{"menuName": "Tonya","data":{"action": "ig_tonya"}},{"menuName": "Topless","data":{"action": "a_f_y_topless_01"}},{"menuName": "Tourist Female","data":{"action": "a_f_m_tourist_01"}},{"menuName": "Tourist Male","data":{"action": "a_m_m_tourist_01"}},{"menuName": "Tourist Young Female","data":{"action": "a_f_y_tourist_01"}},{"menuName": "Tourist Young Female 2","data":{"action": "a_f_y_tourist_02"}},{"menuName": "Tracydisanto","data":{"action": "ig_tracydisanto"}},{"menuName": "Tracydisanto-BROKEN","data":{"action": "cs_tracydisanto"}},{"menuName": "Traffic Warden","data":{"action": "csb_trafficwarden"}},{"menuName": "Trafficwarden","data":{"action": "ig_trafficwarden"}},{"menuName": "Tramp","data":{"action": "u_m_o_tramp_01"}},{"menuName": "Tramp Female","data":{"action": "a_f_m_tramp_01"}},{"menuName": "Tramp Male","data":{"action": "a_m_m_tramp_01"}},{"menuName": "Tramp Old Male","data":{"action": "a_m_o_tramp_01"}},{"menuName": "Tranvestite Male","data":{"action": "a_m_m_tranvest_01"}},{"menuName": "Tranvestite Male 2","data":{"action": "a_m_m_tranvest_02"}},{"menuName": "Trucker","data":{"action": "s_m_m_trucker_01"}},{"menuName": "Tylerdix","data":{"action": "ig_tylerdix"}},{"menuName": "Ups","data":{"action": "s_m_m_ups_01"}},{"menuName": "Ups","data":{"action": "s_m_m_ups_02"}},{"menuName": "Uscg","data":{"action": "s_m_y_uscg_01"}},{"menuName": "Vagos","data":{"action": "g_f_y_vagos_01"}},{"menuName": "Valet","data":{"action": "s_m_y_valet_01"}},{"menuName": "Vespucci Beach Male","data":{"action": "a_m_y_beachvesp_01"}},{"menuName": "Vespucci Beach Male","data":{"action": "a_m_y_beachvesp_02"}},{"menuName": "Vinewood Douche","data":{"action": "a_m_y_vindouche_01"}},{"menuName": "Vinewood Female","data":{"action": "a_f_y_vinewood_01"}},{"menuName": "Vinewood Female 2","data":{"action": "a_f_y_vinewood_02"}},{"menuName": "Vinewood Female 3","data":{"action": "a_f_y_vinewood_03"}},{"menuName": "Vinewood Female 4","data":{"action": "a_f_y_vinewood_04"}},{"menuName": "Vinewood Male","data":{"action": "a_m_y_vinewood_01"}},{"menuName": "Vinewood Male 2","data":{"action": "a_m_y_vinewood_02"}},{"menuName": "Vinewood Male 3","data":{"action": "a_m_y_vinewood_03"}},{"menuName": "Vinewood Male 4","data":{"action": "a_m_y_vinewood_04"}},{"menuName": "Wade","data":{"action": "ig_wade"}},{"menuName": "Wade-BROKEN","data":{"action": "cs_wade"}},{"menuName": "Waiter","data":{"action": "s_m_y_waiter_01"}},{"menuName": "White Street Male","data":{"action": "a_m_y_stwhi_01"}},{"menuName": "White Street Male","data":{"action": "a_m_y_stwhi_02"}},{"menuName": "Willyfist","data":{"action": "u_m_m_willyfist"}},{"menuName": "Winclean","data":{"action": "s_m_y_winclean_01"}},{"menuName": "Xmech","data":{"action": "s_m_y_xmech_01"}},{"menuName": "Xmech","data":{"action": "s_m_y_xmech_02"}},{"menuName": "Yoga Female","data":{"action": "a_f_y_yoga_01"}},{"menuName": "Yoga Male","data":{"action": "a_m_y_yoga_01"}},{"menuName": "Zimbor","data":{"action": "ig_zimbor"}},{"menuName": "Zimbor-BROKEN","data":{"action": "cs_zimbor"}},{"menuName": "Zombie","data":{"action": "u_m_y_zombie_01"}}];
 
 
 // Vehicle Spawning Database
-var vehicle_supercars = [{ 'menuName' : "Annis RE-7B", 'spawnName' : "LE7B" },{ 'menuName' : "Bravado Banshee 900R", 'spawnName' : "BANSHEE2" },{ 'menuName' : "Coil Voltic", 'spawnName' : "VOLTIC" },{ 'menuName' : "Emperor ETR1", 'spawnName' : "SHEAVA" },{ 'menuName' : "Grotti Cheetah", 'spawnName' : "CHEETAH" },{ 'menuName' : "Grotti X80 Proto", 'spawnName' : "PROTOTIPO" },{ 'menuName' : "Grotti Turismo R", 'spawnName' : "TURISMOR" },{ 'menuName' : "Karin Sultan RS", 'spawnName' : "SULTANRS" },{ 'menuName' : "Overflod Entity XF", 'spawnName' : "ENTITYXF" },{ 'menuName' : "Pegassi Infernus", 'spawnName' : "INFERNUS" },{ 'menuName' : "Pegassi Osiris", 'spawnName' : "OSIRIS" },{ 'menuName' : "Pegassi Reaper", 'spawnName' : "REAPER" },{ 'menuName' : "Pegassi Vacca", 'spawnName' : "VACCA" },{ 'menuName' : "Pegassi Zentorno", 'spawnName' : "ZENTORNO" },{ 'menuName' : "Pfister 811", 'spawnName' : "PFISTER811" },{ 'menuName' : "Progen T20", 'spawnName' : "T20" },{ 'menuName' : "Progen Tyrus", 'spawnName' : "TYRUS" },{ 'menuName' : "Truffade Adder", 'spawnName' : "ADDER" },{ 'menuName' : "Vapid Bullet", 'spawnName' : "BULLET" },{ 'menuName' : "Vapid FMJ", 'spawnName' : "FMJ" }]
-var vehicle_sports = [{ 'menuName' : "Albany Alpha", 'spawnName' : "ALPHA" },{ 'menuName' : "Annis Elegy RH8", 'spawnName' : "ELEGY2" },{ 'menuName' : "Benefactor Feltzer", 'spawnName' : "FELTZER2" },{ 'menuName' : "Benefactor Schwarzer", 'spawnName' : "SCHWARZER" },{ 'menuName' : "Benefactor Surano", 'spawnName' : "SURANO" },{ 'menuName' : "BF Raptor", 'spawnName' : "RAPTOR" },{ 'menuName' : "Bravado Banshee", 'spawnName' : "BANSHEE" },{ 'menuName' : "Bravado Buffalo", 'spawnName' : "BUFFALO" },{ 'menuName' : "Bravado Buffalo S", 'spawnName' : "BUFFALO2" },{ 'menuName' : "Bravado Buffalo S (Race)", 'spawnName' : "BUFFALO3" },{ 'menuName' : "Bravado Verlierer", 'spawnName' : "VERLIERER2" },{ 'menuName' : "Declasse Drift Tampa", 'spawnName' : "TAMPA2" },{ 'menuName' : "Dewbauchee Massacro", 'spawnName' : "MASSACRO" },{ 'menuName' : "Dewbauchee Massacro (Race)", 'spawnName' : "MASSACRO2" },{ 'menuName' : "Dewbauchee Rapid GT", 'spawnName' : "RAPIDGT" },{ 'menuName' : "Dewbauchee Rapid GT Cabrio", 'spawnName' : "RAPIDGT2" },{ 'menuName' : "Dewbauchee Seven-70", 'spawnName' : "SEVEN70" },{ 'menuName' : "Dinka Blista Compact", 'spawnName' : "BLISTA2" },{ 'menuName' : "Dinka Blista Compact (Race)", 'spawnName' : "BLISTA3" },{ 'menuName' : "Dinka Jester", 'spawnName' : "JESTER" },{ 'menuName' : "Dinka Jester (Race)", 'spawnName' : "JESTER2" },{ 'menuName' : "Grotti Bestia GTS", 'spawnName' : "BESTIAGTS" },{ 'menuName' : "Grotti Carbonizzare", 'spawnName' : "CARBONIZZARE" },{ 'menuName' : "Hijak Khamelion", 'spawnName' : "KHAMELION" },{ 'menuName' : "Invetero Coquette", 'spawnName' : "COQUETTE" },{ 'menuName' : "Karin Futo", 'spawnName' : "FUTO" },{ 'menuName' : "Karin Kuruma", 'spawnName' : "KURUMA" },{ 'menuName' : "Karin Kuruma (Armoured)", 'spawnName' : "KURUMA2" },{ 'menuName' : "Karin Sultan", 'spawnName' : "SULTAN" },{ 'menuName' : "Lampadati Furore GT", 'spawnName' : "FUROREGT" },{ 'menuName' : "Lampadati Tropos Rallye", 'spawnName' : "TROPOS" },{ 'menuName' : "Maibatsu Penumbra", 'spawnName' : "PENUMBRA" },{ 'menuName' : "Obey 9F", 'spawnName' : "NINEF" },{ 'menuName' : "Obey 9F Cabrio", 'spawnName' : "NINEF2" },{ 'menuName' : "Obey Omnis", 'spawnName' : "OMNIS" },{ 'menuName' : "Ocelot Lynx", 'spawnName' : "LYNX" },{ 'menuName' : "Phister Comet", 'spawnName' : "COMET2" },{ 'menuName' : "Schyster Fusilade", 'spawnName' : "FUSILADE" }]
-var vehicle_sportsclassics = [{ 'menuName' : "Albany Manana", 'spawnName' : "MANANA" },{ 'menuName' : "Albany Roosevelt 1", 'spawnName' : "BTYPE" },{ 'menuName' : "Albany Roosevelt 2", 'spawnName' : "BTYPE3" },{ 'menuName' : "Benefactor Stirling GT", 'spawnName' : "FELTZER3" },{ 'menuName' : "Declasse Tornado", 'spawnName' : "TORNADO" },{ 'menuName' : "Declasse Tornado (Rusty)", 'spawnName' : "TORNADO2" },{ 'menuName' : "Declasse Tornado Cabrio", 'spawnName' : "TORNADO3" },{ 'menuName' : "Declasse Tornado Cabrio (Rusty)", 'spawnName' : "TORNADO4" },{ 'menuName' : "Declasse Tornado Rat Rod", 'spawnName' : "TORNADO6" },{ 'menuName' : "Dewbauchee JB 700", 'spawnName' : "JB700" },{ 'menuName' : "Grotti Stinger", 'spawnName' : "STINGER" },{ 'menuName' : "Grotti Stinger GT", 'spawnName' : "STINGERGT" },{ 'menuName' : "Invetero Coquette Classic", 'spawnName' : "COQUETTE2" },{ 'menuName' : "Lampadati Casco", 'spawnName' : "CASCO" },{ 'menuName' : "Lampadati Pigalle", 'spawnName' : "PIGALLE" },{ 'menuName' : "Pegassi Monroe", 'spawnName' : "MONROE" },{ 'menuName' : "Truffade Z-Type", 'spawnName' : "ZTYPE" },{ 'menuName' : "Vapid Peyote", 'spawnName' : "PEYOTE" }]
-var vehicle_muscle = [{ 'menuName' : "Albany Buccaneer", 'spawnName' : "BUCCANEER" },{ 'menuName' : "Albany Franken Strange", 'spawnName' : "BTYPE2" },{ 'menuName' : "Albany Lurcher", 'spawnName' : "LURCHER" },{ 'menuName' : "Albany Virgo", 'spawnName' : "VIRGO" },{ 'menuName' : "Bravado Gauntlet", 'spawnName' : "GAUNTLET" },{ 'menuName' : "Bravado Gauntlet (Race)", 'spawnName' : "GAUNTLET2" },{ 'menuName' : "Cheval Picador", 'spawnName' : "PICADOR" },{ 'menuName' : "Declasse Mamba", 'spawnName' : "MAMBA" },{ 'menuName' : "Declasse Tampa", 'spawnName' : "TAMPA" },{ 'menuName' : "Declasse Sabre Turbo", 'spawnName' : "SABREGT" },{ 'menuName' : "Declasse Stallion", 'spawnName' : "STALION" },{ 'menuName' : "Declasse Staillion (Race)", 'spawnName' : "STALION2" },{ 'menuName' : "Declasse Vigero", 'spawnName' : "VIGERO" },{ 'menuName' : "Declasse Voodoo", 'spawnName' : "VOODOO2" },{ 'menuName' : "Dundreary Virgo Classic", 'spawnName' : "VIRGO" },{ 'menuName' : "Imponte Duke O' Death", 'spawnName' : "DUKES2" },{ 'menuName' : "Imponte Dukes", 'spawnName' : "DUKES" },{ 'menuName' : "Imponte Nightshade", 'spawnName' : "NIGHTSHADE" },{ 'menuName' : "Imponte Pheonix", 'spawnName' : "PHOENIX" },{ 'menuName' : "Imponte Ruiner", 'spawnName' : "RUINER" },{ 'menuName' : "Invetero Coquette BlackFin", 'spawnName' : "COQUETTE3" },{ 'menuName' : "Vapid Blade", 'spawnName' : "BLADE" },{ 'menuName' : "Vapid Chino", 'spawnName' : "CHINO" },{ 'menuName' : "Vapid Dominator", 'spawnName' : "DOMINATOR" },{ 'menuName' : "Vapid Dominator (Race)", 'spawnName' : "DOMINATOR2" },{ 'menuName' : "Vapid Hotknife", 'spawnName' : "HOTKNIFE" },{ 'menuName' : "Vapid Slamvan", 'spawnName' : "SLAMVAN" },{ 'menuName' : "Vapid Slamvan (Lost MC)", 'spawnName' : "SLAMVAN2" },{ 'menuName' : "Willard Faction", 'spawnName' : "FACTION" }]
-var vehicle_lowriders = [{ 'menuName' : "Albany Buccaneer", 'spawnName' : "BUCCANEER" },{ 'menuName' : "Albany Primo", 'spawnName' : "PRIMO" },{ 'menuName' : "Declasse Moonbeam", 'spawnName' : "MOONBEAM" },{ 'menuName' : "Declasse Sabre Turbo", 'spawnName' : "SABREGT" },{ 'menuName' : "Declasse Tornado", 'spawnName' : "TORNADO" },{ 'menuName' : "Declasse Voodoo", 'spawnName' : "VOODOO2" },{ 'menuName' : "Dundreary Virgo Classic", 'spawnName' : "VIRGO3" },{ 'menuName' : "Vapid Chino", 'spawnName' : "CHINO2" },{ 'menuName' : "Vapid Minivan", 'spawnName' : "MINIVAN" },{ 'menuName' : "Vapid Slamvan", 'spawnName' : "SLAMVAN" },{ 'menuName' : "Willard Faction", 'spawnName' : "FACTION2" },{ 'menuName' : "Willard Faction Donk", 'spawnName' : "FACTION3" }]
-var vehicle_coupes = [{ 'menuName' : "Dewbauchee Exemplar", 'spawnName' : "EXEMPLAR" },{ 'menuName' : "Enus Cognoscenti Cabrio", 'spawnName' : "COGCABRIO" },{ 'menuName' : "Enus Windsor", 'spawnName' : "WINDSOR" },{ 'menuName' : "Enus Windsor Drop", 'spawnName' : "WINDSOR2" },{ 'menuName' : "Lampadati Felon", 'spawnName' : "FELON" },{ 'menuName' : "Lampadati Felon GT", 'spawnName' : "FELON2" },{ 'menuName' : "Ocelot F620", 'spawnName' : "F620" },{ 'menuName' : "Ocelot Jackal", 'spawnName' : "JACKAL" },{ 'menuName' : "Ubermacht Sentinel", 'spawnName' : "SENTINEL" },{ 'menuName' : "Ubermacht Sentinel XS", 'spawnName' : "SENTINEL2" },{ 'menuName' : "Ubermacht Zion", 'spawnName' : "ORACLE" },{ 'menuName' : "Ubermacht Zion Cabrio", 'spawnName' : "ORACLE2" }]
-var vehicle_sedans = [{ 'menuName' : "Albany Emperor", 'spawnName' : "EMPEROR" },{ 'menuName' : "Albany Emperor (Rusty)", 'spawnName' : "EMPEROR2" },{ 'menuName' : "Albany Emperor (Snow)", 'spawnName' : "EMPEROR3" },{ 'menuName' : "Albany Primo", 'spawnName' : "PRIMO" },{ 'menuName' : "Albany Washington", 'spawnName' : "WASHINGTON" },{ 'menuName' : "Benefactor Glendale", 'spawnName' : "GLENDALE" },{ 'menuName' : "Benefactor Schafter", 'spawnName' : "SCHAFTER2" },{ 'menuName' : "Chariot Romero Hearse", 'spawnName' : "ROMERO" },{ 'menuName' : "Cheval Fugitive", 'spawnName' : "FUGITIVE" },{ 'menuName' : "Cheval Surge", 'spawnName' : "SURGE" },{ 'menuName' : "Declasse Asea", 'spawnName' : "ASEA" },{ 'menuName' : "Declasse Asea (snow)", 'spawnName' : "ASEA2" },{ 'menuName' : "Declasse Premier", 'spawnName' : "PREMIER" },{ 'menuName' : "Dundreary Regina", 'spawnName' : "REGINA" },{ 'menuName' : "Dundreary Stretch", 'spawnName' : "STRETCH" },{ 'menuName' : "Enus Super Diamond", 'spawnName' : "SUPERD" },{ 'menuName' : "Karin Asterope", 'spawnName' : "ASTEROPE" },{ 'menuName' : "Karin Intruder", 'spawnName' : "INTRUDER" },{ 'menuName' : "Obey Tailgater", 'spawnName' : "TAILGATER" },{ 'menuName' : "Ubermacht Oracle", 'spawnName' : "ORACLE" },{ 'menuName' : "Ubermacht Oracle Mk2", 'spawnName' : "ORACLE2" },{ 'menuName' : "Vapid Stanier", 'spawnName' : "STANIER" },{ 'menuName' : "Vapid Stanier (Taxi)", 'spawnName' : "TAXI" },{ 'menuName' : "Vulcan Ingot", 'spawnName' : "INGOT" },{ 'menuName' : "Vulcar Warrener", 'spawnName' : "WARRENER" },{ 'menuName' : "Zirconium Stratum", 'spawnName' : "STRATUM" }]
-var vehicle_compacts = [{ 'menuName' : "Benefactor Panto", 'spawnName' : "PANTO" },{ 'menuName' : "Bollokan Prairie", 'spawnName' : "PRAIRIE" },{ 'menuName' : "Declasse Rhapsody", 'spawnName' : "RHAPSODY" },{ 'menuName' : "Dinka Blista", 'spawnName' : "BLISTA" },{ 'menuName' : "Grotti Brioso R/A", 'spawnName' : "BRIOSO" },{ 'menuName' : "Karin Dilettante", 'spawnName' : "DILETTANTE" },{ 'menuName' : "Karin Dilettante (FlyUS)", 'spawnName' : "DILETTANTE2" },{ 'menuName' : "Weeny Issi", 'spawnName' : "ISSI2" }]
-var vehicle_suvs = [{ 'menuName' : "Albany Cavalcade", 'spawnName' : "CAVALCADE" },{ 'menuName' : "Albany Cavalcade Mk2", 'spawnName' : "CAVALCADE2" },{ 'menuName' : "Benefactor Dubsta", 'spawnName' : "DUBSTA" },{ 'menuName' : "Benefactor Dubsta (Flat Black)", 'spawnName' : "DUBSTA2" },{ 'menuName' : "Benefactor Serrano", 'spawnName' : "SERRANO" },{ 'menuName' : "Bravado Gresley", 'spawnName' : "GRESLEY" },{ 'menuName' : "Canis Mesa", 'spawnName' : "MESA" },{ 'menuName' : "Canis Mesa (Snow)", 'spawnName' : "MESA2" },{ 'menuName' : "Canis Seminole", 'spawnName' : "SEMINOLE" },{ 'menuName' : "Declasse Granger", 'spawnName' : "GRANGER" },{ 'menuName' : "Dundreary Landstalker", 'spawnName' : "LANDSTALKER" },{ 'menuName' : "Emperor Habanero", 'spawnName' : "HABANERO" },{ 'menuName' : "Enus Huntley S", 'spawnName' : "HUNTLEY" },{ 'menuName' : "Fathom FQ 2", 'spawnName' : "FQ2" },{ 'menuName' : "Gallivanter Baller (Large)", 'spawnName' : "BALLER" },{ 'menuName' : "Gallivanter Baller (Small)", 'spawnName' : "BALLER2" },{ 'menuName' : "Karin BeeJay XL", 'spawnName' : "BJXL" },{ 'menuName' : "Mammoth Patriot", 'spawnName' : "PATRIOT" },{ 'menuName' : "Obey Rocoto", 'spawnName' : "ROCOTO" },{ 'menuName' : "Vapid Contender", 'spawnName' : "CONTENDER" },{ 'menuName' : "Vapid Radius", 'spawnName' : "RADI" }]
-var vehicle_offroad = [{ 'menuName' : "Benefactor Dubsta 6x6", 'spawnName' : "DUBSTA3" },{ 'menuName' : "BF Bifta", 'spawnName' : "BIFTA" },{ 'menuName' : "BF Injection", 'spawnName' : "BFINJECTION" },{ 'menuName' : "Bravado Dune", 'spawnName' : "DUNE" },{ 'menuName' : "Bravado Duneloader", 'spawnName' : "DLOADER" },{ 'menuName' : "Bravado Space Docker", 'spawnName' : "DUNE2" },{ 'menuName' : "Canis Bodhi", 'spawnName' : "BODHI2" },{ 'menuName' : "Canis Kalahari", 'spawnName' : "KALAHARI" },{ 'menuName' : "Canis Mesa (Off-Road)", 'spawnName' : "MESA3" },{ 'menuName' : "Cheval Marshall", 'spawnName' : "MARSHALL" },{ 'menuName' : "Coil Brawler", 'spawnName' : "BRAWLER" },{ 'menuName' : "Declasse Rancher XL", 'spawnName' : "RANCHERXL" },{ 'menuName' : "Declasse Rancher XL (Snow)", 'spawnName' : "RANCHERXL2" },{ 'menuName' : "Insurgent", 'spawnName' : "INSURGENT" },{ 'menuName' : "Insurgent (Gun Mount)", 'spawnName' : "INSURGENT2" },{ 'menuName' : "Karin Rebel", 'spawnName' : "REBEL" },{ 'menuName' : "Karin Rebel (Rusty)", 'spawnName' : "REBEL2" },{ 'menuName' : "Karin Technical", 'spawnName' : "TECHNICAL" },{ 'menuName' : "Nagasaki Blazer", 'spawnName' : "BLAZER" },{ 'menuName' : "Nagasaki Blazer (Hot Rod)", 'spawnName' : "BLAZER3" },{ 'menuName' : "Nagasaki Blazer (Lifeguard)", 'spawnName' : "BLAZER2" },{ 'menuName' : "Nagasaki Blazer (Street)", 'spawnName' : "BLAZER4" },{ 'menuName' : "Vapid Desert Raid", 'spawnName' : "TROPHYTRUCK2" },{ 'menuName' : "Vapid Guardian", 'spawnName' : "GUARDIAN" },{ 'menuName' : "Vapid Liberator", 'spawnName' : "MONSTER" },{ 'menuName' : "Vapid Sandking", 'spawnName' : "SANDKING2" },{ 'menuName' : "Vapid Sandking XL", 'spawnName' : "SANDKING" },{ 'menuName' : "Vapid Trophy Truck", 'spawnName' : "TROPHYTRUCK" }]
-var vehicle_vip = [{ 'menuName' : "Benefactor Schafter V12", 'spawnName' : "SCHAFTER3" },{ 'menuName' : "Benefactor Schafter V12 (Armored)", 'spawnName' : "SCHAFTER5" },{ 'menuName' : "Benefactor Schafter LWB", 'spawnName' : "SCHAFTER4" },{ 'menuName' : "Benefactor Schafter LWB (Armored)", 'spawnName' : "SCHAFTER6" },{ 'menuName' : "Benefactor Turreted Limo", 'spawnName' : "LIMO2" },{ 'menuName' : "Benefactor XLS", 'spawnName' : "XLS" },{ 'menuName' : "Benefactor XLS (Armored)", 'spawnName' : "XLS2" },{ 'menuName' : "Enus Cognoscenti", 'spawnName' : "COGNOSCENTI" },{ 'menuName' : "Enus Cognoscenti (Armored)", 'spawnName' : "COGNOSCENTI2" },{ 'menuName' : "Enus Cognoscenti 55", 'spawnName' : "COG552" },{ 'menuName' : "Enus Cognoscenti 55 (Armored)", 'spawnName' : "COG552" },{ 'menuName' : "Gallivanter Baller LE", 'spawnName' : "BALLER3" },{ 'menuName' : "Gallivanter Baller LE (Armored)", 'spawnName' : "BALLER5" },{ 'menuName' : "Gallivanter Baller LE LWB", 'spawnName' : "BALLER4" },{ 'menuName' : "Gallivanter Baller LE LWB (Armored)", 'spawnName' : "BALLER6" }]
-var vehicle_pickups = [{ 'menuName' : "Bravado Bison", 'spawnName' : "BISON" },{ 'menuName' : "Bravado Bison (Backrack)", 'spawnName' : "BISON2" },{ 'menuName' : "Bravado Bison (Construction)", 'spawnName' : "BISON3" },{ 'menuName' : "Bravado Ratloader", 'spawnName' : "RATLOADER2" },{ 'menuName' : "Bravado Ratloader (Rusty)", 'spawnName' : "RATLOADER" },{ 'menuName' : "Vapid Bobcat", 'spawnName' : "BOBCATXL" },{ 'menuName' : "Vapid Sadler", 'spawnName' : "SADLER" },{ 'menuName' : "Vapid Sadler (Snow)", 'spawnName' : "SADLER2" }]
-var vehicle_vans = [{ 'menuName' : "BF Surfer", 'spawnName' : "SURFER" },{ 'menuName' : "BF Surfer (Rusty)", 'spawnName' : "SURFER2" },{ 'menuName' : "Bravado Paradise", 'spawnName' : "PARADISE" },{ 'menuName' : "Bravado Rumpo Custom", 'spawnName' : "RUMPO3" },{ 'menuName' : "Bravado Rumpo (Deludamol)", 'spawnName' : "RUMPO2" },{ 'menuName' : "Bravado Rumpo (Weazel News)", 'spawnName' : "RUMPO" },{ 'menuName' : "Bravado Youga", 'spawnName' : "YOUGA" },{ 'menuName' : "Bravado Youga Classic", 'spawnName' : "YOUGA2" },{ 'menuName' : "Brute Camper", 'spawnName' : "CAMPER" },{ 'menuName' : "Brute Pony (Business)", 'spawnName' : "PONY" },{ 'menuName' : "Brute Pony (Cannibus Shop)", 'spawnName' : "PONY2" },{ 'menuName' : "Brute Taco Van", 'spawnName' : "TACO" },{ 'menuName' : "Declasse Burrito", 'spawnName' : "BURRITO3" },{ 'menuName' : "Declasse Burrito (Bug Stars)", 'spawnName' : "BURRITO2" },{ 'menuName' : "Declasse Burrito (Construction)", 'spawnName' : "BURRITO4" },{ 'menuName' : "Declasse Burrito (Gang)", 'spawnName' : "GBURRITO2" },{ 'menuName' : "Declasse Burrito (Graphics)", 'spawnName' : "BURRITO" },{ 'menuName' : "Declasse Burrito (Snow)", 'spawnName' : "BURRITO5" },{ 'menuName' : "Declasse Burrito (The Lost)", 'spawnName' : "GBURRITO" },{ 'menuName' : "Declasse Moonbeam", 'spawnName' : "MOONBEAM" },{ 'menuName' : "Vapid Minivan", 'spawnName' : "MINIVAN" },{ 'menuName' : "Vapid Speedo", 'spawnName' : "SPEEDO" },{ 'menuName' : "Vapid Speedo (Clown)", 'spawnName' : "SPEEDO2" },{ 'menuName' : "Zirconium Journey", 'spawnName' : "JOURNEY" }]
-var vehicle_trucks = [{ 'menuName' : "Brute Boxville (Go Postal)", 'spawnName' : "BOXVILLE2" },{ 'menuName' : "Brute Boxville (Humane Labs)", 'spawnName' : "BOXVILLE3" },{ 'menuName' : "Brute Boxville (Post OP)", 'spawnName' : "BOXVILLE4" },{ 'menuName' : "Brute Boxville (Water & Power)", 'spawnName' : "BOXVILLE" },{ 'menuName' : "Brute Stockade", 'spawnName' : "STOCKADE" },{ 'menuName' : "Brute Stockade (Snow)", 'spawnName' : "STOCKADE3" },{ 'menuName' : "Brute Tipper (2 Axle)", 'spawnName' : "TIPTRUCK" },{ 'menuName' : "Brute Tipper (3 Axle)", 'spawnName' : "TIPTRUCK2" },{ 'menuName' : "Cutter", 'spawnName' : "CUTTER" },{ 'menuName' : "Dock Handler", 'spawnName' : "HANDLER" },{ 'menuName' : "Dock Tug", 'spawnName' : "DOCKTUG" },{ 'menuName' : "Dump Truck", 'spawnName' : "DUMP" },{ 'menuName' : "HVY Biff", 'spawnName' : "BIFF" },{ 'menuName' : "Jobuilt Hauler", 'spawnName' : "HAULER" },{ 'menuName' : "Jobuilt Phantom", 'spawnName' : "PHANTOM" },{ 'menuName' : "Jobuilt Rubble", 'spawnName' : "RUBBLE" },{ 'menuName' : "Maibatsu Mule (Graphics 1)", 'spawnName' : "MULE" },{ 'menuName' : "Maibatsu Mule (Graphics 2)", 'spawnName' : "MULE2" },{ 'menuName' : "Maibatsu Mule (Plain)", 'spawnName' : "MULE3" },{ 'menuName' : "Mixer", 'spawnName' : "MIXER" },{ 'menuName' : "Mixer (Support Wheel)", 'spawnName' : "MIXER2" },{ 'menuName' : "MTL Flatbed Truck", 'spawnName' : "FLATBED" },{ 'menuName' : "MTL Packer", 'spawnName' : "PACKER" },{ 'menuName' : "MTL Pounder", 'spawnName' : "POUNDER" },{ 'menuName' : "Vapid Benson", 'spawnName' : "BENSON" },{ 'menuName' : "Vapid Scrap Truck", 'spawnName' : "SCRAP" },{ 'menuName' : "Vapid Tow Truck", 'spawnName' : "TOWTRUCK" },{ 'menuName' : "Vapid Tow Truck (Old)", 'spawnName' : "TOWTRUCK2" }]
-var vehicle_service = [{ 'menuName' : "Airtug", 'spawnName' : "AIRTUG" },{ 'menuName' : "Brute Airport Bus", 'spawnName' : "AIRBUS" },{ 'menuName' : "Brute Bus (City Bus)", 'spawnName' : "BUS" },{ 'menuName' : "Brute Rental Shuttle Bus", 'spawnName' : "RENTALBUS" },{ 'menuName' : "Brute Tourbus", 'spawnName' : "TOURBUS" },{ 'menuName' : "Cable Car (Mt. Chilliad)", 'spawnName' : "CABLECAR" },{ 'menuName' : "Dashound Coach Bus", 'spawnName' : "COACH" },{ 'menuName' : "Dozer", 'spawnName' : "BULLDOZER" },{ 'menuName' : "Forklift", 'spawnName' : "FORKLIFT" },{ 'menuName' : "HVY Brickade", 'spawnName' : "BRICKADE" },{ 'menuName' : "Jobuilt Trashmaster", 'spawnName' : "TRASH" },{ 'menuName' : "Jobuilt Trashmaster (Rusty)", 'spawnName' : "TRASH2" },{ 'menuName' : "MTL Dune", 'spawnName' : "DUNE" },{ 'menuName' : "Nagasaki Caddy", 'spawnName' : "CADDY" },{ 'menuName' : "Nagasaki Caddy (Golf)", 'spawnName' : "CADDY2" },{ 'menuName' : "Ripley (Airpot Tug)", 'spawnName' : "RIPLEY" },{ 'menuName' : "Stanley Fieldmaster Tractor", 'spawnName' : "TRACTOR2" },{ 'menuName' : "Stanley Fieldmaster Tractor (Snow)", 'spawnName' : "TRACTOR3" },{ 'menuName' : "Stanley Lawn Mower", 'spawnName' : "MOWER" },{ 'menuName' : "Stanley Tractor (Rusty)", 'spawnName' : "tractor" },{ 'menuName' : "Vapid Pickup Utility", 'spawnName' : "UTILLITRUCK" },{ 'menuName' : "Vapid Plumbing Utility", 'spawnName' : "UTILLITRUCK2" },{ 'menuName' : "Vapid Telephone Utlity", 'spawnName' : "UTILLITRUCK3" }]
-var vehicle_trailers = [{ 'menuName' : "Army Flatbed Trailer", 'spawnName' : "ARMYTRAILER" },{ 'menuName' : "Army Flatbed Trailer (with Drill)", 'spawnName' : "ARMYTRAILER2" },{ 'menuName' : "Army Fuel Tanker", 'spawnName' : "ARMYTANKER" },{ 'menuName' : "Boat trailer (small)", 'spawnName' : "BOATTRAILER" },{ 'menuName' : "Boat Trailer (With Boat)", 'spawnName' : "TR3" },{ 'menuName' : "Car Tranport Trailer", 'spawnName' : "TR4" },{ 'menuName' : "Car Tranport Trailer (Empty)", 'spawnName' : "TR2" },{ 'menuName' : "Commercial Trailer (Graphics 1)", 'spawnName' : "TRAILERS2" },{ 'menuName' : "Commercial Trailer (Graphics 2)", 'spawnName' : "TRAILERS3" },{ 'menuName' : "Container Trailer", 'spawnName' : "DOCKTRAILER" },{ 'menuName' : "Fame or Shame Trailer", 'spawnName' : "TVTRAILER" },{ 'menuName' : "Flatbed Trailer", 'spawnName' : "TRFLAT" },{ 'menuName' : "Flatbed Trailer", 'spawnName' : "FREIGHTTRAILER" },{ 'menuName' : "Grain Trailer", 'spawnName' : "GRAINTRAILER" },{ 'menuName' : "Hay Bale Trailer", 'spawnName' : "BALETRAILER" },{ 'menuName' : "Logging Trailer", 'spawnName' : "TRAILERLOGS" },{ 'menuName' : "Meth Lab Trailer", 'spawnName' : "PROPTRAILER" },{ 'menuName' : "Petrol Tanker Trailer (Plain)", 'spawnName' : "TANKER2" },{ 'menuName' : "Petrol Tanker Trailer (Ron)", 'spawnName' : "TANKER" },{ 'menuName' : "Plain Trailer", 'spawnName' : "TRAILERS" },{ 'menuName' : "Rake Trailer", 'spawnName' : "RAKETRAILER" },{ 'menuName' : "Small Trailer", 'spawnName' : "TRAILERSMALL" }]
-var vehicle_trains = [{ 'menuName' : "Container Car 1", 'spawnName' : "FREIGHTCONT1" },{ 'menuName' : "Container Car 2", 'spawnName' : "FREIGHTCONT2" },{ 'menuName' : "Flatbed Car", 'spawnName' : "FREIGHTCAR" },{ 'menuName' : "Freight Train Cab", 'spawnName' : "FREIGHT" },{ 'menuName' : "Grain Car", 'spawnName' : "FREIGHTGRAIN" },{ 'menuName' : "Metro Train (Half)", 'spawnName' : "METROTRAIN" },{ 'menuName' : "Oil Tanker Car", 'spawnName' : "TANKERCAR" }]
-var vehicle_emergency = [{ 'menuName' : "Albany Police Roadcruiser (Snow)", 'spawnName' : "POLICEOLD2" },{ 'menuName' : "Ambulance", 'spawnName' : "AMBULANCE" },{ 'menuName' : "Army Barracks Truck", 'spawnName' : "BARRACKS" },{ 'menuName' : "Army Truck Cab", 'spawnName' : "BARRACKS2" },{ 'menuName' : "Bravado Buffalo (FIB)", 'spawnName' : "FBI" },{ 'menuName' : "Brute Police Riot Van", 'spawnName' : "RIOT" },{ 'menuName' : "Canis Crusader (Army Mesa)", 'spawnName' : "CRUSADER" },{ 'menuName' : "Declasse Granger (FIB)", 'spawnName' : "FBI2" },{ 'menuName' : "Declasse Lifeguard", 'spawnName' : "LGUARD" },{ 'menuName' : "Declasse Park Ranger", 'spawnName' : "PRANGER" },{ 'menuName' : "Declasse Police Rancher (Snow)", 'spawnName' : "POLICEOLD1" },{ 'menuName' : "Declasse Police Transporter", 'spawnName' : "POLICET" },{ 'menuName' : "Declasse Sheriff SUV", 'spawnName' : "SHERIFF2" },{ 'menuName' : "Firetruck", 'spawnName' : "FIRETRUK" },{ 'menuName' : "Prison Bus", 'spawnName' : "PBUS" },{ 'menuName' : "Rhino Tank", 'spawnName' : "RHINO" },{ 'menuName' : "Vapid Police Buffalo", 'spawnName' : "POLICE2" },{ 'menuName' : "Vapid Police Cruiser", 'spawnName' : "POLICE" },{ 'menuName' : "Vapid Police Interceptor", 'spawnName' : "POLICE3" },{ 'menuName' : "Vapid Sheriff Cruiser", 'spawnName' : "SHERIFF" },{ 'menuName' : "Vapid Unmarked Police Cruiser", 'spawnName' : "POLICE4" },{ 'menuName' : "Western Police Bike", 'spawnName' : "POLICEB" }]
-var vehicle_motorcycles = [{ 'menuName' : "Dinka Akuma", 'spawnName' : "AKUMA" },{ 'menuName' : "Dinka Double-T", 'spawnName' : "DOUBLE" },{ 'menuName' : "Dinka Enduro", 'spawnName' : "ENDURO" },{ 'menuName' : "Dinka Thrust", 'spawnName' : "THRUST" },{ 'menuName' : "Dinka Vindicator", 'spawnName' : "VINDICATOR" },{ 'menuName' : "LLC Avarus", 'spawnName' : "AVARUS" },{ 'menuName' : "LLC Hexer", 'spawnName' : "HEXER" },{ 'menuName' : "LLC Innovation", 'spawnName' : "INNOVATION" },{ 'menuName' : "LLC Sanctus", 'spawnName' : "SANCTUS" },{ 'menuName' : "Maibatsu Carbon RS", 'spawnName' : "CARBONRS" },{ 'menuName' : "Maibatsu Chimera", 'spawnName' : "CHIMERA" },{ 'menuName' : "Maibatsu Manchez", 'spawnName' : "MANCHEZ" },{ 'menuName' : "Maibatsu Sanchez", 'spawnName' : "SANCHEZ" },{ 'menuName' : "Maibatsu Sanchez (Graphics)", 'spawnName' : "SANCHEZ2" },{ 'menuName' : "Maibatsu Shotaro", 'spawnName' : "SHOTARO" },{ 'menuName' : "Pegassi Bati", 'spawnName' : "BATI" },{ 'menuName' : "Pegassi Bati(Race)", 'spawnName' : "BATI2" },{ 'menuName' : "Pegassi Esskey", 'spawnName' : "ESSKEY" },{ 'menuName' : "Pegassi Faggio", 'spawnName' : "FAGGIO" },{ 'menuName' : "Pegassi Faggio Mod", 'spawnName' : "FAGGIO3" },{ 'menuName' : "Pegassi Faggio Sport", 'spawnName' : "FAGGIO2" },{ 'menuName' : "Pegassi Ruffian", 'spawnName' : "RUFFIAN" },{ 'menuName' : "Pegassi Vortex", 'spawnName' : "VORTEX" },{ 'menuName' : "Principe Lectro", 'spawnName' : "LECTRO" },{ 'menuName' : "Principe Nemesis", 'spawnName' : "NEMESIS" },{ 'menuName' : "Shitzu Defiler", 'spawnName' : "DEFILER" },{ 'menuName' : "Shitzu Hakuchou", 'spawnName' : "HAKUCHOU" },{ 'menuName' : "Shitzu Hakuchou Drag", 'spawnName' : "HAKUCHOU2" },{ 'menuName' : "Shitzu PCJ 600", 'spawnName' : "PCJ" },{ 'menuName' : "Shitzu Vader", 'spawnName' : "VADER" },{ 'menuName' : "Western Bagger", 'spawnName' : "BAGGER" },{ 'menuName' : "Western Cliffhanger", 'spawnName' : "CLIFFHANGER" },{ 'menuName' : "Western Daemon", 'spawnName' : "DAEMON2" },{ 'menuName' : "Western Daemon Custom", 'spawnName' : "DAEMON" },{ 'menuName' : "Western Gargoyle", 'spawnName' : "GARGOYLE" },{ 'menuName' : "Western Nightblade", 'spawnName' : "NIGHTBLADE" },{ 'menuName' : "Western Rat Bike", 'spawnName' : "RATBIKE" },{ 'menuName' : "Western Sovereign", 'spawnName' : "SOVEREIGN" },{ 'menuName' : "Western Wolfsbane", 'spawnName' : "WOLFSBANE" },{ 'menuName' : "Western Zombie Bobber", 'spawnName' : "ZOMBIEA" },{ 'menuName' : "Western Zombie Chopper", 'spawnName' : "ZOMBIEB" }]
-var vehicle_planes = [{ 'menuName' : "Buckingham Cargo Plane (An-225)", 'spawnName' : "CARGOPLANE" },{ 'menuName' : "Buckingham Jet (B747)", 'spawnName' : "JET" },{ 'menuName' : "Buckingham Luxor", 'spawnName' : "LUXOR" },{ 'menuName' : "Buckingham Luxor Deluxe", 'spawnName' : "LUXOR2" },{ 'menuName' : "Buckingham Miljet", 'spawnName' : "MILJET" },{ 'menuName' : "Buckingham Nimbus", 'spawnName' : "NIMBUS" },{ 'menuName' : "Buckingham Shamal", 'spawnName' : "SHAMAL" },{ 'menuName' : "Buckingham Vestra", 'spawnName' : "VESTRA" },{ 'menuName' : "Jobuilt Mammatus", 'spawnName' : "MAMMATUS" },{ 'menuName' : "Jobuilt P-996 Lazer", 'spawnName' : "LAZER" },{ 'menuName' : "Jobuilt Velum (4 Seater)", 'spawnName' : "VELUM" },{ 'menuName' : "Jobuilt Velum (5 Seater)", 'spawnName' : "VELUM2" },{ 'menuName' : "Mammoth Dodo", 'spawnName' : "DODO" },{ 'menuName' : "Mammoth Hydra", 'spawnName' : "HYDRA" },{ 'menuName' : "Mammoth Titan", 'spawnName' : "TITAN" },{ 'menuName' : "Western Besra", 'spawnName' : "BESRA" },{ 'menuName' : "Western Cuban 800", 'spawnName' : "CUBAN800" },{ 'menuName' : "Western Duster", 'spawnName' : "DUSTER" },{ 'menuName' : "Western Mallard Stunt Plane", 'spawnName' : "STUNT" }]
-var vehicle_helicopters = [{ 'menuName' : "Blimp (Atomic)", 'spawnName' : "BLIMP" },{ 'menuName' : "Blimp (Xero Gas)", 'spawnName' : "BLIMP2" },{ 'menuName' : "Buckingham Savage", 'spawnName' : "SAVAGE" },{ 'menuName' : "Buckingham SuperVolito", 'spawnName' : "SUPERVOLITO" },{ 'menuName' : "Buckingham SuperVolito Carbon", 'spawnName' : "SUPERVOLITO2" },{ 'menuName' : "Buckingham Swift", 'spawnName' : "SWIFT" },{ 'menuName' : "Buckingham Swift Deluxe", 'spawnName' : "SWIFT2" },{ 'menuName' : "Buckingham Valkyrie", 'spawnName' : "VALKYRIE" },{ 'menuName' : "Buckingham Volatus", 'spawnName' : "VOLATUS" },{ 'menuName' : "HVT Skylift", 'spawnName' : "SKYLIFT" },{ 'menuName' : "Maibatsu Frogger", 'spawnName' : "FROGGER" },{ 'menuName' : "Maibatsu Frogger (TPE/FIB)", 'spawnName' : "FROGGER2" },{ 'menuName' : "Nagasaki Buzzard (Unarmed)", 'spawnName' : "BUZZARD" },{ 'menuName' : "Nagasaki Buzzard (Attack Chopper)", 'spawnName' : "BUZZARD2" },{ 'menuName' : "Western Annihilator", 'spawnName' : "ANNIHILATOR" },{ 'menuName' : "Western Cargobob (Desert Camo)", 'spawnName' : "CARGOBOB" },{ 'menuName' : "Western Cargobob (Jetsam)", 'spawnName' : "CARGOBOB2" },{ 'menuName' : "Western Cargobob (TPE)", 'spawnName' : "CARGOBOB3" },{ 'menuName' : "Western Mavrick", 'spawnName' : "MAVERICK" },{ 'menuName' : "Western Mavrick (Police)", 'spawnName' : "POLMAV" }]
-var vehicle_boats = [{ 'menuName' : "Buckingham Tug", 'spawnName' : "TUG" },{ 'menuName' : "Dinka Marquis", 'spawnName' : "MARQUIS" },{ 'menuName' : "Lampadati Toro", 'spawnName' : "TORO" },{ 'menuName' : "Nagasaki Dinghy (2 Seater)", 'spawnName' : "DINGHY2" },{ 'menuName' : "Nagasaki Dinghy (4 Seater Black)", 'spawnName' : "DINGHY3" },{ 'menuName' : "Nagasaki Dinghy (4 Seater Red)", 'spawnName' : "DINGHY" },{ 'menuName' : "Pegassi Speeder", 'spawnName' : "SPEEDER" },{ 'menuName' : "Shitzu Jetmax", 'spawnName' : "SUNTRAP" },{ 'menuName' : "Shitzu Predator (Police)", 'spawnName' : "PREDATOR" },{ 'menuName' : "Shitzu Squalo", 'spawnName' : "SQUALO" },{ 'menuName' : "Shitzu Suntrap", 'spawnName' : "SUNTRAP" },{ 'menuName' : "Shitzu Tropic", 'spawnName' : "TROPIC" },{ 'menuName' : "Speedophile Seashark", 'spawnName' : "SEASHARK" },{ 'menuName' : "Speedophile Seashark (Lifeguard)", 'spawnName' : "SEASHARK2" },{ 'menuName' : "Submersible", 'spawnName' : "SUBMERSIBLE" },{ 'menuName' : "Submersible (Kraken)", 'spawnName' : "SUBMERSIBLE2" }]
-var vehicle_bicycles = [{ 'menuName' : "BMX", 'spawnName' : "BMX" },{ 'menuName' : "Cruiser", 'spawnName' : "CRUISER" },{ 'menuName' : "Endurex Race", 'spawnName' : "TRIBIKE2" },{ 'menuName' : "Fixter", 'spawnName' : "FIXTER" },{ 'menuName' : "Scorcher", 'spawnName' : "SCORCHER" },{ 'menuName' : "Tri-Cycles Race", 'spawnName' : "TRIBIKE3" },{ 'menuName' : "Whippet Race", 'spawnName' : "TRIBIKE" }]
+var vehicle_supercars = [{ "menuName" : "Annis RE-7B","data":{"action": "LE7B" }},{ "menuName" : "Bravado Banshee 900R","data":{"action": "BANSHEE2" }},{ "menuName" : "Coil Voltic","data":{"action": "VOLTIC" }},{ "menuName" : "Emperor ETR1","data":{"action": "SHEAVA" }},{ "menuName" : "Grotti Cheetah","data":{"action": "CHEETAH" }},{ "menuName" : "Grotti X80 Proto","data":{"action": "PROTOTIPO" }},{ "menuName" : "Grotti Turismo R","data":{"action": "TURISMOR" }},{ "menuName" : "Karin Sultan RS","data":{"action": "SULTANRS" }},{ "menuName" : "Overflod Entity XF","data":{"action": "ENTITYXF" }},{ "menuName" : "Pegassi Infernus","data":{"action": "INFERNUS" }},{ "menuName" : "Pegassi Osiris","data":{"action": "OSIRIS" }},{ "menuName" : "Pegassi Reaper","data":{"action": "REAPER" }},{ "menuName" : "Pegassi Vacca","data":{"action": "VACCA" }},{ "menuName" : "Pegassi Zentorno","data":{"action": "ZENTORNO" }},{ "menuName" : "Pfister 811","data":{"action": "PFISTER811" }},{ "menuName" : "Progen T20","data":{"action": "T20" }},{ "menuName" : "Progen Tyrus","data":{"action": "TYRUS" }},{ "menuName" : "Truffade Adder","data":{"action": "ADDER" }},{ "menuName" : "Vapid Bullet","data":{"action": "BULLET" }},{ "menuName" : "Vapid FMJ","data":{"action": "FMJ" }}];
+var vehicle_sports = [{ "menuName" : "Albany Alpha","data":{"action": "ALPHA" }},{ "menuName" : "Annis Elegy RH8","data":{"action": "ELEGY2" }},{ "menuName" : "Benefactor Feltzer","data":{"action": "FELTZER2" }},{ "menuName" : "Benefactor Schwarzer","data":{"action": "SCHWARZER" }},{ "menuName" : "Benefactor Surano","data":{"action": "SURANO" }},{ "menuName" : "BF Raptor","data":{"action": "RAPTOR" }},{ "menuName" : "Bravado Banshee","data":{"action": "BANSHEE" }},{ "menuName" : "Bravado Buffalo","data":{"action": "BUFFALO" }},{ "menuName" : "Bravado Buffalo S","data":{"action": "BUFFALO2" }},{ "menuName" : "Bravado Buffalo S (Race)","data":{"action": "BUFFALO3" }},{ "menuName" : "Bravado Verlierer","data":{"action": "VERLIERER2" }},{ "menuName" : "Declasse Drift Tampa","data":{"action": "TAMPA2" }},{ "menuName" : "Dewbauchee Massacro","data":{"action": "MASSACRO" }},{ "menuName" : "Dewbauchee Massacro (Race)","data":{"action": "MASSACRO2" }},{ "menuName" : "Dewbauchee Rapid GT","data":{"action": "RAPIDGT" }},{ "menuName" : "Dewbauchee Rapid GT Cabrio","data":{"action": "RAPIDGT2" }},{ "menuName" : "Dewbauchee Seven-70","data":{"action": "SEVEN70" }},{ "menuName" : "Dinka Blista Compact","data":{"action": "BLISTA2" }},{ "menuName" : "Dinka Blista Compact (Race)","data":{"action": "BLISTA3" }},{ "menuName" : "Dinka Jester","data":{"action": "JESTER" }},{ "menuName" : "Dinka Jester (Race)","data":{"action": "JESTER2" }},{ "menuName" : "Grotti Bestia GTS","data":{"action": "BESTIAGTS" }},{ "menuName" : "Grotti Carbonizzare","data":{"action": "CARBONIZZARE" }},{ "menuName" : "Hijak Khamelion","data":{"action": "KHAMELION" }},{ "menuName" : "Invetero Coquette","data":{"action": "COQUETTE" }},{ "menuName" : "Karin Futo","data":{"action": "FUTO" }},{ "menuName" : "Karin Kuruma","data":{"action": "KURUMA" }},{ "menuName" : "Karin Kuruma (Armoured)","data":{"action": "KURUMA2" }},{ "menuName" : "Karin Sultan","data":{"action": "SULTAN" }},{ "menuName" : "Lampadati Furore GT","data":{"action": "FUROREGT" }},{ "menuName" : "Lampadati Tropos Rallye","data":{"action": "TROPOS" }},{ "menuName" : "Maibatsu Penumbra","data":{"action": "PENUMBRA" }},{ "menuName" : "Obey 9F","data":{"action": "NINEF" }},{ "menuName" : "Obey 9F Cabrio","data":{"action": "NINEF2" }},{ "menuName" : "Obey Omnis","data":{"action": "OMNIS" }},{ "menuName" : "Ocelot Lynx","data":{"action": "LYNX" }},{ "menuName" : "Phister Comet","data":{"action": "COMET2" }},{ "menuName" : "Schyster Fusilade","data":{"action": "FUSILADE" }}];
+var vehicle_sportsclassics = [{ "menuName" : "Albany Manana","data":{"action": "MANANA" }},{ "menuName" : "Albany Roosevelt 1","data":{"action": "BTYPE" }},{ "menuName" : "Albany Roosevelt 2","data":{"action": "BTYPE3" }},{ "menuName" : "Benefactor Stirling GT","data":{"action": "FELTZER3" }},{ "menuName" : "Declasse Tornado","data":{"action": "TORNADO" }},{ "menuName" : "Declasse Tornado (Rusty)","data":{"action": "TORNADO2" }},{ "menuName" : "Declasse Tornado Cabrio","data":{"action": "TORNADO3" }},{ "menuName" : "Declasse Tornado Cabrio (Rusty)","data":{"action": "TORNADO4" }},{ "menuName" : "Declasse Tornado Rat Rod","data":{"action": "TORNADO6" }},{ "menuName" : "Dewbauchee JB 700","data":{"action": "JB700" }},{ "menuName" : "Grotti Stinger","data":{"action": "STINGER" }},{ "menuName" : "Grotti Stinger GT","data":{"action": "STINGERGT" }},{ "menuName" : "Invetero Coquette Classic","data":{"action": "COQUETTE2" }},{ "menuName" : "Lampadati Casco","data":{"action": "CASCO" }},{ "menuName" : "Lampadati Pigalle","data":{"action": "PIGALLE" }},{ "menuName" : "Pegassi Monroe","data":{"action": "MONROE" }},{ "menuName" : "Truffade Z-Type","data":{"action": "ZTYPE" }},{ "menuName" : "Vapid Peyote","data":{"action": "PEYOTE" }}];
+var vehicle_muscle = [{ "menuName" : "Albany Buccaneer","data":{"action": "BUCCANEER" }},{ "menuName" : "Albany Franken Strange","data":{"action": "BTYPE2" }},{ "menuName" : "Albany Lurcher","data":{"action": "LURCHER" }},{ "menuName" : "Albany Virgo","data":{"action": "VIRGO" }},{ "menuName" : "Bravado Gauntlet","data":{"action": "GAUNTLET" }},{ "menuName" : "Bravado Gauntlet (Race)","data":{"action": "GAUNTLET2" }},{ "menuName" : "Cheval Picador","data":{"action": "PICADOR" }},{ "menuName" : "Declasse Mamba","data":{"action": "MAMBA" }},{ "menuName" : "Declasse Tampa","data":{"action": "TAMPA" }},{ "menuName" : "Declasse Sabre Turbo","data":{"action": "SABREGT" }},{ "menuName" : "Declasse Stallion","data":{"action": "STALION" }},{ "menuName" : "Declasse Staillion (Race)","data":{"action": "STALION2" }},{ "menuName" : "Declasse Vigero","data":{"action": "VIGERO" }},{ "menuName" : "Declasse Voodoo","data":{"action": "VOODOO2" }},{ "menuName" : "Dundreary Virgo Classic","data":{"action": "VIRGO" }},{ "menuName" : "Imponte Duke O' Death","data":{"action": "DUKES2" }},{ "menuName" : "Imponte Dukes","data":{"action": "DUKES" }},{ "menuName" : "Imponte Nightshade","data":{"action": "NIGHTSHADE" }},{ "menuName" : "Imponte Pheonix","data":{"action": "PHOENIX" }},{ "menuName" : "Imponte Ruiner","data":{"action": "RUINER" }},{ "menuName" : "Invetero Coquette BlackFin","data":{"action": "COQUETTE3" }},{ "menuName" : "Vapid Blade","data":{"action": "BLADE" }},{ "menuName" : "Vapid Chino","data":{"action": "CHINO" }},{ "menuName" : "Vapid Dominator","data":{"action": "DOMINATOR" }},{ "menuName" : "Vapid Dominator (Race)","data":{"action": "DOMINATOR2" }},{ "menuName" : "Vapid Hotknife","data":{"action": "HOTKNIFE" }},{ "menuName" : "Vapid Slamvan","data":{"action": "SLAMVAN" }},{ "menuName" : "Vapid Slamvan (Lost MC)","data":{"action": "SLAMVAN2" }},{ "menuName" : "Willard Faction","data":{"action": "FACTION" }}];
+var vehicle_lowriders = [{ "menuName" : "Albany Buccaneer","data":{"action": "BUCCANEER" }},{ "menuName" : "Albany Primo","data":{"action": "PRIMO" }},{ "menuName" : "Declasse Moonbeam","data":{"action": "MOONBEAM" }},{ "menuName" : "Declasse Sabre Turbo","data":{"action": "SABREGT" }},{ "menuName" : "Declasse Tornado","data":{"action": "TORNADO" }},{ "menuName" : "Declasse Voodoo","data":{"action": "VOODOO2" }},{ "menuName" : "Dundreary Virgo Classic","data":{"action": "VIRGO3" }},{ "menuName" : "Vapid Chino","data":{"action": "CHINO2" }},{ "menuName" : "Vapid Minivan","data":{"action": "MINIVAN" }},{ "menuName" : "Vapid Slamvan","data":{"action": "SLAMVAN" }},{ "menuName" : "Willard Faction","data":{"action": "FACTION2" }},{ "menuName" : "Willard Faction Donk","data":{"action": "FACTION3" }}];
+var vehicle_coupes = [{ "menuName" : "Dewbauchee Exemplar","data":{"action": "EXEMPLAR" }},{ "menuName" : "Enus Cognoscenti Cabrio","data":{"action": "COGCABRIO" }},{ "menuName" : "Enus Windsor","data":{"action": "WINDSOR" }},{ "menuName" : "Enus Windsor Drop","data":{"action": "WINDSOR2" }},{ "menuName" : "Lampadati Felon","data":{"action": "FELON" }},{ "menuName" : "Lampadati Felon GT","data":{"action": "FELON2" }},{ "menuName" : "Ocelot F620","data":{"action": "F620" }},{ "menuName" : "Ocelot Jackal","data":{"action": "JACKAL" }},{ "menuName" : "Ubermacht Sentinel","data":{"action": "SENTINEL" }},{ "menuName" : "Ubermacht Sentinel XS","data":{"action": "SENTINEL2" }},{ "menuName" : "Ubermacht Zion","data":{"action": "ORACLE" }},{ "menuName" : "Ubermacht Zion Cabrio","data":{"action": "ORACLE2" }}];
+var vehicle_sedans = [{ "menuName" : "Albany Emperor","data":{"action": "EMPEROR" }},{ "menuName" : "Albany Emperor (Rusty)","data":{"action": "EMPEROR2" }},{ "menuName" : "Albany Emperor (Snow)","data":{"action": "EMPEROR3" }},{ "menuName" : "Albany Primo","data":{"action": "PRIMO" }},{ "menuName" : "Albany Washington","data":{"action": "WASHINGTON" }},{ "menuName" : "Benefactor Glendale","data":{"action": "GLENDALE" }},{ "menuName" : "Benefactor Schafter","data":{"action": "SCHAFTER2" }},{ "menuName" : "Chariot Romero Hearse","data":{"action": "ROMERO" }},{ "menuName" : "Cheval Fugitive","data":{"action": "FUGITIVE" }},{ "menuName" : "Cheval Surge","data":{"action": "SURGE" }},{ "menuName" : "Declasse Asea","data":{"action": "ASEA" }},{ "menuName" : "Declasse Asea (snow)","data":{"action": "ASEA2" }},{ "menuName" : "Declasse Premier","data":{"action": "PREMIER" }},{ "menuName" : "Dundreary Regina","data":{"action": "REGINA" }},{ "menuName" : "Dundreary Stretch","data":{"action": "STRETCH" }},{ "menuName" : "Enus Super Diamond","data":{"action": "SUPERD" }},{ "menuName" : "Karin Asterope","data":{"action": "ASTEROPE" }},{ "menuName" : "Karin Intruder","data":{"action": "INTRUDER" }},{ "menuName" : "Obey Tailgater","data":{"action": "TAILGATER" }},{ "menuName" : "Ubermacht Oracle","data":{"action": "ORACLE" }},{ "menuName" : "Ubermacht Oracle Mk2","data":{"action": "ORACLE2" }},{ "menuName" : "Vapid Stanier","data":{"action": "STANIER" }},{ "menuName" : "Vapid Stanier (Taxi)","data":{"action": "TAXI" }},{ "menuName" : "Vulcan Ingot","data":{"action": "INGOT" }},{ "menuName" : "Vulcar Warrener","data":{"action": "WARRENER" }},{ "menuName" : "Zirconium Stratum","data":{"action": "STRATUM" }}];
+var vehicle_compacts = [{ "menuName" : "Benefactor Panto","data":{"action": "PANTO" }},{ "menuName" : "Bollokan Prairie","data":{"action": "PRAIRIE" }},{ "menuName" : "Declasse Rhapsody","data":{"action": "RHAPSODY" }},{ "menuName" : "Dinka Blista","data":{"action": "BLISTA" }},{ "menuName" : "Grotti Brioso R/A","data":{"action": "BRIOSO" }},{ "menuName" : "Karin Dilettante","data":{"action": "DILETTANTE" }},{ "menuName" : "Karin Dilettante (FlyUS)","data":{"action": "DILETTANTE2" }},{ "menuName" : "Weeny Issi","data":{"action": "ISSI2" }}];
+var vehicle_suvs = [{ "menuName" : "Albany Cavalcade","data":{"action": "CAVALCADE" }},{ "menuName" : "Albany Cavalcade Mk2","data":{"action": "CAVALCADE2" }},{ "menuName" : "Benefactor Dubsta","data":{"action": "DUBSTA" }},{ "menuName" : "Benefactor Dubsta (Flat Black)","data":{"action": "DUBSTA2" }},{ "menuName" : "Benefactor Serrano","data":{"action": "SERRANO" }},{ "menuName" : "Bravado Gresley","data":{"action": "GRESLEY" }},{ "menuName" : "Canis Mesa","data":{"action": "MESA" }},{ "menuName" : "Canis Mesa (Snow)","data":{"action": "MESA2" }},{ "menuName" : "Canis Seminole","data":{"action": "SEMINOLE" }},{ "menuName" : "Declasse Granger","data":{"action": "GRANGER" }},{ "menuName" : "Dundreary Landstalker","data":{"action": "LANDSTALKER" }},{ "menuName" : "Emperor Habanero","data":{"action": "HABANERO" }},{ "menuName" : "Enus Huntley S","data":{"action": "HUNTLEY" }},{ "menuName" : "Fathom FQ 2","data":{"action": "FQ2" }},{ "menuName" : "Gallivanter Baller (Large)","data":{"action": "BALLER" }},{ "menuName" : "Gallivanter Baller (Small)","data":{"action": "BALLER2" }},{ "menuName" : "Karin BeeJay XL","data":{"action": "BJXL" }},{ "menuName" : "Mammoth Patriot","data":{"action": "PATRIOT" }},{ "menuName" : "Obey Rocoto","data":{"action": "ROCOTO" }},{ "menuName" : "Vapid Contender","data":{"action": "CONTENDER" }},{ "menuName" : "Vapid Radius","data":{"action": "RADI" }}];
+var vehicle_offroad = [{ "menuName" : "Benefactor Dubsta 6x6","data":{"action": "DUBSTA3" }},{ "menuName" : "BF Bifta","data":{"action": "BIFTA" }},{ "menuName" : "BF Injection","data":{"action": "BFINJECTION" }},{ "menuName" : "Bravado Dune","data":{"action": "DUNE" }},{ "menuName" : "Bravado Duneloader","data":{"action": "DLOADER" }},{ "menuName" : "Bravado Space Docker","data":{"action": "DUNE2" }},{ "menuName" : "Canis Bodhi","data":{"action": "BODHI2" }},{ "menuName" : "Canis Kalahari","data":{"action": "KALAHARI" }},{ "menuName" : "Canis Mesa (Off-Road)","data":{"action": "MESA3" }},{ "menuName" : "Cheval Marshall","data":{"action": "MARSHALL" }},{ "menuName" : "Coil Brawler","data":{"action": "BRAWLER" }},{ "menuName" : "Declasse Rancher XL","data":{"action": "RANCHERXL" }},{ "menuName" : "Declasse Rancher XL (Snow)","data":{"action": "RANCHERXL2" }},{ "menuName" : "Insurgent","data":{"action": "INSURGENT" }},{ "menuName" : "Insurgent (Gun Mount)","data":{"action": "INSURGENT2" }},{ "menuName" : "Karin Rebel","data":{"action": "REBEL" }},{ "menuName" : "Karin Rebel (Rusty)","data":{"action": "REBEL2" }},{ "menuName" : "Karin Technical","data":{"action": "TECHNICAL" }},{ "menuName" : "Nagasaki Blazer","data":{"action": "BLAZER" }},{ "menuName" : "Nagasaki Blazer (Hot Rod)","data":{"action": "BLAZER3" }},{ "menuName" : "Nagasaki Blazer (Lifeguard)","data":{"action": "BLAZER2" }},{ "menuName" : "Nagasaki Blazer (Street)","data":{"action": "BLAZER4" }},{ "menuName" : "Vapid Desert Raid","data":{"action": "TROPHYTRUCK2" }},{ "menuName" : "Vapid Guardian","data":{"action": "GUARDIAN" }},{ "menuName" : "Vapid Liberator","data":{"action": "MONSTER" }},{ "menuName" : "Vapid Sandking","data":{"action": "SANDKING2" }},{ "menuName" : "Vapid Sandking XL","data":{"action": "SANDKING" }},{ "menuName" : "Vapid Trophy Truck","data":{"action": "TROPHYTRUCK" }}];
+var vehicle_vip = [{ "menuName" : "Benefactor Schafter V12","data":{"action": "SCHAFTER3" }},{ "menuName" : "Benefactor Schafter V12 (Armored)","data":{"action": "SCHAFTER5" }},{ "menuName" : "Benefactor Schafter LWB","data":{"action": "SCHAFTER4" }},{ "menuName" : "Benefactor Schafter LWB (Armored)","data":{"action": "SCHAFTER6" }},{ "menuName" : "Benefactor Turreted Limo","data":{"action": "LIMO2" }},{ "menuName" : "Benefactor XLS","data":{"action": "XLS" }},{ "menuName" : "Benefactor XLS (Armored)","data":{"action": "XLS2" }},{ "menuName" : "Enus Cognoscenti","data":{"action": "COGNOSCENTI" }},{ "menuName" : "Enus Cognoscenti (Armored)","data":{"action": "COGNOSCENTI2" }},{ "menuName" : "Enus Cognoscenti 55","data":{"action": "COG552" }},{ "menuName" : "Enus Cognoscenti 55 (Armored)","data":{"action": "COG552" }},{ "menuName" : "Gallivanter Baller LE","data":{"action": "BALLER3" }},{ "menuName" : "Gallivanter Baller LE (Armored)","data":{"action": "BALLER5" }},{ "menuName" : "Gallivanter Baller LE LWB","data":{"action": "BALLER4" }},{ "menuName" : "Gallivanter Baller LE LWB (Armored)","data":{"action": "BALLER6" }}];
+var vehicle_pickups = [{ "menuName" : "Bravado Bison","data":{"action": "BISON" }},{ "menuName" : "Bravado Bison (Backrack)","data":{"action": "BISON2" }},{ "menuName" : "Bravado Bison (Construction)","data":{"action": "BISON3" }},{ "menuName" : "Bravado Ratloader","data":{"action": "RATLOADER2" }},{ "menuName" : "Bravado Ratloader (Rusty)","data":{"action": "RATLOADER" }},{ "menuName" : "Vapid Bobcat","data":{"action": "BOBCATXL" }},{ "menuName" : "Vapid Sadler","data":{"action": "SADLER" }},{ "menuName" : "Vapid Sadler (Snow)","data":{"action": "SADLER2" }}];
+var vehicle_vans = [{ "menuName" : "BF Surfer","data":{"action": "SURFER" }},{ "menuName" : "BF Surfer (Rusty)","data":{"action": "SURFER2" }},{ "menuName" : "Bravado Paradise","data":{"action": "PARADISE" }},{ "menuName" : "Bravado Rumpo Custom","data":{"action": "RUMPO3" }},{ "menuName" : "Bravado Rumpo (Deludamol)","data":{"action": "RUMPO2" }},{ "menuName" : "Bravado Rumpo (Weazel News)","data":{"action": "RUMPO" }},{ "menuName" : "Bravado Youga","data":{"action": "YOUGA" }},{ "menuName" : "Bravado Youga Classic","data":{"action": "YOUGA2" }},{ "menuName" : "Brute Camper","data":{"action": "CAMPER" }},{ "menuName" : "Brute Pony (Business)","data":{"action": "PONY" }},{ "menuName" : "Brute Pony (Cannibus Shop)","data":{"action": "PONY2" }},{ "menuName" : "Brute Taco Van","data":{"action": "TACO" }},{ "menuName" : "Declasse Burrito","data":{"action": "BURRITO3" }},{ "menuName" : "Declasse Burrito (Bug Stars)","data":{"action": "BURRITO2" }},{ "menuName" : "Declasse Burrito (Construction)","data":{"action": "BURRITO4" }},{ "menuName" : "Declasse Burrito (Gang)","data":{"action": "GBURRITO2" }},{ "menuName" : "Declasse Burrito (Graphics)","data":{"action": "BURRITO" }},{ "menuName" : "Declasse Burrito (Snow)","data":{"action": "BURRITO5" }},{ "menuName" : "Declasse Burrito (The Lost)","data":{"action": "GBURRITO" }},{ "menuName" : "Declasse Moonbeam","data":{"action": "MOONBEAM" }},{ "menuName" : "Vapid Minivan","data":{"action": "MINIVAN" }},{ "menuName" : "Vapid Speedo","data":{"action": "SPEEDO" }},{ "menuName" : "Vapid Speedo (Clown)","data":{"action": "SPEEDO2" }},{ "menuName" : "Zirconium Journey","data":{"action": "JOURNEY" }}];
+var vehicle_trucks = [{ "menuName" : "Brute Boxville (Go Postal)","data":{"action": "BOXVILLE2" }},{ "menuName" : "Brute Boxville (Humane Labs)","data":{"action": "BOXVILLE3" }},{ "menuName" : "Brute Boxville (Post OP)","data":{"action": "BOXVILLE4" }},{ "menuName" : "Brute Boxville (Water & Power)","data":{"action": "BOXVILLE" }},{ "menuName" : "Brute Stockade","data":{"action": "STOCKADE" }},{ "menuName" : "Brute Stockade (Snow)","data":{"action": "STOCKADE3" }},{ "menuName" : "Brute Tipper (2 Axle)","data":{"action": "TIPTRUCK" }},{ "menuName" : "Brute Tipper (3 Axle)","data":{"action": "TIPTRUCK2" }},{ "menuName" : "Cutter","data":{"action": "CUTTER" }},{ "menuName" : "Dock Handler","data":{"action": "HANDLER" }},{ "menuName" : "Dock Tug","data":{"action": "DOCKTUG" }},{ "menuName" : "Dump Truck","data":{"action": "DUMP" }},{ "menuName" : "HVY Biff","data":{"action": "BIFF" }},{ "menuName" : "Jobuilt Hauler","data":{"action": "HAULER" }},{ "menuName" : "Jobuilt Phantom","data":{"action": "PHANTOM" }},{ "menuName" : "Jobuilt Rubble","data":{"action": "RUBBLE" }},{ "menuName" : "Maibatsu Mule (Graphics 1)","data":{"action": "MULE" }},{ "menuName" : "Maibatsu Mule (Graphics 2)","data":{"action": "MULE2" }},{ "menuName" : "Maibatsu Mule (Plain)","data":{"action": "MULE3" }},{ "menuName" : "Mixer","data":{"action": "MIXER" }},{ "menuName" : "Mixer (Support Wheel)","data":{"action": "MIXER2" }},{ "menuName" : "MTL Flatbed Truck","data":{"action": "FLATBED" }},{ "menuName" : "MTL Packer","data":{"action": "PACKER" }},{ "menuName" : "MTL Pounder","data":{"action": "POUNDER" }},{ "menuName" : "Vapid Benson","data":{"action": "BENSON" }},{ "menuName" : "Vapid Scrap Truck","data":{"action": "SCRAP" }},{ "menuName" : "Vapid Tow Truck","data":{"action": "TOWTRUCK" }},{ "menuName" : "Vapid Tow Truck (Old)","data":{"action": "TOWTRUCK2" }}];
+var vehicle_service = [{ "menuName" : "Airtug","data":{"action": "AIRTUG" }},{ "menuName" : "Brute Airport Bus","data":{"action": "AIRBUS" }},{ "menuName" : "Brute Bus (City Bus)","data":{"action": "BUS" }},{ "menuName" : "Brute Rental Shuttle Bus","data":{"action": "RENTALBUS" }},{ "menuName" : "Brute Tourbus","data":{"action": "TOURBUS" }},{ "menuName" : "Cable Car (Mt. Chilliad)","data":{"action": "CABLECAR" }},{ "menuName" : "Dashound Coach Bus","data":{"action": "COACH" }},{ "menuName" : "Dozer","data":{"action": "BULLDOZER" }},{ "menuName" : "Forklift","data":{"action": "FORKLIFT" }},{ "menuName" : "HVY Brickade","data":{"action": "BRICKADE" }},{ "menuName" : "Jobuilt Trashmaster","data":{"action": "TRASH" }},{ "menuName" : "Jobuilt Trashmaster (Rusty)","data":{"action": "TRASH2" }},{ "menuName" : "MTL Dune","data":{"action": "DUNE" }},{ "menuName" : "Nagasaki Caddy","data":{"action": "CADDY" }},{ "menuName" : "Nagasaki Caddy (Golf)","data":{"action": "CADDY2" }},{ "menuName" : "Ripley (Airpot Tug)","data":{"action": "RIPLEY" }},{ "menuName" : "Stanley Fieldmaster Tractor","data":{"action": "TRACTOR2" }},{ "menuName" : "Stanley Fieldmaster Tractor (Snow)","data":{"action": "TRACTOR3" }},{ "menuName" : "Stanley Lawn Mower","data":{"action": "MOWER" }},{ "menuName" : "Stanley Tractor (Rusty)","data":{"action": "tractor" }},{ "menuName" : "Vapid Pickup Utility","data":{"action": "UTILLITRUCK" }},{ "menuName" : "Vapid Plumbing Utility","data":{"action": "UTILLITRUCK2" }},{ "menuName" : "Vapid Telephone Utlity","data":{"action": "UTILLITRUCK3" }}];
+var vehicle_trailers = [{ "menuName" : "Army Flatbed Trailer","data":{"action": "ARMYTRAILER" }},{ "menuName" : "Army Flatbed Trailer (with Drill)","data":{"action": "ARMYTRAILER2" }},{ "menuName" : "Army Fuel Tanker","data":{"action": "ARMYTANKER" }},{ "menuName" : "Boat trailer (small)","data":{"action": "BOATTRAILER" }},{ "menuName" : "Boat Trailer (With Boat)","data":{"action": "TR3" }},{ "menuName" : "Car Tranport Trailer","data":{"action": "TR4" }},{ "menuName" : "Car Tranport Trailer (Empty)","data":{"action": "TR2" }},{ "menuName" : "Commercial Trailer (Graphics 1)","data":{"action": "TRAILERS2" }},{ "menuName" : "Commercial Trailer (Graphics 2)","data":{"action": "TRAILERS3" }},{ "menuName" : "Container Trailer","data":{"action": "DOCKTRAILER" }},{ "menuName" : "Fame or Shame Trailer","data":{"action": "TVTRAILER" }},{ "menuName" : "Flatbed Trailer","data":{"action": "TRFLAT" }},{ "menuName" : "Flatbed Trailer","data":{"action": "FREIGHTTRAILER" }},{ "menuName" : "Grain Trailer","data":{"action": "GRAINTRAILER" }},{ "menuName" : "Hay Bale Trailer","data":{"action": "BALETRAILER" }},{ "menuName" : "Logging Trailer","data":{"action": "TRAILERLOGS" }},{ "menuName" : "Meth Lab Trailer","data":{"action": "PROPTRAILER" }},{ "menuName" : "Petrol Tanker Trailer (Plain)","data":{"action": "TANKER2" }},{ "menuName" : "Petrol Tanker Trailer (Ron)","data":{"action": "TANKER" }},{ "menuName" : "Plain Trailer","data":{"action": "TRAILERS" }},{ "menuName" : "Rake Trailer","data":{"action": "RAKETRAILER" }},{ "menuName" : "Small Trailer","data":{"action": "TRAILERSMALL" }}];
+var vehicle_trains = [{ "menuName" : "Container Car 1","data":{"action": "FREIGHTCONT1" }},{ "menuName" : "Container Car 2","data":{"action": "FREIGHTCONT2" }},{ "menuName" : "Flatbed Car","data":{"action": "FREIGHTCAR" }},{ "menuName" : "Freight Train Cab","data":{"action": "FREIGHT" }},{ "menuName" : "Grain Car","data":{"action": "FREIGHTGRAIN" }},{ "menuName" : "Metro Train (Half)","data":{"action": "METROTRAIN" }},{ "menuName" : "Oil Tanker Car","data":{"action": "TANKERCAR" }}];
+var vehicle_emergency = [{ "menuName" : "Albany Police Roadcruiser (Snow)","data":{"action": "POLICEOLD2" }},{ "menuName" : "Ambulance","data":{"action": "AMBULANCE" }},{ "menuName" : "Army Barracks Truck","data":{"action": "BARRACKS" }},{ "menuName" : "Army Truck Cab","data":{"action": "BARRACKS2" }},{ "menuName" : "Bravado Buffalo (FIB)","data":{"action": "FBI" }},{ "menuName" : "Brute Police Riot Van","data":{"action": "RIOT" }},{ "menuName" : "Canis Crusader (Army Mesa)","data":{"action": "CRUSADER" }},{ "menuName" : "Declasse Granger (FIB)","data":{"action": "FBI2" }},{ "menuName" : "Declasse Lifeguard","data":{"action": "LGUARD" }},{ "menuName" : "Declasse Park Ranger","data":{"action": "PRANGER" }},{ "menuName" : "Declasse Police Rancher (Snow)","data":{"action": "POLICEOLD1" }},{ "menuName" : "Declasse Police Transporter","data":{"action": "POLICET" }},{ "menuName" : "Declasse Sheriff SUV","data":{"action": "SHERIFF2" }},{ "menuName" : "Firetruck","data":{"action": "FIRETRUK" }},{ "menuName" : "Prison Bus","data":{"action": "PBUS" }},{ "menuName" : "Rhino Tank","data":{"action": "RHINO" }},{ "menuName" : "Vapid Police Buffalo","data":{"action": "POLICE2" }},{ "menuName" : "Vapid Police Cruiser","data":{"action": "POLICE" }},{ "menuName" : "Vapid Police Interceptor","data":{"action": "POLICE3" }},{ "menuName" : "Vapid Sheriff Cruiser","data":{"action": "SHERIFF" }},{ "menuName" : "Vapid Unmarked Police Cruiser","data":{"action": "POLICE4" }},{ "menuName" : "Western Police Bike","data":{"action": "POLICEB" }}];
+var vehicle_motorcycles = [{ "menuName" : "Dinka Akuma","data":{"action": "AKUMA" }},{ "menuName" : "Dinka Double-T","data":{"action": "DOUBLE" }},{ "menuName" : "Dinka Enduro","data":{"action": "ENDURO" }},{ "menuName" : "Dinka Thrust","data":{"action": "THRUST" }},{ "menuName" : "Dinka Vindicator","data":{"action": "VINDICATOR" }},{ "menuName" : "LLC Avarus","data":{"action": "AVARUS" }},{ "menuName" : "LLC Hexer","data":{"action": "HEXER" }},{ "menuName" : "LLC Innovation","data":{"action": "INNOVATION" }},{ "menuName" : "LLC Sanctus","data":{"action": "SANCTUS" }},{ "menuName" : "Maibatsu Carbon RS","data":{"action": "CARBONRS" }},{ "menuName" : "Maibatsu Chimera","data":{"action": "CHIMERA" }},{ "menuName" : "Maibatsu Manchez","data":{"action": "MANCHEZ" }},{ "menuName" : "Maibatsu Sanchez","data":{"action": "SANCHEZ" }},{ "menuName" : "Maibatsu Sanchez (Graphics)","data":{"action": "SANCHEZ2" }},{ "menuName" : "Maibatsu Shotaro","data":{"action": "SHOTARO" }},{ "menuName" : "Pegassi Bati","data":{"action": "BATI" }},{ "menuName" : "Pegassi Bati(Race)","data":{"action": "BATI2" }},{ "menuName" : "Pegassi Esskey","data":{"action": "ESSKEY" }},{ "menuName" : "Pegassi Faggio","data":{"action": "FAGGIO" }},{ "menuName" : "Pegassi Faggio Mod","data":{"action": "FAGGIO3" }},{ "menuName" : "Pegassi Faggio Sport","data":{"action": "FAGGIO2" }},{ "menuName" : "Pegassi Ruffian","data":{"action": "RUFFIAN" }},{ "menuName" : "Pegassi Vortex","data":{"action": "VORTEX" }},{ "menuName" : "Principe Lectro","data":{"action": "LECTRO" }},{ "menuName" : "Principe Nemesis","data":{"action": "NEMESIS" }},{ "menuName" : "Shitzu Defiler","data":{"action": "DEFILER" }},{ "menuName" : "Shitzu Hakuchou","data":{"action": "HAKUCHOU" }},{ "menuName" : "Shitzu Hakuchou Drag","data":{"action": "HAKUCHOU2" }},{ "menuName" : "Shitzu PCJ 600","data":{"action": "PCJ" }},{ "menuName" : "Shitzu Vader","data":{"action": "VADER" }},{ "menuName" : "Western Bagger","data":{"action": "BAGGER" }},{ "menuName" : "Western Cliffhanger","data":{"action": "CLIFFHANGER" }},{ "menuName" : "Western Daemon","data":{"action": "DAEMON2" }},{ "menuName" : "Western Daemon Custom","data":{"action": "DAEMON" }},{ "menuName" : "Western Gargoyle","data":{"action": "GARGOYLE" }},{ "menuName" : "Western Nightblade","data":{"action": "NIGHTBLADE" }},{ "menuName" : "Western Rat Bike","data":{"action": "RATBIKE" }},{ "menuName" : "Western Sovereign","data":{"action": "SOVEREIGN" }},{ "menuName" : "Western Wolfsbane","data":{"action": "WOLFSBANE" }},{ "menuName" : "Western Zombie Bobber","data":{"action": "ZOMBIEA" }},{ "menuName" : "Western Zombie Chopper","data":{"action": "ZOMBIEB" }}];
+var vehicle_planes = [{ "menuName" : "Buckingham Cargo Plane (An-225)","data":{"action": "CARGOPLANE" }},{ "menuName" : "Buckingham Jet (B747)","data":{"action": "JET" }},{ "menuName" : "Buckingham Luxor","data":{"action": "LUXOR" }},{ "menuName" : "Buckingham Luxor Deluxe","data":{"action": "LUXOR2" }},{ "menuName" : "Buckingham Miljet","data":{"action": "MILJET" }},{ "menuName" : "Buckingham Nimbus","data":{"action": "NIMBUS" }},{ "menuName" : "Buckingham Shamal","data":{"action": "SHAMAL" }},{ "menuName" : "Buckingham Vestra","data":{"action": "VESTRA" }},{ "menuName" : "Jobuilt Mammatus","data":{"action": "MAMMATUS" }},{ "menuName" : "Jobuilt P-996 Lazer","data":{"action": "LAZER" }},{ "menuName" : "Jobuilt Velum (4 Seater)","data":{"action": "VELUM" }},{ "menuName" : "Jobuilt Velum (5 Seater)","data":{"action": "VELUM2" }},{ "menuName" : "Mammoth Dodo","data":{"action": "DODO" }},{ "menuName" : "Mammoth Hydra","data":{"action": "HYDRA" }},{ "menuName" : "Mammoth Titan","data":{"action": "TITAN" }},{ "menuName" : "Western Besra","data":{"action": "BESRA" }},{ "menuName" : "Western Cuban 800","data":{"action": "CUBAN800" }},{ "menuName" : "Western Duster","data":{"action": "DUSTER" }},{ "menuName" : "Western Mallard Stunt Plane","data":{"action": "STUNT" }}];
+var vehicle_helicopters = [{ "menuName" : "Blimp (Atomic)","data":{"action": "BLIMP" }},{ "menuName" : "Blimp (Xero Gas)","data":{"action": "BLIMP2" }},{ "menuName" : "Buckingham Savage","data":{"action": "SAVAGE" }},{ "menuName" : "Buckingham SuperVolito","data":{"action": "SUPERVOLITO" }},{ "menuName" : "Buckingham SuperVolito Carbon","data":{"action": "SUPERVOLITO2" }},{ "menuName" : "Buckingham Swift","data":{"action": "SWIFT" }},{ "menuName" : "Buckingham Swift Deluxe","data":{"action": "SWIFT2" }},{ "menuName" : "Buckingham Valkyrie","data":{"action": "VALKYRIE" }},{ "menuName" : "Buckingham Volatus","data":{"action": "VOLATUS" }},{ "menuName" : "HVT Skylift","data":{"action": "SKYLIFT" }},{ "menuName" : "Maibatsu Frogger","data":{"action": "FROGGER" }},{ "menuName" : "Maibatsu Frogger (TPE/FIB)","data":{"action": "FROGGER2" }},{ "menuName" : "Nagasaki Buzzard (Unarmed)","data":{"action": "BUZZARD" }},{ "menuName" : "Nagasaki Buzzard (Attack Chopper)","data":{"action": "BUZZARD2" }},{ "menuName" : "Western Annihilator","data":{"action": "ANNIHILATOR" }},{ "menuName" : "Western Cargobob (Desert Camo)","data":{"action": "CARGOBOB" }},{ "menuName" : "Western Cargobob (Jetsam)","data":{"action": "CARGOBOB2" }},{ "menuName" : "Western Cargobob (TPE)","data":{"action": "CARGOBOB3" }},{ "menuName" : "Western Mavrick","data":{"action": "MAVERICK" }},{ "menuName" : "Western Mavrick (Police)","data":{"action": "POLMAV" }}];
+var vehicle_boats = [{ "menuName" : "Buckingham Tug","data":{"action": "TUG" }},{ "menuName" : "Dinka Marquis","data":{"action": "MARQUIS" }},{ "menuName" : "Lampadati Toro","data":{"action": "TORO" }},{ "menuName" : "Nagasaki Dinghy (2 Seater)","data":{"action": "DINGHY2" }},{ "menuName" : "Nagasaki Dinghy (4 Seater Black)","data":{"action": "DINGHY3" }},{ "menuName" : "Nagasaki Dinghy (4 Seater Red)","data":{"action": "DINGHY" }},{ "menuName" : "Pegassi Speeder","data":{"action": "SPEEDER" }},{ "menuName" : "Shitzu Jetmax","data":{"action": "SUNTRAP" }},{ "menuName" : "Shitzu Predator (Police)","data":{"action": "PREDATOR" }},{ "menuName" : "Shitzu Squalo","data":{"action": "SQUALO" }},{ "menuName" : "Shitzu Suntrap","data":{"action": "SUNTRAP" }},{ "menuName" : "Shitzu Tropic","data":{"action": "TROPIC" }},{ "menuName" : "Speedophile Seashark","data":{"action": "SEASHARK" }},{ "menuName" : "Speedophile Seashark (Lifeguard)","data":{"action": "SEASHARK2" }},{ "menuName" : "Submersible","data":{"action": "SUBMERSIBLE" }},{ "menuName" : "Submersible (Kraken)","data":{"action": "SUBMERSIBLE2" }}];
+var vehicle_bicycles = [{ "menuName" : "BMX","data":{"action": "BMX" }},{ "menuName" : "Cruiser","data":{"action": "CRUISER" }},{ "menuName" : "Endurex Race","data":{"action": "TRIBIKE2" }},{ "menuName" : "Fixter","data":{"action": "FIXTER" }},{ "menuName" : "Scorcher","data":{"action": "SCORCHER" }},{ "menuName" : "Tri-Cycles Race","data":{"action": "TRIBIKE3" }},{ "menuName" : "Whippet Race","data":{"action": "TRIBIKE" }}];
 
 
-// Weapon Spawning Database.
-var weaponDB = {"Melee":[{"menuName":"Knife","spawnName":"WEAPON_KNIFE","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Brass Knuckles","spawnName":"WEAPON_KNUCKLE","subOptions":{"ammo":false,"weapon":true,"options":[{"menuName":"Default","spawnName":"COMPONENT_KNUCKLE_VARMOD_BASE"},{"menuName":"Pimp","spawnName":"COMPONENT_KNUCKLE_VARMOD_PIMP"},{"menuName":"Ballas","spawnName":"COMPONENT_KNUCKLE_VARMOD_BALLAS"},{"menuName":"Dollars","spawnName":"COMPONENT_KNUCKLE_VARMOD_DOLLAR"},{"menuName":"Diamond","spawnName":"COMPONENT_KNUCKLE_VARMOD_DIAMOND"},{"menuName":"Hate","spawnName":"COMPONENT_KNUCKLE_VARMOD_HATE"},{"menuName":"Love","spawnName":"COMPONENT_KNUCKLE_VARMOD_LOVE"},{"menuName":"Player","spawnName":"COMPONENT_KNUCKLE_VARMOD_PLAYER"},{"menuName":"King","spawnName":"COMPONENT_KNUCKLE_VARMOD_KING"},{"menuName":"Vagos","spawnName":"COMPONENT_KNUCKLE_VARMOD_VAGOS"}]}},{"menuName":"Nightstick","spawnName":"WEAPON_NIGHTSTICK","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Hammer","spawnName":"WEAPON_HAMMER","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Baseball Bat","spawnName":"WEAPON_BAT","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Golf Club","spawnName":"WEAPON_GOLFCLUB","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Crowbar","spawnName":"WEAPON_CROWBAR","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Bottle","spawnName":"WEAPON_BOTTLE","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Antique Dagger","spawnName":"WEAPON_DAGGER","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Hatchet","spawnName":"WEAPON_HATCHET","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Machete","spawnName":"WEAPON_MACHETE","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Flashlight","spawnName":"WEAPON_FLASHLIGHT","subOptions":{"ammo":false,"weapon":true,"options":[]}},{"menuName":"Switchblade","spawnName":"WEAPON_SWITCHBLADE","subOptions":{"ammo":false,"weapon":true,"options":[{"menuName":"Variation 1","spawnName":"COMPONENT_SWITCHBLADE_VARMOD_VAR1"},{"menuName":"Variation 2","spawnName":"COMPONENT_SWITCHBLADE_VARMOD_VAR2"}]}}],"Handguns":[{"menuName":"Pistol","spawnName":"WEAPON_PISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_PISTOL_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_SUPP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_PI_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_PISTOL_VARMOD_LUXE"}]}},{"menuName":"Combat Pistol","spawnName":"WEAPON_COMBATPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_COMBATPISTOL_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_SUPP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_PI_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_COMBATPISTOL_VARMOD_LOWRIDER"}]}},{"menuName":"AP Pistol","spawnName":"WEAPON_APPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_APPISTOL_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_SUPP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_PI_FLSH"},{"menuName":"Gilded Gun Metal Finish","spawnName":"COMPONENT_APPISTOL_VARMOD_LUXE"}]}},{"menuName":"Pistol .50","spawnName":"WEAPON_PISTOL50","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_PISTOL50_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_PI_FLSH"},{"menuName":"Platinum Pearl Deluxe Finish","spawnName":"COMPONENT_PISTOL50_VARMOD_LUXE"}]}},{"menuName":"SNS Pistol","spawnName":"WEAPON_SNSPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"COMPONENT_SNSPISTOL_CLIP_02","spawnName":"Extended Magazine"},{"menuName":"COMPONENT_SNSPISTOL_VARMOD_LOWRIDER","spawnName":"Etched Wood Grip Finish"}]}},{"menuName":"Heavy Pistol","spawnName":"WEAPON_HEAVYPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_HEAVYPISTOL_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_FLSH"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_PI_SUPP"},{"menuName":"Etched Wood Grip Finish","spawnName":"COMPONENT_HEAVYPISTOL_VARMOD_LUXE"}]}},{"menuName":"Vintage Pistol","spawnName":"WEAPON_VINTAGEPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_VINTAGEPISTOL_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_SUPP"}]}},{"menuName":"Stungun","spawnName":"WEAPON_STUNGUN","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Flaregun","spawnName":"WEAPON_FLAREGUN","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Marksman Pistol","spawnName":"WEAPON_MARKSMANPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Variation 1","spawnName":"COMPONENT_REVOLVER_VARMOD_BOSS"},{"menuName":"Variation 2","spawnName":"COMPONENT_REVOLVER_VARMOD_GOON"}]}},{"menuName":"Heavy Revolver","spawnName":"WEAPON_REVOLVER","subOptions":{"ammo":true,"weapon":true,"options":[]}}],"Submachine":[{"menuName":"Micro SMG","spawnName":"WEAPON_MICROSMG","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_MICROSMG_CLIP_02"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MACRO"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_PI_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_MICROSMG_VARMOD_LUXE"}]}},{"menuName":"SMG","spawnName":"WEAPON_SMG","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_SMG_CLIP_02"},{"menuName":"Drum Magazine","spawnName":"COMPONENT_SMG_CLIP_03"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MACRO_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_SUPP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_SMG_VARMOD_LUXE"}]}},{"menuName":"Assault SMG","spawnName":"WEAPON_ASSAULTSMG","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_ASSAULTSMG_CLIP_02"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MACRO"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_ASSAULTSMG_VARMOD_LOWRIDER"}]}},{"menuName":"MG","spawnName":"WEAPON_MG","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_MG_CLIP_02"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_SMALL_02"}]}},{"menuName":"Combat MG","spawnName":"WEAPON_COMBATMG","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_COMBATMG_CLIP_02"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MEDIUM"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"Combat PDW","spawnName":"WEAPON_COMBATPDW","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_COMBATPDW_CLIP_02"},{"menuName":"Drum Magazine","spawnName":"COMPONENT_COMBATPDW_CLIP_03"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_SMALL"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"Gusenberg Sweeper","spawnName":"WEAPON_GUSENBERG","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_GUSENBERG_CLIP_02"}]}},{"menuName":"Machine Pistol","spawnName":"WEAPON_MACHINEPISTOL","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_MACHINEPISTOL_CLIP_02"},{"menuName":"Drum Magazine","spawnName":"COMPONENT_MACHINEPISTOL_CLIP_03"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_PI_SUPP"}]}}],"Assault":[{"menuName":"Assault Rifle","spawnName":"WEAPON_ASSAULTRIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_ASSAULTRIFLE_CLIP_02"},{"menuName":"Drum Magazine","spawnName":"COMPONENT_ASSAULTRIFLE_CLIP_03"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MACRO"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_ASSAULTRIFLE_VARMOD_LUXE"}]}},{"menuName":"Carbine Rifle","spawnName":"WEAPON_CARBINERIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_CARBINERIFLE_CLIP_02"},{"menuName":"Box Magazine","spawnName":"COMPONENT_CARBINERIFLE_CLIP_03"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MEDIUM"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Rail Cover","spawnName":"COMPONENT_AT_RAILCOVER_01"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_CARBINERIFLE_VARMOD_LUXE"}]}},{"menuName":"Advanced Rifle","spawnName":"WEAPON_ADVANCEDRIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_ADVANCEDRIFLE_CLIP_02"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_SMALL"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Gilded Gun Metal Finish","spawnName":"COMPONENT_ADVANCEDRIFLE_VARMOD_LUXE"}]}},{"menuName":"Special Carbine","spawnName":"WEAPON_SPECIALCARBINE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_SPECIALCARBINE_CLIP_02"},{"menuName":"Beta C-Magazine","spawnName":"COMPONENT_SPECIALCARBINE_CLIP_03"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_MEDIUM"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"Bullpup Rifle","spawnName":"WEAPON_BULLPUPRIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"Compact Rifle","spawnName":"WEAPON_COMPACTRIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_COMPACTRIFLE_CLIP_02"},{"menuName":"Drum Magazine","spawnName":"COMPONENT_COMPACTRIFLE_CLIP_03"}]}}],"Shotguns":[{"menuName":"Pump Shotgun","spawnName":"WEAPON_PUMPSHOTGUN","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Suppressor","spawnName":"COMPONENT_AT_SR_SUPP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_PUMPSHOTGUN_VARMOD_LOWRIDER"}]}},{"menuName":"Sawnoff Shotgun","spawnName":"WEAPON_SAWNOFFSHOTGUN","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Gilded Gun Metal Finish","spawnName":"COMPONENT_SAWNOFFSHOTGUN_VARMOD_LUXE"}]}},{"menuName":"Bullpup Shotgun","spawnName":"WEAPON_BULLPUPSHOTGUN","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_BULLPUPRIFLE_CLIP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_SMALL"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"},{"menuName":"Gilded Gun Metal Finish","spawnName":"COMPONENT_BULLPUPRIFLE_VARMOD_LOW"}]}},{"menuName":"Assault Shotgun","spawnName":"WEAPON_ASSAULTSHOTGUN","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_ASSAULTSHOTGUN_CLIP_02"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"}]}},{"menuName":"Musket","spawnName":"WEAPON_MUSKET","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Heavy Shotgun","spawnName":"WEAPON_HEAVYSHOTGUN","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_HEAVYSHOTGUN_CLIP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"Double Barrel Shotgun","spawnName":"WEAPON_DBSHOTGUN","subOptions":{"ammo":true,"weapon":true,"options":[]}}],"Snipers":[{"menuName":"Sniper Rifle","spawnName":"WEAPON_SNIPERRIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Advanced Scope","spawnName":"COMPONENT_AT_SCOPE_MAX"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP_02"},{"menuName":"Etched Wood Grip Finish","spawnName":"COMPONENT_SNIPERRIFLE_VARMOD_LUXE"}]}},{"menuName":"Heavy Sniper","spawnName":"WEAPON_HEAVYSNIPER","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Normal Scope","spawnName":"COMPONENT_AT_SCOPE_LARGE"}]}},{"menuName":"Marksman Rifle","spawnName":"WEAPON_MARKSMANRIFLE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Extended Magazine","spawnName":"COMPONENT_MARKSMANRIFLE_CLIP_02"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Suppressor","spawnName":"COMPONENT_AT_AR_SUPP"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"},{"menuName":"Yusuf Amir Luxury Finish","spawnName":"COMPONENT_MARKSMANRIFLE_VARMOD_LUXE"}]}}],"Heavy":[{"menuName":"Grenade Launcher","spawnName":"WEAPON_GRENADELAUNCHER","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_SMALL"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"Grenade Launcher (Smoke)","spawnName":"WEAPON_GRENADELAUNCHER_SMOKE","subOptions":{"ammo":true,"weapon":true,"options":[{"menuName":"Scope","spawnName":"COMPONENT_AT_SCOPE_SMALL"},{"menuName":"Flashlight","spawnName":"COMPONENT_AT_AR_FLSH"},{"menuName":"Grip","spawnName":"COMPONENT_AT_AR_AFGRIP"}]}},{"menuName":"RPG","spawnName":"WEAPON_RPG","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Stinger","spawnName":"WEAPON_STINGER","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Minigun","spawnName":"WEAPON_MINIGUN","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Firework Launcher","spawnName":"WEAPON_FIREWORK","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Railgun","spawnName":"WEAPON_RAILGUN","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Homing Launcher","spawnName":"WEAPON_HOMINGLAUNCHER","subOptions":{"ammo":true,"weapon":true,"options":[]}}],"Thrown":[{"menuName":"Grenade","spawnName":"WEAPON_GRENADE","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Sticky Bomb","spawnName":"WEAPON_STICKYBOMB","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Proximity Mine","spawnName":"WEAPON_PROXMINE","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Tear Gas","spawnName":"WEAPON_BZGAS","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Smoke Grenade","spawnName":"WEAPON_SMOKEGRENADE","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Molotov","spawnName":"WEAPON_MOLOTOV","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Fire Extinguisher","spawnName":"WEAPON_FIREEXTINGUISHER","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Jerry Can","spawnName":"WEAPON_PETROLCAN","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Snowball","spawnName":"WEAPON_SNOWBALL","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Flare","spawnName":"WEAPON_FLARE","subOptions":{"ammo":true,"weapon":true,"options":[]}},{"menuName":"Baseball","spawnName":"WEAPON_BALL","subOptions":{"ammo":true,"weapon":true,"options":[]}}]}
+// Weapon Spawning Database
+var weaponDB = {"Melee":[{"menuName":"Knife","weaponName":"WEAPON_KNIFE","data":{"sub":0},"weapon":true,"submenu":[]},{"menuName":"Brass Knuckles","weaponName":"WEAPON_KNUCKLE","data":{"sub":1},"weapon":true,"submenu":[{"menuName":"Default","data":{"action":"COMPONENT_KNUCKLE_VARMOD_BASE"}},{"menuName":"Pimp","data":{"action":"COMPONENT_KNUCKLE_VARMOD_PIMP"}},{"menuName":"Ballas","data":{"action":"COMPONENT_KNUCKLE_VARMOD_BALLAS"}},{"menuName":"Dollars","data":{"action":"COMPONENT_KNUCKLE_VARMOD_DOLLAR"}},{"menuName":"Diamond","data":{"action":"COMPONENT_KNUCKLE_VARMOD_DIAMOND"}},{"menuName":"Hate","data":{"action":"COMPONENT_KNUCKLE_VARMOD_HATE"}},{"menuName":"Love","data":{"action":"COMPONENT_KNUCKLE_VARMOD_LOVE"}},{"menuName":"Player","data":{"action":"COMPONENT_KNUCKLE_VARMOD_PLAYER"}},{"menuName":"King","data":{"action":"COMPONENT_KNUCKLE_VARMOD_KING"}},{"menuName":"Vagos","data":{"action":"COMPONENT_KNUCKLE_VARMOD_VAGOS"}}]},{"menuName":"Nightstick","weaponName":"WEAPON_NIGHTSTICK","data":{"sub":2},"weapon":true,"submenu":[]},{"menuName":"Hammer","weaponName":"WEAPON_HAMMER","data":{"sub":3},"weapon":true,"submenu":[]},{"menuName":"Baseball Bat","weaponName":"WEAPON_BAT","data":{"sub":4},"weapon":true,"submenu":[]},{"menuName":"Golf Club","weaponName":"WEAPON_GOLFCLUB","data":{"sub":5},"weapon":true,"submenu":[]},{"menuName":"Crowbar","weaponName":"WEAPON_CROWBAR","data":{"sub":6},"weapon":true,"submenu":[]},{"menuName":"Bottle","weaponName":"WEAPON_BOTTLE","data":{"sub":7},"weapon":true,"submenu":[]},{"menuName":"Antique Dagger","weaponName":"WEAPON_DAGGER","data":{"sub":8},"weapon":true,"submenu":[]},{"menuName":"Hatchet","weaponName":"WEAPON_HATCHET","data":{"sub":9},"weapon":true,"submenu":[]},{"menuName":"Machete","weaponName":"WEAPON_MACHETE","data":{"sub":10},"weapon":true,"submenu":[]},{"menuName":"Flashlight","weaponName":"WEAPON_FLASHLIGHT","data":{"sub":11},"weapon":true,"submenu":[]},{"menuName":"Switchblade","weaponName":"WEAPON_SWITCHBLADE","data":{"sub":12},"weapon":true,"submenu":[{"menuName":"Variation 1","data":{"action":"COMPONENT_SWITCHBLADE_VARMOD_VAR1"}},{"menuName":"Variation 2","data":{"action":"COMPONENT_SWITCHBLADE_VARMOD_VAR2"}}]}],"Handguns":[{"menuName":"Pistol","weaponName":"WEAPON_PISTOL","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_PISTOL_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_SUPP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_PI_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_PISTOL_VARMOD_LUXE"}}]},{"menuName":"Combat Pistol","weaponName":"WEAPON_COMBATPISTOL","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_COMBATPISTOL_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_SUPP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_PI_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_COMBATPISTOL_VARMOD_LOWRIDER"}}]},{"menuName":"AP Pistol","weaponName":"WEAPON_APPISTOL","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_APPISTOL_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_SUPP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_PI_FLSH"}},{"menuName":"Gilded Gun Metal Finish","data":{"action":"COMPONENT_APPISTOL_VARMOD_LUXE"}}]},{"menuName":"Pistol .50","weaponName":"WEAPON_PISTOL50","data":{"sub":3},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_PISTOL50_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_PI_FLSH"}},{"menuName":"Platinum Pearl Deluxe Finish","data":{"action":"COMPONENT_PISTOL50_VARMOD_LUXE"}}]},{"menuName":"SNS Pistol","weaponName":"WEAPON_SNSPISTOL","data":{"sub":4},"ammo":true,"weapon":true,"submenu":[{"menuName":"COMPONENT_SNSPISTOL_CLIP_02","data":{"action":"Extended Magazine"}},{"menuName":"COMPONENT_SNSPISTOL_VARMOD_LOWRIDER","data":{"action":"Etched Wood Grip Finish"}}]},{"menuName":"Heavy Pistol","weaponName":"WEAPON_HEAVYPISTOL","data":{"sub":5},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_HEAVYPISTOL_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_FLSH"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_PI_SUPP"}},{"menuName":"Etched Wood Grip Finish","data":{"action":"COMPONENT_HEAVYPISTOL_VARMOD_LUXE"}}]},{"menuName":"Vintage Pistol","weaponName":"WEAPON_VINTAGEPISTOL","data":{"sub":6},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_VINTAGEPISTOL_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_SUPP"}}]},{"menuName":"Stungun","weaponName":"WEAPON_STUNGUN","data":{"sub":7},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Flaregun","weaponName":"WEAPON_FLAREGUN","data":{"sub":8},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Marksman Pistol","weaponName":"WEAPON_MARKSMANPISTOL","data":{"sub":9},"ammo":true,"weapon":true,"submenu":[{"menuName":"Variation 1","data":{"action":"COMPONENT_REVOLVER_VARMOD_BOSS"}},{"menuName":"Variation 2","data":{"action":"COMPONENT_REVOLVER_VARMOD_GOON"}}]},{"menuName":"Heavy Revolver","weaponName":"WEAPON_REVOLVER","data":{"sub":10},"ammo":true,"weapon":true,"submenu":[]}],"Submachine":[{"menuName":"Micro SMG","weaponName":"WEAPON_MICROSMG","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_MICROSMG_CLIP_02"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MACRO"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_PI_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_MICROSMG_VARMOD_LUXE"}}]},{"menuName":"SMG","weaponName":"WEAPON_SMG","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_SMG_CLIP_02"}},{"menuName":"Drum Magazine","data":{"action":"COMPONENT_SMG_CLIP_03"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MACRO_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_SUPP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_SMG_VARMOD_LUXE"}}]},{"menuName":"Assault SMG","weaponName":"WEAPON_ASSAULTSMG","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_ASSAULTSMG_CLIP_02"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MACRO"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_ASSAULTSMG_VARMOD_LOWRIDER"}}]},{"menuName":"MG","weaponName":"WEAPON_MG","data":{"sub":3},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_MG_CLIP_02"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_SMALL_02"}}]},{"menuName":"Combat MG","weaponName":"WEAPON_COMBATMG","data":{"sub":4},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_COMBATMG_CLIP_02"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MEDIUM"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"Combat PDW","weaponName":"WEAPON_COMBATPDW","data":{"sub":5},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_COMBATPDW_CLIP_02"}},{"menuName":"Drum Magazine","data":{"action":"COMPONENT_COMBATPDW_CLIP_03"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_SMALL"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"Gusenberg Sweeper","weaponName":"WEAPON_GUSENBERG","data":{"sub":6},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_GUSENBERG_CLIP_02"}}]},{"menuName":"Machine Pistol","weaponName":"WEAPON_MACHINEPISTOL","data":{"sub":7},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_MACHINEPISTOL_CLIP_02"}},{"menuName":"Drum Magazine","data":{"action":"COMPONENT_MACHINEPISTOL_CLIP_03"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_PI_SUPP"}}]}],"Assault":[{"menuName":"Assault Rifle","weaponName":"WEAPON_ASSAULTRIFLE","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_ASSAULTRIFLE_CLIP_02"}},{"menuName":"Drum Magazine","data":{"action":"COMPONENT_ASSAULTRIFLE_CLIP_03"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MACRO"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_ASSAULTRIFLE_VARMOD_LUXE"}}]},{"menuName":"Carbine Rifle","weaponName":"WEAPON_CARBINERIFLE","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_CARBINERIFLE_CLIP_02"}},{"menuName":"Box Magazine","data":{"action":"COMPONENT_CARBINERIFLE_CLIP_03"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MEDIUM"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Rail Cover","data":{"action":"COMPONENT_AT_RAILCOVER_01"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_CARBINERIFLE_VARMOD_LUXE"}}]},{"menuName":"Advanced Rifle","weaponName":"WEAPON_ADVANCEDRIFLE","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_ADVANCEDRIFLE_CLIP_02"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_SMALL"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Gilded Gun Metal Finish","data":{"action":"COMPONENT_ADVANCEDRIFLE_VARMOD_LUXE"}}]},{"menuName":"Special Carbine","weaponName":"WEAPON_SPECIALCARBINE","data":{"sub":3},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_SPECIALCARBINE_CLIP_02"}},{"menuName":"Beta C-Magazine","data":{"action":"COMPONENT_SPECIALCARBINE_CLIP_03"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_MEDIUM"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"Bullpup Rifle","weaponName":"WEAPON_BULLPUPRIFLE","data":{"sub":4},"ammo":true,"weapon":true,"submenu":[{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"Compact Rifle","weaponName":"WEAPON_COMPACTRIFLE","data":{"sub":5},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_COMPACTRIFLE_CLIP_02"}},{"menuName":"Drum Magazine","data":{"action":"COMPONENT_COMPACTRIFLE_CLIP_03"}}]}],"Shotguns":[{"menuName":"Pump Shotgun","weaponName":"WEAPON_PUMPSHOTGUN","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_SR_SUPP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_PUMPSHOTGUN_VARMOD_LOWRIDER"}}]},{"menuName":"Sawnoff Shotgun","weaponName":"WEAPON_SAWNOFFSHOTGUN","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[{"menuName":"Gilded Gun Metal Finish","data":{"action":"COMPONENT_SAWNOFFSHOTGUN_VARMOD_LUXE"}}]},{"menuName":"Bullpup Shotgun","weaponName":"WEAPON_BULLPUPSHOTGUN","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_BULLPUPRIFLE_CLIP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_SMALL"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}},{"menuName":"Gilded Gun Metal Finish","data":{"action":"COMPONENT_BULLPUPRIFLE_VARMOD_LOW"}}]},{"menuName":"Assault Shotgun","weaponName":"WEAPON_ASSAULTSHOTGUN","data":{"sub":3},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_ASSAULTSHOTGUN_CLIP_02"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}}]},{"menuName":"Musket","weaponName":"WEAPON_MUSKET","data":{"sub":4},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Heavy Shotgun","weaponName":"WEAPON_HEAVYSHOTGUN","data":{"sub":5},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_HEAVYSHOTGUN_CLIP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"Double Barrel Shotgun","weaponName":"WEAPON_DBSHOTGUN","data":{"sub":6},"ammo":true,"weapon":true,"submenu":[]}],"Snipers":[{"menuName":"Sniper Rifle","weaponName":"WEAPON_SNIPERRIFLE","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[{"menuName":"Advanced Scope","data":{"action":"COMPONENT_AT_SCOPE_MAX"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP_02"}},{"menuName":"Etched Wood Grip Finish","data":{"action":"COMPONENT_SNIPERRIFLE_VARMOD_LUXE"}}]},{"menuName":"Heavy Sniper","weaponName":"WEAPON_HEAVYSNIPER","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[{"menuName":"Normal Scope","data":{"action":"COMPONENT_AT_SCOPE_LARGE"}}]},{"menuName":"Marksman Rifle","weaponName":"WEAPON_MARKSMANRIFLE","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[{"menuName":"Extended Magazine","data":{"action":"COMPONENT_MARKSMANRIFLE_CLIP_02"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Suppressor","data":{"action":"COMPONENT_AT_AR_SUPP"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}},{"menuName":"Yusuf Amir Luxury Finish","data":{"action":"COMPONENT_MARKSMANRIFLE_VARMOD_LUXE"}}]}],"Heavy":[{"menuName":"Grenade Launcher","weaponName":"WEAPON_GRENADELAUNCHER","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_SMALL"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"Grenade Launcher (Smoke)","weaponName":"WEAPON_GRENADELAUNCHER_SMOKE","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[{"menuName":"Scope","data":{"action":"COMPONENT_AT_SCOPE_SMALL"}},{"menuName":"Flashlight","data":{"action":"COMPONENT_AT_AR_FLSH"}},{"menuName":"Grip","data":{"action":"COMPONENT_AT_AR_AFGRIP"}}]},{"menuName":"RPG","weaponName":"WEAPON_RPG","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Stinger","weaponName":"WEAPON_STINGER","data":{"sub":3},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Minigun","weaponName":"WEAPON_MINIGUN","data":{"sub":4},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Firework Launcher","weaponName":"WEAPON_FIREWORK","data":{"sub":5},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Railgun","weaponName":"WEAPON_RAILGUN","data":{"sub":6},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Homing Launcher","weaponName":"WEAPON_HOMINGLAUNCHER","data":{"sub":7},"ammo":true,"weapon":true,"submenu":[]}],"Thrown":[{"menuName":"Grenade","weaponName":"WEAPON_GRENADE","data":{"sub":0},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Sticky Bomb","weaponName":"WEAPON_STICKYBOMB","data":{"sub":1},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Proximity Mine","weaponName":"WEAPON_PROXMINE","data":{"sub":2},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Tear Gas","weaponName":"WEAPON_BZGAS","data":{"sub":3},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Smoke Grenade","weaponName":"WEAPON_SMOKEGRENADE","data":{"sub":4},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Molotov","weaponName":"WEAPON_MOLOTOV","data":{"sub":5},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Fire Extinguisher","weaponName":"WEAPON_FIREEXTINGUISHER","data":{"sub":6},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Jerry Can","weaponName":"WEAPON_PETROLCAN","data":{"sub":7},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Snowball","weaponName":"WEAPON_SNOWBALL","data":{"sub":8},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Flare","weaponName":"WEAPON_FLARE","data":{"sub":9},"ammo":true,"weapon":true,"submenu":[]},{"menuName":"Baseball","weaponName":"WEAPON_BALL","data":{"sub":10},"ammo":true,"weapon":true,"submenu":[]}]}
 
 
 // Vehicle Paint Options.
 var vehicleColors = {
-    "primarymetallic":[{'menuName':"Black", 'spawnName':0},{'menuName':"Carbon Black", 'spawnName':147},{'menuName':"Hraphite", 'spawnName':1},{'menuName':"Anhracite Black", 'spawnName':11},{'menuName':"Black Steel", 'spawnName':2},{'menuName':"Dark Steel", 'spawnName':3},{'menuName':"Silver", 'spawnName':4},{'menuName':"Bluish Silver", 'spawnName':5},{'menuName':"Rolled Steel", 'spawnName':6},{'menuName':"Shadow Silver", 'spawnName':7},{'menuName':"Stone Silver", 'spawnName':8},{'menuName':"Midnight Silver", 'spawnName':9},{'menuName':"Cast Iron Silver", 'spawnName':10},{'menuName':"Red", 'spawnName':27},{'menuName':"Torino Red", 'spawnName':28},{'menuName':"Formula Red", 'spawnName':29},{'menuName':"Lava Red", 'spawnName':150},{'menuName':"Blaze Red", 'spawnName':30},{'menuName':"Grace Red", 'spawnName':31},{'menuName':"Garnet Red", 'spawnName':32},{'menuName':"Sunset Red", 'spawnName':33},{'menuName':"Cabernet Red", 'spawnName':34},{'menuName':"Wine Red", 'spawnName':143},{'menuName':"Candy Red", 'spawnName':35},{'menuName':"Hot Pink", 'spawnName':135},{'menuName':"Pfsiter Pink", 'spawnName':137},{'menuName':"Salmon Pink", 'spawnName':136},{'menuName':"Sunrise Orange", 'spawnName':36},{'menuName':"Orange", 'spawnName':38},{'menuName':"Bright Orange", 'spawnName':138},{'menuName':"Gold", 'spawnName':99},{'menuName':"Bronze", 'spawnName':90},{'menuName':"Yellow", 'spawnName':88},{'menuName':"Race Yellow", 'spawnName':89},{'menuName':"Dew Yellow", 'spawnName':91},{'menuName':"Dark Green", 'spawnName':49},{'menuName':"Racing Green", 'spawnName':50},{'menuName':"Sea Green", 'spawnName':51},{'menuName':"Olive Green", 'spawnName':52},{'menuName':"Bright Green", 'spawnName':53},{'menuName':"Gasoline Green", 'spawnName':54},{'menuName':"Lime Green", 'spawnName':92},{'menuName':"Midnight Blue", 'spawnName':141},{'menuName':"Galaxy Blue", 'spawnName':61},{'menuName':"Dark Blue", 'spawnName':62},{'menuName':"Saxon Blue", 'spawnName':63},{'menuName':"Blue", 'spawnName':64},{'menuName':"Mariner Blue", 'spawnName':65},{'menuName':"Harbor Blue", 'spawnName':66},{'menuName':"Diamond Blue", 'spawnName':67},{'menuName':"Surf Blue", 'spawnName':68},{'menuName':"Nautical Blue", 'spawnName':69},{'menuName':"Racing Blue", 'spawnName':73},{'menuName':"Ultra Blue", 'spawnName':70},{'menuName':"Light Blue", 'spawnName':74},{'menuName':"Chocolate Brown", 'spawnName':96},{'menuName':"Bison Brown", 'spawnName':101},{'menuName':"Creeen Brown", 'spawnName':95},{'menuName':"Feltzer Brown", 'spawnName':94},{'menuName':"Maple Brown", 'spawnName':97},{'menuName':"Beechwood Brown", 'spawnName':103},{'menuName':"Sienna Brown", 'spawnName':104},{'menuName':"Saddle Brown", 'spawnName':98},{'menuName':"Moss Brown", 'spawnName':100},{'menuName':"Woodbeech Brown", 'spawnName':102},{'menuName':"Straw Brown", 'spawnName':99},{'menuName':"Sandy Brown", 'spawnName':105},{'menuName':"Bleached Brown", 'spawnName':106},{'menuName':"Schafter Purple", 'spawnName':71},{'menuName':"Spinnaker Purple", 'spawnName':72},{'menuName':"Midnight Purple", 'spawnName':142},{'menuName':"Bright Purple", 'spawnName':145},{'menuName':"Cream", 'spawnName':107},{'menuName':"Ice White", 'spawnName':111},{'menuName':"Frost White", 'spawnName':112}],
-    "secondarymetallic":[{'menuName':"Black", 'spawnName':0},{'menuName':"Carbon Black", 'spawnName':147},{'menuName':"Hraphite", 'spawnName':1},{'menuName':"Anhracite Black", 'spawnName':11},{'menuName':"Black Steel", 'spawnName':2},{'menuName':"Dark Steel", 'spawnName':3},{'menuName':"Silver", 'spawnName':4},{'menuName':"Bluish Silver", 'spawnName':5},{'menuName':"Rolled Steel", 'spawnName':6},{'menuName':"Shadow Silver", 'spawnName':7},{'menuName':"Stone Silver", 'spawnName':8},{'menuName':"Midnight Silver", 'spawnName':9},{'menuName':"Cast Iron Silver", 'spawnName':10},{'menuName':"Red", 'spawnName':27},{'menuName':"Torino Red", 'spawnName':28},{'menuName':"Formula Red", 'spawnName':29},{'menuName':"Lava Red", 'spawnName':150},{'menuName':"Blaze Red", 'spawnName':30},{'menuName':"Grace Red", 'spawnName':31},{'menuName':"Garnet Red", 'spawnName':32},{'menuName':"Sunset Red", 'spawnName':33},{'menuName':"Cabernet Red", 'spawnName':34},{'menuName':"Wine Red", 'spawnName':143},{'menuName':"Candy Red", 'spawnName':35},{'menuName':"Hot Pink", 'spawnName':135},{'menuName':"Pfsiter Pink", 'spawnName':137},{'menuName':"Salmon Pink", 'spawnName':136},{'menuName':"Sunrise Orange", 'spawnName':36},{'menuName':"Orange", 'spawnName':38},{'menuName':"Bright Orange", 'spawnName':138},{'menuName':"Gold", 'spawnName':99},{'menuName':"Bronze", 'spawnName':90},{'menuName':"Yellow", 'spawnName':88},{'menuName':"Race Yellow", 'spawnName':89},{'menuName':"Dew Yellow", 'spawnName':91},{'menuName':"Dark Green", 'spawnName':49},{'menuName':"Racing Green", 'spawnName':50},{'menuName':"Sea Green", 'spawnName':51},{'menuName':"Olive Green", 'spawnName':52},{'menuName':"Bright Green", 'spawnName':53},{'menuName':"Gasoline Green", 'spawnName':54},{'menuName':"Lime Green", 'spawnName':92},{'menuName':"Midnight Blue", 'spawnName':141},{'menuName':"Galaxy Blue", 'spawnName':61},{'menuName':"Dark Blue", 'spawnName':62},{'menuName':"Saxon Blue", 'spawnName':63},{'menuName':"Blue", 'spawnName':64},{'menuName':"Mariner Blue", 'spawnName':65},{'menuName':"Harbor Blue", 'spawnName':66},{'menuName':"Diamond Blue", 'spawnName':67},{'menuName':"Surf Blue", 'spawnName':68},{'menuName':"Nautical Blue", 'spawnName':69},{'menuName':"Racing Blue", 'spawnName':73},{'menuName':"Ultra Blue", 'spawnName':70},{'menuName':"Light Blue", 'spawnName':74},{'menuName':"Chocolate Brown", 'spawnName':96},{'menuName':"Bison Brown", 'spawnName':101},{'menuName':"Creeen Brown", 'spawnName':95},{'menuName':"Feltzer Brown", 'spawnName':94},{'menuName':"Maple Brown", 'spawnName':97},{'menuName':"Beechwood Brown", 'spawnName':103},{'menuName':"Sienna Brown", 'spawnName':104},{'menuName':"Saddle Brown", 'spawnName':98},{'menuName':"Moss Brown", 'spawnName':100},{'menuName':"Woodbeech Brown", 'spawnName':102},{'menuName':"Straw Brown", 'spawnName':99},{'menuName':"Sandy Brown", 'spawnName':105},{'menuName':"Bleached Brown", 'spawnName':106},{'menuName':"Schafter Purple", 'spawnName':71},{'menuName':"Spinnaker Purple", 'spawnName':72},{'menuName':"Midnight Purple", 'spawnName':142},{'menuName':"Bright Purple", 'spawnName':145},{'menuName':"Cream", 'spawnName':107},{'menuName':"Ice White", 'spawnName':111},{'menuName':"Frost White", 'spawnName':112}],
-    "primarymatte":[{'menuName':"Black", 'spawnName':12},{'menuName':"Gray", 'spawnName':13},{'menuName':"Light Gray", 'spawnName':14},{'menuName':"Ice White", 'spawnName':131},{'menuName':"Blue", 'spawnName':83},{'menuName':"Dark Blue", 'spawnName':82},{'menuName':"Midnight Blue", 'spawnName':84},{'menuName':"Midnight Purple", 'spawnName':149},{'menuName':"Schafter Purple", 'spawnName':148},{'menuName':"Red", 'spawnName':39},{'menuName':"Dark Red", 'spawnName':40},{'menuName':"Orange", 'spawnName':41},{'menuName':"Yellow", 'spawnName':42},{'menuName':"Lime Green", 'spawnName':55},{'menuName':"Green", 'spawnName':128},{'menuName':"Frost Green", 'spawnName':151},{'menuName':"Foliage Green", 'spawnName':155},{'menuName':"Olive Darb", 'spawnName':152},{'menuName':"Dark Earth", 'spawnName':153},{'menuName':"Desert Tan", 'spawnName':154}],
-    "secondarymatte":[{'menuName':"Black", 'spawnName':12},{'menuName':"Gray", 'spawnName':13},{'menuName':"Light Gray", 'spawnName':14},{'menuName':"Ice White", 'spawnName':131},{'menuName':"Blue", 'spawnName':83},{'menuName':"Dark Blue", 'spawnName':82},{'menuName':"Midnight Blue", 'spawnName':84},{'menuName':"Midnight Purple", 'spawnName':149},{'menuName':"Schafter Purple", 'spawnName':148},{'menuName':"Red", 'spawnName':39},{'menuName':"Dark Red", 'spawnName':40},{'menuName':"Orange", 'spawnName':41},{'menuName':"Yellow", 'spawnName':42},{'menuName':"Lime Green", 'spawnName':55},{'menuName':"Green", 'spawnName':128},{'menuName':"Frost Green", 'spawnName':151},{'menuName':"Foliage Green", 'spawnName':155},{'menuName':"Olive Darb", 'spawnName':152},{'menuName':"Dark Earth", 'spawnName':153},{'menuName':"Desert Tan", 'spawnName':154}],
-    "primarymetal":[{'menuName':"Brushed Steel",'spawnName':117},{'menuName':"Brushed Black Steel",'spawnName':118},{'menuName':"Brushed Aluminum",'spawnName':119},{'menuName':"Pure Gold",'spawnName':158},{'menuName':"Brushed Gold",'spawnName':159}],
-    "secondarymetal":[{'menuName':"Brushed Steel",'spawnName':117},{'menuName':"Brushed Black Steel",'spawnName':118},{'menuName':"Brushed Aluminum",'spawnName':119},{'menuName':"Pure Gold",'spawnName':158},{'menuName':"Brushed Gold",'spawnName':159}],
-    "primaryclassic":[{'menuName':"Black", 'spawnName':0},{'menuName':"Carbon Black", 'spawnName':147},{'menuName':"Hraphite", 'spawnName':1},{'menuName':"Anhracite Black", 'spawnName':11},{'menuName':"Black Steel", 'spawnName':2},{'menuName':"Dark Steel", 'spawnName':3},{'menuName':"Silver", 'spawnName':4},{'menuName':"Bluish Silver", 'spawnName':5},{'menuName':"Rolled Steel", 'spawnName':6},{'menuName':"Shadow Silver", 'spawnName':7},{'menuName':"Stone Silver", 'spawnName':8},{'menuName':"Midnight Silver", 'spawnName':9},{'menuName':"Cast Iron Silver", 'spawnName':10},{'menuName':"Red", 'spawnName':27},{'menuName':"Torino Red", 'spawnName':28},{'menuName':"Formula Red", 'spawnName':29},{'menuName':"Lava Red", 'spawnName':150},{'menuName':"Blaze Red", 'spawnName':30},{'menuName':"Grace Red", 'spawnName':31},{'menuName':"Garnet Red", 'spawnName':32},{'menuName':"Sunset Red", 'spawnName':33},{'menuName':"Cabernet Red", 'spawnName':34},{'menuName':"Wine Red", 'spawnName':143},{'menuName':"Candy Red", 'spawnName':35},{'menuName':"Hot Pink", 'spawnName':135},{'menuName':"Pfsiter Pink", 'spawnName':137},{'menuName':"Salmon Pink", 'spawnName':136},{'menuName':"Sunrise Orange", 'spawnName':36},{'menuName':"Orange", 'spawnName':38},{'menuName':"Bright Orange", 'spawnName':138},{'menuName':"Gold", 'spawnName':99},{'menuName':"Bronze", 'spawnName':90},{'menuName':"Yellow", 'spawnName':88},{'menuName':"Race Yellow", 'spawnName':89},{'menuName':"Dew Yellow", 'spawnName':91},{'menuName':"Dark Green", 'spawnName':49},{'menuName':"Racing Green", 'spawnName':50},{'menuName':"Sea Green", 'spawnName':51},{'menuName':"Olive Green", 'spawnName':52},{'menuName':"Bright Green", 'spawnName':53},{'menuName':"Gasoline Green", 'spawnName':54},{'menuName':"Lime Green", 'spawnName':92},{'menuName':"Midnight Blue", 'spawnName':141},{'menuName':"Galaxy Blue", 'spawnName':61},{'menuName':"Dark Blue", 'spawnName':62},{'menuName':"Saxon Blue", 'spawnName':63},{'menuName':"Blue", 'spawnName':64},{'menuName':"Mariner Blue", 'spawnName':65},{'menuName':"Harbor Blue", 'spawnName':66},{'menuName':"Diamond Blue", 'spawnName':67},{'menuName':"Surf Blue", 'spawnName':68},{'menuName':"Nautical Blue", 'spawnName':69},{'menuName':"Racing Blue", 'spawnName':73},{'menuName':"Ultra Blue", 'spawnName':70},{'menuName':"Light Blue", 'spawnName':74},{'menuName':"Chocolate Brown", 'spawnName':96},{'menuName':"Bison Brown", 'spawnName':101},{'menuName':"Creeen Brown", 'spawnName':95},{'menuName':"Feltzer Brown", 'spawnName':94},{'menuName':"Maple Brown", 'spawnName':97},{'menuName':"Beechwood Brown", 'spawnName':103},{'menuName':"Sienna Brown", 'spawnName':104},{'menuName':"Saddle Brown", 'spawnName':98},{'menuName':"Moss Brown", 'spawnName':100},{'menuName':"Woodbeech Brown", 'spawnName':102},{'menuName':"Straw Brown", 'spawnName':99},{'menuName':"Sandy Brown", 'spawnName':105},{'menuName':"Bleached Brown", 'spawnName':106},{'menuName':"Schafter Purple", 'spawnName':71},{'menuName':"Spinnaker Purple", 'spawnName':72},{'menuName':"Midnight Purple", 'spawnName':142},{'menuName':"Bright Purple", 'spawnName':145},{'menuName':"Cream", 'spawnName':107},{'menuName':"Ice White", 'spawnName':111},{'menuName':"Frost White", 'spawnName':112}],
-    "secondaryclassic":[{'menuName':"Black", 'spawnName':0},{'menuName':"Carbon Black", 'spawnName':147},{'menuName':"Hraphite", 'spawnName':1},{'menuName':"Anhracite Black", 'spawnName':11},{'menuName':"Black Steel", 'spawnName':2},{'menuName':"Dark Steel", 'spawnName':3},{'menuName':"Silver", 'spawnName':4},{'menuName':"Bluish Silver", 'spawnName':5},{'menuName':"Rolled Steel", 'spawnName':6},{'menuName':"Shadow Silver", 'spawnName':7},{'menuName':"Stone Silver", 'spawnName':8},{'menuName':"Midnight Silver", 'spawnName':9},{'menuName':"Cast Iron Silver", 'spawnName':10},{'menuName':"Red", 'spawnName':27},{'menuName':"Torino Red", 'spawnName':28},{'menuName':"Formula Red", 'spawnName':29},{'menuName':"Lava Red", 'spawnName':150},{'menuName':"Blaze Red", 'spawnName':30},{'menuName':"Grace Red", 'spawnName':31},{'menuName':"Garnet Red", 'spawnName':32},{'menuName':"Sunset Red", 'spawnName':33},{'menuName':"Cabernet Red", 'spawnName':34},{'menuName':"Wine Red", 'spawnName':143},{'menuName':"Candy Red", 'spawnName':35},{'menuName':"Hot Pink", 'spawnName':135},{'menuName':"Pfsiter Pink", 'spawnName':137},{'menuName':"Salmon Pink", 'spawnName':136},{'menuName':"Sunrise Orange", 'spawnName':36},{'menuName':"Orange", 'spawnName':38},{'menuName':"Bright Orange", 'spawnName':138},{'menuName':"Gold", 'spawnName':99},{'menuName':"Bronze", 'spawnName':90},{'menuName':"Yellow", 'spawnName':88},{'menuName':"Race Yellow", 'spawnName':89},{'menuName':"Dew Yellow", 'spawnName':91},{'menuName':"Dark Green", 'spawnName':49},{'menuName':"Racing Green", 'spawnName':50},{'menuName':"Sea Green", 'spawnName':51},{'menuName':"Olive Green", 'spawnName':52},{'menuName':"Bright Green", 'spawnName':53},{'menuName':"Gasoline Green", 'spawnName':54},{'menuName':"Lime Green", 'spawnName':92},{'menuName':"Midnight Blue", 'spawnName':141},{'menuName':"Galaxy Blue", 'spawnName':61},{'menuName':"Dark Blue", 'spawnName':62},{'menuName':"Saxon Blue", 'spawnName':63},{'menuName':"Blue", 'spawnName':64},{'menuName':"Mariner Blue", 'spawnName':65},{'menuName':"Harbor Blue", 'spawnName':66},{'menuName':"Diamond Blue", 'spawnName':67},{'menuName':"Surf Blue", 'spawnName':68},{'menuName':"Nautical Blue", 'spawnName':69},{'menuName':"Racing Blue", 'spawnName':73},{'menuName':"Ultra Blue", 'spawnName':70},{'menuName':"Light Blue", 'spawnName':74},{'menuName':"Chocolate Brown", 'spawnName':96},{'menuName':"Bison Brown", 'spawnName':101},{'menuName':"Creeen Brown", 'spawnName':95},{'menuName':"Feltzer Brown", 'spawnName':94},{'menuName':"Maple Brown", 'spawnName':97},{'menuName':"Beechwood Brown", 'spawnName':103},{'menuName':"Sienna Brown", 'spawnName':104},{'menuName':"Saddle Brown", 'spawnName':98},{'menuName':"Moss Brown", 'spawnName':100},{'menuName':"Woodbeech Brown", 'spawnName':102},{'menuName':"Straw Brown", 'spawnName':99},{'menuName':"Sandy Brown", 'spawnName':105},{'menuName':"Bleached Brown", 'spawnName':106},{'menuName':"Schafter Purple", 'spawnName':71},{'menuName':"Spinnaker Purple", 'spawnName':72},{'menuName':"Midnight Purple", 'spawnName':142},{'menuName':"Bright Purple", 'spawnName':145},{'menuName':"Cream", 'spawnName':107},{'menuName':"Ice White", 'spawnName':111},{'menuName':"Frost White", 'spawnName':112}],
-    "primarychrome":[{'menuName':"Chrome", 'spawnName':120}],
-    "secondarychrome":[{'menuName':"Chrome", 'spawnName':120}],
-    "wheelcolors" : [{'menuName':"Black", 'spawnName':0},{'menuName':"Carbon Black", 'spawnName':147},{'menuName':"Hraphite", 'spawnName':1},{'menuName':"Anhracite Black", 'spawnName':11},{'menuName':"Black Steel", 'spawnName':2},{'menuName':"Dark Steel", 'spawnName':3},{'menuName':"Silver", 'spawnName':4},{'menuName':"Bluish Silver", 'spawnName':5},{'menuName':"Rolled Steel", 'spawnName':6},{'menuName':"Shadow Silver", 'spawnName':7},{'menuName':"Stone Silver", 'spawnName':8},{'menuName':"Midnight Silver", 'spawnName':9},{'menuName':"Cast Iron Silver", 'spawnName':10},{'menuName':"Red", 'spawnName':27},{'menuName':"Torino Red", 'spawnName':28},{'menuName':"Formula Red", 'spawnName':29},{'menuName':"Lava Red", 'spawnName':150},{'menuName':"Blaze Red", 'spawnName':30},{'menuName':"Grace Red", 'spawnName':31},{'menuName':"Garnet Red", 'spawnName':32},{'menuName':"Sunset Red", 'spawnName':33},{'menuName':"Cabernet Red", 'spawnName':34},{'menuName':"Wine Red", 'spawnName':143},{'menuName':"Candy Red", 'spawnName':35},{'menuName':"Hot Pink", 'spawnName':135},{'menuName':"Pfsiter Pink", 'spawnName':137},{'menuName':"Salmon Pink", 'spawnName':136},{'menuName':"Sunrise Orange", 'spawnName':36},{'menuName':"Orange", 'spawnName':38},{'menuName':"Bright Orange", 'spawnName':138},{'menuName':"Gold", 'spawnName':99},{'menuName':"Bronze", 'spawnName':90},{'menuName':"Yellow", 'spawnName':88},{'menuName':"Race Yellow", 'spawnName':89},{'menuName':"Dew Yellow", 'spawnName':91},{'menuName':"Dark Green", 'spawnName':49},{'menuName':"Racing Green", 'spawnName':50},{'menuName':"Sea Green", 'spawnName':51},{'menuName':"Olive Green", 'spawnName':52},{'menuName':"Bright Green", 'spawnName':53},{'menuName':"Gasoline Green", 'spawnName':54},{'menuName':"Lime Green", 'spawnName':92},{'menuName':"Midnight Blue", 'spawnName':141},{'menuName':"Galaxy Blue", 'spawnName':61},{'menuName':"Dark Blue", 'spawnName':62},{'menuName':"Saxon Blue", 'spawnName':63},{'menuName':"Blue", 'spawnName':64},{'menuName':"Mariner Blue", 'spawnName':65},{'menuName':"Harbor Blue", 'spawnName':66},{'menuName':"Diamond Blue", 'spawnName':67},{'menuName':"Surf Blue", 'spawnName':68},{'menuName':"Nautical Blue", 'spawnName':69},{'menuName':"Racing Blue", 'spawnName':73},{'menuName':"Ultra Blue", 'spawnName':70},{'menuName':"Light Blue", 'spawnName':74},{'menuName':"Chocolate Brown", 'spawnName':96},{'menuName':"Bison Brown", 'spawnName':101},{'menuName':"Creeen Brown", 'spawnName':95},{'menuName':"Feltzer Brown", 'spawnName':94},{'menuName':"Maple Brown", 'spawnName':97},{'menuName':"Beechwood Brown", 'spawnName':103},{'menuName':"Sienna Brown", 'spawnName':104},{'menuName':"Saddle Brown", 'spawnName':98},{'menuName':"Moss Brown", 'spawnName':100},{'menuName':"Woodbeech Brown", 'spawnName':102},{'menuName':"Straw Brown", 'spawnName':99},{'menuName':"Sandy Brown", 'spawnName':105},{'menuName':"Bleached Brown", 'spawnName':106},{'menuName':"Schafter Purple", 'spawnName':71},{'menuName':"Spinnaker Purple", 'spawnName':72},{'menuName':"Midnight Purple", 'spawnName':142},{'menuName':"Bright Purple", 'spawnName':145},{'menuName':"Cream", 'spawnName':107},{'menuName':"Ice White", 'spawnName':111},{'menuName':"Frost White", 'spawnName':112}]
-}
+    "primarymetallic":[{"menuName":"Black","data":{"action":0}},{"menuName":"Carbon Black","data":{"action":147}},{"menuName":"Hraphite","data":{"action":1}},{"menuName":"Anhracite Black","data":{"action":11}},{"menuName":"Black Steel","data":{"action":2}},{"menuName":"Dark Steel","data":{"action":3}},{"menuName":"Silver","data":{"action":4}},{"menuName":"Bluish Silver","data":{"action":5}},{"menuName":"Rolled Steel","data":{"action":6}},{"menuName":"Shadow Silver","data":{"action":7}},{"menuName":"Stone Silver","data":{"action":8}},{"menuName":"Midnight Silver","data":{"action":9}},{"menuName":"Cast Iron Silver","data":{"action":10}},{"menuName":"Red","data":{"action":27}},{"menuName":"Torino Red","data":{"action":28}},{"menuName":"Formula Red","data":{"action":29}},{"menuName":"Lava Red","data":{"action":150}},{"menuName":"Blaze Red","data":{"action":30}},{"menuName":"Grace Red","data":{"action":31}},{"menuName":"Garnet Red","data":{"action":32}},{"menuName":"Sunset Red","data":{"action":33}},{"menuName":"Cabernet Red","data":{"action":34}},{"menuName":"Wine Red","data":{"action":143}},{"menuName":"Candy Red","data":{"action":35}},{"menuName":"Hot Pink","data":{"action":135}},{"menuName":"Pfsiter Pink","data":{"action":137}},{"menuName":"Salmon Pink","data":{"action":136}},{"menuName":"Sunrise Orange","data":{"action":36}},{"menuName":"Orange","data":{"action":38}},{"menuName":"Bright Orange","data":{"action":138}},{"menuName":"Gold","data":{"action":99}},{"menuName":"Bronze","data":{"action":90}},{"menuName":"Yellow","data":{"action":88}},{"menuName":"Race Yellow","data":{"action":89}},{"menuName":"Dew Yellow","data":{"action":91}},{"menuName":"Dark Green","data":{"action":49}},{"menuName":"Racing Green","data":{"action":50}},{"menuName":"Sea Green","data":{"action":51}},{"menuName":"Olive Green","data":{"action":52}},{"menuName":"Bright Green","data":{"action":53}},{"menuName":"Gasoline Green","data":{"action":54}},{"menuName":"Lime Green","data":{"action":92}},{"menuName":"Midnight Blue","data":{"action":141}},{"menuName":"Galaxy Blue","data":{"action":61}},{"menuName":"Dark Blue","data":{"action":62}},{"menuName":"Saxon Blue","data":{"action":63}},{"menuName":"Blue","data":{"action":64}},{"menuName":"Mariner Blue","data":{"action":65}},{"menuName":"Harbor Blue","data":{"action":66}},{"menuName":"Diamond Blue","data":{"action":67}},{"menuName":"Surf Blue","data":{"action":68}},{"menuName":"Nautical Blue","data":{"action":69}},{"menuName":"Racing Blue","data":{"action":73}},{"menuName":"Ultra Blue","data":{"action":70}},{"menuName":"Light Blue","data":{"action":74}},{"menuName":"Chocolate Brown","data":{"action":96}},{"menuName":"Bison Brown","data":{"action":101}},{"menuName":"Creeen Brown","data":{"action":95}},{"menuName":"Feltzer Brown","data":{"action":94}},{"menuName":"Maple Brown","data":{"action":97}},{"menuName":"Beechwood Brown","data":{"action":103}},{"menuName":"Sienna Brown","data":{"action":104}},{"menuName":"Saddle Brown","data":{"action":98}},{"menuName":"Moss Brown","data":{"action":100}},{"menuName":"Woodbeech Brown","data":{"action":102}},{"menuName":"Straw Brown","data":{"action":99}},{"menuName":"Sandy Brown","data":{"action":105}},{"menuName":"Bleached Brown","data":{"action":106}},{"menuName":"Schafter Purple","data":{"action":71}},{"menuName":"Spinnaker Purple","data":{"action":72}},{"menuName":"Midnight Purple","data":{"action":142}},{"menuName":"Bright Purple","data":{"action":145}},{"menuName":"Cream","data":{"action":107}},{"menuName":"Ice White","data":{"action":111}},{"menuName":"Frost White","data":{"action":112}}],
+    "secondarymetallic":[{"menuName":"Black","data":{"action":0}},{"menuName":"Carbon Black","data":{"action":147}},{"menuName":"Hraphite","data":{"action":1}},{"menuName":"Anhracite Black","data":{"action":11}},{"menuName":"Black Steel","data":{"action":2}},{"menuName":"Dark Steel","data":{"action":3}},{"menuName":"Silver","data":{"action":4}},{"menuName":"Bluish Silver","data":{"action":5}},{"menuName":"Rolled Steel","data":{"action":6}},{"menuName":"Shadow Silver","data":{"action":7}},{"menuName":"Stone Silver","data":{"action":8}},{"menuName":"Midnight Silver","data":{"action":9}},{"menuName":"Cast Iron Silver","data":{"action":10}},{"menuName":"Red","data":{"action":27}},{"menuName":"Torino Red","data":{"action":28}},{"menuName":"Formula Red","data":{"action":29}},{"menuName":"Lava Red","data":{"action":150}},{"menuName":"Blaze Red","data":{"action":30}},{"menuName":"Grace Red","data":{"action":31}},{"menuName":"Garnet Red","data":{"action":32}},{"menuName":"Sunset Red","data":{"action":33}},{"menuName":"Cabernet Red","data":{"action":34}},{"menuName":"Wine Red","data":{"action":143}},{"menuName":"Candy Red","data":{"action":35}},{"menuName":"Hot Pink","data":{"action":135}},{"menuName":"Pfsiter Pink","data":{"action":137}},{"menuName":"Salmon Pink","data":{"action":136}},{"menuName":"Sunrise Orange","data":{"action":36}},{"menuName":"Orange","data":{"action":38}},{"menuName":"Bright Orange","data":{"action":138}},{"menuName":"Gold","data":{"action":99}},{"menuName":"Bronze","data":{"action":90}},{"menuName":"Yellow","data":{"action":88}},{"menuName":"Race Yellow","data":{"action":89}},{"menuName":"Dew Yellow","data":{"action":91}},{"menuName":"Dark Green","data":{"action":49}},{"menuName":"Racing Green","data":{"action":50}},{"menuName":"Sea Green","data":{"action":51}},{"menuName":"Olive Green","data":{"action":52}},{"menuName":"Bright Green","data":{"action":53}},{"menuName":"Gasoline Green","data":{"action":54}},{"menuName":"Lime Green","data":{"action":92}},{"menuName":"Midnight Blue","data":{"action":141}},{"menuName":"Galaxy Blue","data":{"action":61}},{"menuName":"Dark Blue","data":{"action":62}},{"menuName":"Saxon Blue","data":{"action":63}},{"menuName":"Blue","data":{"action":64}},{"menuName":"Mariner Blue","data":{"action":65}},{"menuName":"Harbor Blue","data":{"action":66}},{"menuName":"Diamond Blue","data":{"action":67}},{"menuName":"Surf Blue","data":{"action":68}},{"menuName":"Nautical Blue","data":{"action":69}},{"menuName":"Racing Blue","data":{"action":73}},{"menuName":"Ultra Blue","data":{"action":70}},{"menuName":"Light Blue","data":{"action":74}},{"menuName":"Chocolate Brown","data":{"action":96}},{"menuName":"Bison Brown","data":{"action":101}},{"menuName":"Creeen Brown","data":{"action":95}},{"menuName":"Feltzer Brown","data":{"action":94}},{"menuName":"Maple Brown","data":{"action":97}},{"menuName":"Beechwood Brown","data":{"action":103}},{"menuName":"Sienna Brown","data":{"action":104}},{"menuName":"Saddle Brown","data":{"action":98}},{"menuName":"Moss Brown","data":{"action":100}},{"menuName":"Woodbeech Brown","data":{"action":102}},{"menuName":"Straw Brown","data":{"action":99}},{"menuName":"Sandy Brown","data":{"action":105}},{"menuName":"Bleached Brown","data":{"action":106}},{"menuName":"Schafter Purple","data":{"action":71}},{"menuName":"Spinnaker Purple","data":{"action":72}},{"menuName":"Midnight Purple","data":{"action":142}},{"menuName":"Bright Purple","data":{"action":145}},{"menuName":"Cream","data":{"action":107}},{"menuName":"Ice White","data":{"action":111}},{"menuName":"Frost White","data":{"action":112}}],
+    "primarymatte":[{"menuName":"Black","data":{"action":12}},{"menuName":"Gray","data":{"action":13}},{"menuName":"Light Gray","data":{"action":14}},{"menuName":"Ice White","data":{"action":131}},{"menuName":"Blue","data":{"action":83}},{"menuName":"Dark Blue","data":{"action":82}},{"menuName":"Midnight Blue","data":{"action":84}},{"menuName":"Midnight Purple","data":{"action":149}},{"menuName":"Schafter Purple","data":{"action":148}},{"menuName":"Red","data":{"action":39}},{"menuName":"Dark Red","data":{"action":40}},{"menuName":"Orange","data":{"action":41}},{"menuName":"Yellow","data":{"action":42}},{"menuName":"Lime Green","data":{"action":55}},{"menuName":"Green","data":{"action":128}},{"menuName":"Frost Green","data":{"action":151}},{"menuName":"Foliage Green","data":{"action":155}},{"menuName":"Olive Darb","data":{"action":152}},{"menuName":"Dark Earth","data":{"action":153}},{"menuName":"Desert Tan","data":{"action":154}}],
+    "secondarymatte":[{"menuName":"Black","data":{"action":12}},{"menuName":"Gray","data":{"action":13}},{"menuName":"Light Gray","data":{"action":14}},{"menuName":"Ice White","data":{"action":131}},{"menuName":"Blue","data":{"action":83}},{"menuName":"Dark Blue","data":{"action":82}},{"menuName":"Midnight Blue","data":{"action":84}},{"menuName":"Midnight Purple","data":{"action":149}},{"menuName":"Schafter Purple","data":{"action":148}},{"menuName":"Red","data":{"action":39}},{"menuName":"Dark Red","data":{"action":40}},{"menuName":"Orange","data":{"action":41}},{"menuName":"Yellow","data":{"action":42}},{"menuName":"Lime Green","data":{"action":55}},{"menuName":"Green","data":{"action":128}},{"menuName":"Frost Green","data":{"action":151}},{"menuName":"Foliage Green","data":{"action":155}},{"menuName":"Olive Darb","data":{"action":152}},{"menuName":"Dark Earth","data":{"action":153}},{"menuName":"Desert Tan","data":{"action":154}}],
+    "primarymetal":[{"menuName":"Brushed Steel","data":{"action":117}},{"menuName":"Brushed Black Steel","data":{"action":118}},{"menuName":"Brushed Aluminum","data":{"action":119}},{"menuName":"Pure Gold","data":{"action":158}},{"menuName":"Brushed Gold","data":{"action":159}}],
+    "secondarymetal":[{"menuName":"Brushed Steel","data":{"action":117}},{"menuName":"Brushed Black Steel","data":{"action":118}},{"menuName":"Brushed Aluminum","data":{"action":119}},{"menuName":"Pure Gold","data":{"action":158}},{"menuName":"Brushed Gold","data":{"action":159}}],
+    "primaryclassic":[{"menuName":"Black","data":{"action":0}},{"menuName":"Carbon Black","data":{"action":147}},{"menuName":"Hraphite","data":{"action":1}},{"menuName":"Anhracite Black","data":{"action":11}},{"menuName":"Black Steel","data":{"action":2}},{"menuName":"Dark Steel","data":{"action":3}},{"menuName":"Silver","data":{"action":4}},{"menuName":"Bluish Silver","data":{"action":5}},{"menuName":"Rolled Steel","data":{"action":6}},{"menuName":"Shadow Silver","data":{"action":7}},{"menuName":"Stone Silver","data":{"action":8}},{"menuName":"Midnight Silver","data":{"action":9}},{"menuName":"Cast Iron Silver","data":{"action":10}},{"menuName":"Red","data":{"action":27}},{"menuName":"Torino Red","data":{"action":28}},{"menuName":"Formula Red","data":{"action":29}},{"menuName":"Lava Red","data":{"action":150}},{"menuName":"Blaze Red","data":{"action":30}},{"menuName":"Grace Red","data":{"action":31}},{"menuName":"Garnet Red","data":{"action":32}},{"menuName":"Sunset Red","data":{"action":33}},{"menuName":"Cabernet Red","data":{"action":34}},{"menuName":"Wine Red","data":{"action":143}},{"menuName":"Candy Red","data":{"action":35}},{"menuName":"Hot Pink","data":{"action":135}},{"menuName":"Pfsiter Pink","data":{"action":137}},{"menuName":"Salmon Pink","data":{"action":136}},{"menuName":"Sunrise Orange","data":{"action":36}},{"menuName":"Orange","data":{"action":38}},{"menuName":"Bright Orange","data":{"action":138}},{"menuName":"Gold","data":{"action":99}},{"menuName":"Bronze","data":{"action":90}},{"menuName":"Yellow","data":{"action":88}},{"menuName":"Race Yellow","data":{"action":89}},{"menuName":"Dew Yellow","data":{"action":91}},{"menuName":"Dark Green","data":{"action":49}},{"menuName":"Racing Green","data":{"action":50}},{"menuName":"Sea Green","data":{"action":51}},{"menuName":"Olive Green","data":{"action":52}},{"menuName":"Bright Green","data":{"action":53}},{"menuName":"Gasoline Green","data":{"action":54}},{"menuName":"Lime Green","data":{"action":92}},{"menuName":"Midnight Blue","data":{"action":141}},{"menuName":"Galaxy Blue","data":{"action":61}},{"menuName":"Dark Blue","data":{"action":62}},{"menuName":"Saxon Blue","data":{"action":63}},{"menuName":"Blue","data":{"action":64}},{"menuName":"Mariner Blue","data":{"action":65}},{"menuName":"Harbor Blue","data":{"action":66}},{"menuName":"Diamond Blue","data":{"action":67}},{"menuName":"Surf Blue","data":{"action":68}},{"menuName":"Nautical Blue","data":{"action":69}},{"menuName":"Racing Blue","data":{"action":73}},{"menuName":"Ultra Blue","data":{"action":70}},{"menuName":"Light Blue","data":{"action":74}},{"menuName":"Chocolate Brown","data":{"action":96}},{"menuName":"Bison Brown","data":{"action":101}},{"menuName":"Creeen Brown","data":{"action":95}},{"menuName":"Feltzer Brown","data":{"action":94}},{"menuName":"Maple Brown","data":{"action":97}},{"menuName":"Beechwood Brown","data":{"action":103}},{"menuName":"Sienna Brown","data":{"action":104}},{"menuName":"Saddle Brown","data":{"action":98}},{"menuName":"Moss Brown","data":{"action":100}},{"menuName":"Woodbeech Brown","data":{"action":102}},{"menuName":"Straw Brown","data":{"action":99}},{"menuName":"Sandy Brown","data":{"action":105}},{"menuName":"Bleached Brown","data":{"action":106}},{"menuName":"Schafter Purple","data":{"action":71}},{"menuName":"Spinnaker Purple","data":{"action":72}},{"menuName":"Midnight Purple","data":{"action":142}},{"menuName":"Bright Purple","data":{"action":145}},{"menuName":"Cream","data":{"action":107}},{"menuName":"Ice White","data":{"action":111}},{"menuName":"Frost White","data":{"action":112}}],
+    "secondaryclassic":[{"menuName":"Black","data":{"action":0}},{"menuName":"Carbon Black","data":{"action":147}},{"menuName":"Hraphite","data":{"action":1}},{"menuName":"Anhracite Black","data":{"action":11}},{"menuName":"Black Steel","data":{"action":2}},{"menuName":"Dark Steel","data":{"action":3}},{"menuName":"Silver","data":{"action":4}},{"menuName":"Bluish Silver","data":{"action":5}},{"menuName":"Rolled Steel","data":{"action":6}},{"menuName":"Shadow Silver","data":{"action":7}},{"menuName":"Stone Silver","data":{"action":8}},{"menuName":"Midnight Silver","data":{"action":9}},{"menuName":"Cast Iron Silver","data":{"action":10}},{"menuName":"Red","data":{"action":27}},{"menuName":"Torino Red","data":{"action":28}},{"menuName":"Formula Red","data":{"action":29}},{"menuName":"Lava Red","data":{"action":150}},{"menuName":"Blaze Red","data":{"action":30}},{"menuName":"Grace Red","data":{"action":31}},{"menuName":"Garnet Red","data":{"action":32}},{"menuName":"Sunset Red","data":{"action":33}},{"menuName":"Cabernet Red","data":{"action":34}},{"menuName":"Wine Red","data":{"action":143}},{"menuName":"Candy Red","data":{"action":35}},{"menuName":"Hot Pink","data":{"action":135}},{"menuName":"Pfsiter Pink","data":{"action":137}},{"menuName":"Salmon Pink","data":{"action":136}},{"menuName":"Sunrise Orange","data":{"action":36}},{"menuName":"Orange","data":{"action":38}},{"menuName":"Bright Orange","data":{"action":138}},{"menuName":"Gold","data":{"action":99}},{"menuName":"Bronze","data":{"action":90}},{"menuName":"Yellow","data":{"action":88}},{"menuName":"Race Yellow","data":{"action":89}},{"menuName":"Dew Yellow","data":{"action":91}},{"menuName":"Dark Green","data":{"action":49}},{"menuName":"Racing Green","data":{"action":50}},{"menuName":"Sea Green","data":{"action":51}},{"menuName":"Olive Green","data":{"action":52}},{"menuName":"Bright Green","data":{"action":53}},{"menuName":"Gasoline Green","data":{"action":54}},{"menuName":"Lime Green","data":{"action":92}},{"menuName":"Midnight Blue","data":{"action":141}},{"menuName":"Galaxy Blue","data":{"action":61}},{"menuName":"Dark Blue","data":{"action":62}},{"menuName":"Saxon Blue","data":{"action":63}},{"menuName":"Blue","data":{"action":64}},{"menuName":"Mariner Blue","data":{"action":65}},{"menuName":"Harbor Blue","data":{"action":66}},{"menuName":"Diamond Blue","data":{"action":67}},{"menuName":"Surf Blue","data":{"action":68}},{"menuName":"Nautical Blue","data":{"action":69}},{"menuName":"Racing Blue","data":{"action":73}},{"menuName":"Ultra Blue","data":{"action":70}},{"menuName":"Light Blue","data":{"action":74}},{"menuName":"Chocolate Brown","data":{"action":96}},{"menuName":"Bison Brown","data":{"action":101}},{"menuName":"Creeen Brown","data":{"action":95}},{"menuName":"Feltzer Brown","data":{"action":94}},{"menuName":"Maple Brown","data":{"action":97}},{"menuName":"Beechwood Brown","data":{"action":103}},{"menuName":"Sienna Brown","data":{"action":104}},{"menuName":"Saddle Brown","data":{"action":98}},{"menuName":"Moss Brown","data":{"action":100}},{"menuName":"Woodbeech Brown","data":{"action":102}},{"menuName":"Straw Brown","data":{"action":99}},{"menuName":"Sandy Brown","data":{"action":105}},{"menuName":"Bleached Brown","data":{"action":106}},{"menuName":"Schafter Purple","data":{"action":71}},{"menuName":"Spinnaker Purple","data":{"action":72}},{"menuName":"Midnight Purple","data":{"action":142}},{"menuName":"Bright Purple","data":{"action":145}},{"menuName":"Cream","data":{"action":107}},{"menuName":"Ice White","data":{"action":111}},{"menuName":"Frost White","data":{"action":112}}],
+    "primarychrome":[{"menuName":"Chrome","data":{"action":120}}],
+    "secondarychrome":[{"menuName":"Chrome","data":{"action":120}}],
+    "wheelcolors" : [{"menuName":"Black","data":{"action":0}},{"menuName":"Carbon Black","data":{"action":147}},{"menuName":"Hraphite","data":{"action":1}},{"menuName":"Anhracite Black","data":{"action":11}},{"menuName":"Black Steel","data":{"action":2}},{"menuName":"Dark Steel","data":{"action":3}},{"menuName":"Silver","data":{"action":4}},{"menuName":"Bluish Silver","data":{"action":5}},{"menuName":"Rolled Steel","data":{"action":6}},{"menuName":"Shadow Silver","data":{"action":7}},{"menuName":"Stone Silver","data":{"action":8}},{"menuName":"Midnight Silver","data":{"action":9}},{"menuName":"Cast Iron Silver","data":{"action":10}},{"menuName":"Red","data":{"action":27}},{"menuName":"Torino Red","data":{"action":28}},{"menuName":"Formula Red","data":{"action":29}},{"menuName":"Lava Red","data":{"action":150}},{"menuName":"Blaze Red","data":{"action":30}},{"menuName":"Grace Red","data":{"action":31}},{"menuName":"Garnet Red","data":{"action":32}},{"menuName":"Sunset Red","data":{"action":33}},{"menuName":"Cabernet Red","data":{"action":34}},{"menuName":"Wine Red","data":{"action":143}},{"menuName":"Candy Red","data":{"action":35}},{"menuName":"Hot Pink","data":{"action":135}},{"menuName":"Pfsiter Pink","data":{"action":137}},{"menuName":"Salmon Pink","data":{"action":136}},{"menuName":"Sunrise Orange","data":{"action":36}},{"menuName":"Orange","data":{"action":38}},{"menuName":"Bright Orange","data":{"action":138}},{"menuName":"Gold","data":{"action":99}},{"menuName":"Bronze","data":{"action":90}},{"menuName":"Yellow","data":{"action":88}},{"menuName":"Race Yellow","data":{"action":89}},{"menuName":"Dew Yellow","data":{"action":91}},{"menuName":"Dark Green","data":{"action":49}},{"menuName":"Racing Green","data":{"action":50}},{"menuName":"Sea Green","data":{"action":51}},{"menuName":"Olive Green","data":{"action":52}},{"menuName":"Bright Green","data":{"action":53}},{"menuName":"Gasoline Green","data":{"action":54}},{"menuName":"Lime Green","data":{"action":92}},{"menuName":"Midnight Blue","data":{"action":141}},{"menuName":"Galaxy Blue","data":{"action":61}},{"menuName":"Dark Blue","data":{"action":62}},{"menuName":"Saxon Blue","data":{"action":63}},{"menuName":"Blue","data":{"action":64}},{"menuName":"Mariner Blue","data":{"action":65}},{"menuName":"Harbor Blue","data":{"action":66}},{"menuName":"Diamond Blue","data":{"action":67}},{"menuName":"Surf Blue","data":{"action":68}},{"menuName":"Nautical Blue","data":{"action":69}},{"menuName":"Racing Blue","data":{"action":73}},{"menuName":"Ultra Blue","data":{"action":70}},{"menuName":"Light Blue","data":{"action":74}},{"menuName":"Chocolate Brown","data":{"action":96}},{"menuName":"Bison Brown","data":{"action":101}},{"menuName":"Creeen Brown","data":{"action":95}},{"menuName":"Feltzer Brown","data":{"action":94}},{"menuName":"Maple Brown","data":{"action":97}},{"menuName":"Beechwood Brown","data":{"action":103}},{"menuName":"Sienna Brown","data":{"action":104}},{"menuName":"Saddle Brown","data":{"action":98}},{"menuName":"Moss Brown","data":{"action":100}},{"menuName":"Woodbeech Brown","data":{"action":102}},{"menuName":"Straw Brown","data":{"action":99}},{"menuName":"Sandy Brown","data":{"action":105}},{"menuName":"Bleached Brown","data":{"action":106}},{"menuName":"Schafter Purple","data":{"action":71}},{"menuName":"Spinnaker Purple","data":{"action":72}},{"menuName":"Midnight Purple","data":{"action":142}},{"menuName":"Bright Purple","data":{"action":145}},{"menuName":"Cream","data":{"action":107}},{"menuName":"Ice White","data":{"action":111}},{"menuName":"Frost White","data":{"action":112}}]
+};
+
 
 // Vehicle RGB colors
 var rgbcolors = {
-    "smoke": [{"menuName":"Default", "spawnName": "18 17 16"},{"menuName":"Black", "spawnName": "8 8 8"},{"menuName":"Graphite", "spawnName": "15 15 15"},{"menuName":"Anthracite Black", "spawnName": "18 17 16"},{"menuName":"Black Steel", "spawnName": "28 30 33"},{"menuName":"Dark Silver", "spawnName": "41 44 46"},{"menuName":"Silver", "spawnName": "90 94 102"},{"menuName":"Blue Silver", "spawnName": "119 124 135"},{"menuName":"Rolled Steel", "spawnName": "81 84 89"},{"menuName":"Shadow Silver", "spawnName": "50 59 71"},{"menuName":"Stone Silver", "spawnName": "51 51 51"},{"menuName":"Midnight Silver", "spawnName": "31 34 38"},{"menuName":"Cast Iron Silver", "spawnName": "35 41 46"},{"menuName":"Red", "spawnName": "105 0 0"},{"menuName":"Torino Red", "spawnName": "138 11 0"},{"menuName":"Formula Red", "spawnName": "107 0 0"},{"menuName":"Lava Red", "spawnName": "107 11 0"},{"menuName":"Blaze Red", "spawnName": "97 16 9"},{"menuName":"Grace Red", "spawnName": "74 10 10"},{"menuName":"Garnet Red", "spawnName": "71 14 14"},{"menuName":"Sunset Red", "spawnName": "56 12 0"},{"menuName":"Cabernet Red", "spawnName": "38 3 11"},{"menuName":"Wine Red", "spawnName": "8 0 0"},{"menuName":"Candy Red", "spawnName": "99 0 18"},{"menuName":"Hot Pink", "spawnName": "176 18 89"},{"menuName":"Pink", "spawnName": "143 47 85"},{"menuName":"Salmon Pink", "spawnName": "246 151 153"},{"menuName":"Sunrise Orange", "spawnName": "128 40 0"},{"menuName":"Bright Orange", "spawnName": "194 102 16"},{"menuName":"Gold", "spawnName": "94 83 67"},{"menuName":"Bronze", "spawnName": "74 52 27"},{"menuName":"Yellow", "spawnName": "245 137 15"},{"menuName":"Flur Yellow", "spawnName": "162 168 39"},{"menuName":"Dark Green", "spawnName": "0 18 7"},{"menuName":"Sea Green", "spawnName": "0 33 30"},{"menuName":"Olive Green", "spawnName": "31 38 30"},{"menuName":"Bright Green", "spawnName": "0 56 5"},{"menuName":"Petrol Green", "spawnName": "11 65 69"},{"menuName":"Lime Green", "spawnName": "86 143 0"},{"menuName":"Midnight Blue", "spawnName": "0 1 8"},{"menuName":"Galaxy Blue", "spawnName": "0 13 20"},{"menuName":"Dark Blue", "spawnName": "0 16 41"},{"menuName":"Saxon Blue", "spawnName": "28 47 79"},{"menuName":"Blue", "spawnName": "0 27 87"},{"menuName":"Mariner Blue", "spawnName": "59 78 120"},{"menuName":"Harbor Blue", "spawnName": "39 45 59"},{"menuName":"Diamond Blue", "spawnName": "149 178 219"},{"menuName":"Surf Blue", "spawnName": "62 98 122"},{"menuName":"Nautical Blue", "spawnName": "28 49 64"},{"menuName":"Racing Blue", "spawnName": "14 49 109"},{"menuName":"Light Blue", "spawnName": "57 90 131"},{"menuName":"Bison Brown", "spawnName": "34 25 24"},{"menuName":"Creek Brown", "spawnName": "38 33 23"},{"menuName":"Umber Brown", "spawnName": "41 27 6"},{"menuName":"Maple Brown", "spawnName": "51 33 17"},{"menuName":"Beechwood Brown", "spawnName": "36 19 9"},{"menuName":"Sienna Brown", "spawnName": "59 23 0"},{"menuName":"Saddle Brown", "spawnName": "61 48 35"},{"menuName":"Moss Brown", "spawnName": "55 56 43"},{"menuName":"Woodbeech Brown", "spawnName": "87 80 54"},{"menuName":"Straw Brown", "spawnName": "94 83 67"},{"menuName":"Sandy Brown", "spawnName": "110 98 70"},{"menuName":"Bleeched Brown", "spawnName": "153 141 115"},{"menuName":"Purple", "spawnName": "26 24 46"},{"menuName":"Spin Purple", "spawnName": "22 22 41"},{"menuName":"Might Purple", "spawnName": "5 0 8"},{"menuName":"Bright Purple", "spawnName": "50 6 66"},{"menuName":"Cream", "spawnName": "207 192 165"},{"menuName":"Frost White", "spawnName": "179 185 201"}],
-    "neon" : [{"menuName":"White", "spawnName": "222 222 255"},{"menuName":"Cream", "spawnName": "207 192 165"},{"menuName":"Red", "spawnName": "255 1 1"},{"menuName":"Lava Red", "spawnName": "105 0 0"},{"menuName":"Grace Red", "spawnName": "74 10 10"},{"menuName":"Garnet Red", "spawnName": "71 14 14"},{"menuName":"Wine Red", "spawnName": "8 0 0"},{"menuName":"Pony Pink", "spawnName": "255 50 100"},{"menuName":"Fluorescent Pink", "spawnName": "255 5 190"},{"menuName":"Light Pink", "spawnName": "38 3 11"},{"menuName":"Hot Pink", "spawnName": "99 0 18"},{"menuName":"Pink", "spawnName": "176 18 89"},{"menuName":"Salmon Pink", "spawnName": "143 47 85"},{"menuName":"Orange", "spawnName": "138 11 0"},{"menuName":"Light Orange", "spawnName": "107 11 0"},{"menuName":"Gold", "spawnName": "255 62 0"},{"menuName":"Light Gold", "spawnName": "194 102 16"},{"menuName":"Golden Shower", "spawnName": "255 150 5"},{"menuName":"Bronze", "spawnName": "74 52 27"},{"menuName":"Yellow", "spawnName": "245 137 15"},{"menuName":"Flur Yellow", "spawnName": "162 168 39"},{"menuName":"Flurorescent Yellow", "spawnName": "255 255 0"},{"menuName":"Mint Green", "spawnName": "0 255 140"},{"menuName":"Fluorescent Green", "spawnName": "94 255 1"},{"menuName":"Dark Green", "spawnName": "0 18 7"},{"menuName":"Sea Green", "spawnName": "0 33 30"},{"menuName":"Bright Green", "spawnName": "0 56 5"},{"menuName":"Petrol Green", "spawnName": "11 65 69"},{"menuName":"Electric Blue", "spawnName": "3 83 255"},{"menuName":"Midnight Blue", "spawnName": "0 1 8"},{"menuName":"Galaxy Blue", "spawnName": "0 13 20"},{"menuName":"Dark Blue", "spawnName": "0 16 41"},{"menuName":"Blue", "spawnName": "0 27 87"},{"menuName":"Racing Blue", "spawnName": "14 49 109"},{"menuName":"Purple", "spawnName": "35 1 255"},{"menuName":"Spin Purple", "spawnName": "26 24 46"},{"menuName":"Might Purple", "spawnName": "5 0 8"},{"menuName":"Bright Purple", "spawnName": "50 6 66"},{"menuName":"Blacklight", "spawnName": "15 3 255"}]
+    "smoke": [{"menuName":"Default","data":{"action": "18 17 16"}},{"menuName":"Black","data":{"action": "8 8 8"}},{"menuName":"Graphite","data":{"action": "15 15 15"}},{"menuName":"Anthracite Black","data":{"action": "18 17 16"}},{"menuName":"Black Steel","data":{"action": "28 30 33"}},{"menuName":"Dark Silver","data":{"action": "41 44 46"}},{"menuName":"Silver","data":{"action": "90 94 102"}},{"menuName":"Blue Silver","data":{"action": "119 124 135"}},{"menuName":"Rolled Steel","data":{"action": "81 84 89"}},{"menuName":"Shadow Silver","data":{"action": "50 59 71"}},{"menuName":"Stone Silver","data":{"action": "51 51 51"}},{"menuName":"Midnight Silver","data":{"action": "31 34 38"}},{"menuName":"Cast Iron Silver","data":{"action": "35 41 46"}},{"menuName":"Red","data":{"action": "105 0 0"}},{"menuName":"Torino Red","data":{"action": "138 11 0"}},{"menuName":"Formula Red","data":{"action": "107 0 0"}},{"menuName":"Lava Red","data":{"action": "107 11 0"}},{"menuName":"Blaze Red","data":{"action": "97 16 9"}},{"menuName":"Grace Red","data":{"action": "74 10 10"}},{"menuName":"Garnet Red","data":{"action": "71 14 14"}},{"menuName":"Sunset Red","data":{"action": "56 12 0"}},{"menuName":"Cabernet Red","data":{"action": "38 3 11"}},{"menuName":"Wine Red","data":{"action": "8 0 0"}},{"menuName":"Candy Red","data":{"action": "99 0 18"}},{"menuName":"Hot Pink","data":{"action": "176 18 89"}},{"menuName":"Pink","data":{"action": "143 47 85"}},{"menuName":"Salmon Pink","data":{"action": "246 151 153"}},{"menuName":"Sunrise Orange","data":{"action": "128 40 0"}},{"menuName":"Bright Orange","data":{"action": "194 102 16"}},{"menuName":"Gold","data":{"action": "94 83 67"}},{"menuName":"Bronze","data":{"action": "74 52 27"}},{"menuName":"Yellow","data":{"action": "245 137 15"}},{"menuName":"Flur Yellow","data":{"action": "162 168 39"}},{"menuName":"Dark Green","data":{"action": "0 18 7"}},{"menuName":"Sea Green","data":{"action": "0 33 30"}},{"menuName":"Olive Green","data":{"action": "31 38 30"}},{"menuName":"Bright Green","data":{"action": "0 56 5"}},{"menuName":"Petrol Green","data":{"action": "11 65 69"}},{"menuName":"Lime Green","data":{"action": "86 143 0"}},{"menuName":"Midnight Blue","data":{"action": "0 1 8"}},{"menuName":"Galaxy Blue","data":{"action": "0 13 20"}},{"menuName":"Dark Blue","data":{"action": "0 16 41"}},{"menuName":"Saxon Blue","data":{"action": "28 47 79"}},{"menuName":"Blue","data":{"action": "0 27 87"}},{"menuName":"Mariner Blue","data":{"action": "59 78 120"}},{"menuName":"Harbor Blue","data":{"action": "39 45 59"}},{"menuName":"Diamond Blue","data":{"action": "149 178 219"}},{"menuName":"Surf Blue","data":{"action": "62 98 122"}},{"menuName":"Nautical Blue","data":{"action": "28 49 64"}},{"menuName":"Racing Blue","data":{"action": "14 49 109"}},{"menuName":"Light Blue","data":{"action": "57 90 131"}},{"menuName":"Bison Brown","data":{"action": "34 25 24"}},{"menuName":"Creek Brown","data":{"action": "38 33 23"}},{"menuName":"Umber Brown","data":{"action": "41 27 6"}},{"menuName":"Maple Brown","data":{"action": "51 33 17"}},{"menuName":"Beechwood Brown","data":{"action": "36 19 9"}},{"menuName":"Sienna Brown","data":{"action": "59 23 0"}},{"menuName":"Saddle Brown","data":{"action": "61 48 35"}},{"menuName":"Moss Brown","data":{"action": "55 56 43"}},{"menuName":"Woodbeech Brown","data":{"action": "87 80 54"}},{"menuName":"Straw Brown","data":{"action": "94 83 67"}},{"menuName":"Sandy Brown","data":{"action": "110 98 70"}},{"menuName":"Bleeched Brown","data":{"action": "153 141 115"}},{"menuName":"Purple","data":{"action": "26 24 46"}},{"menuName":"Spin Purple","data":{"action": "22 22 41"}},{"menuName":"Might Purple","data":{"action": "5 0 8"}},{"menuName":"Bright Purple","data":{"action": "50 6 66"}},{"menuName":"Cream","data":{"action": "207 192 165"}},{"menuName":"Frost White","data":{"action": "179 185 201"}}],
+    "neon" : [{"menuName":"White","data":{"action": "222 222 255"}},{"menuName":"Cream","data":{"action": "207 192 165"}},{"menuName":"Red","data":{"action": "255 1 1"}},{"menuName":"Lava Red","data":{"action": "105 0 0"}},{"menuName":"Grace Red","data":{"action": "74 10 10"}},{"menuName":"Garnet Red","data":{"action": "71 14 14"}},{"menuName":"Wine Red","data":{"action": "8 0 0"}},{"menuName":"Pony Pink","data":{"action": "255 50 100"}},{"menuName":"Fluorescent Pink","data":{"action": "255 5 190"}},{"menuName":"Light Pink","data":{"action": "38 3 11"}},{"menuName":"Hot Pink","data":{"action": "99 0 18"}},{"menuName":"Pink","data":{"action": "176 18 89"}},{"menuName":"Salmon Pink","data":{"action": "143 47 85"}},{"menuName":"Orange","data":{"action": "138 11 0"}},{"menuName":"Light Orange","data":{"action": "107 11 0"}},{"menuName":"Gold","data":{"action": "255 62 0"}},{"menuName":"Light Gold","data":{"action": "194 102 16"}},{"menuName":"Golden Shower","data":{"action": "255 150 5"}},{"menuName":"Bronze","data":{"action": "74 52 27"}},{"menuName":"Yellow","data":{"action": "245 137 15"}},{"menuName":"Flur Yellow","data":{"action": "162 168 39"}},{"menuName":"Flurorescent Yellow","data":{"action": "255 255 0"}},{"menuName":"Mint Green","data":{"action": "0 255 140"}},{"menuName":"Fluorescent Green","data":{"action": "94 255 1"}},{"menuName":"Dark Green","data":{"action": "0 18 7"}},{"menuName":"Sea Green","data":{"action": "0 33 30"}},{"menuName":"Bright Green","data":{"action": "0 56 5"}},{"menuName":"Petrol Green","data":{"action": "11 65 69"}},{"menuName":"Electric Blue","data":{"action": "3 83 255"}},{"menuName":"Midnight Blue","data":{"action": "0 1 8"}},{"menuName":"Galaxy Blue","data":{"action": "0 13 20"}},{"menuName":"Dark Blue","data":{"action": "0 16 41"}},{"menuName":"Blue","data":{"action": "0 27 87"}},{"menuName":"Racing Blue","data":{"action": "14 49 109"}},{"menuName":"Purple","data":{"action": "35 1 255"}},{"menuName":"Spin Purple","data":{"action": "26 24 46"}},{"menuName":"Might Purple","data":{"action": "5 0 8"}},{"menuName":"Bright Purple","data":{"action": "50 6 66"}},{"menuName":"Blacklight","data":{"action": "15 3 255"}}]
 };
 
+
+// Vehicle Modification Objects.
+var vehicle_mods = {
+    "vehiclehorns" : [{"menuName":"Stock Horn","data": {"action":"14 -1"}},{"menuName":"Truck Horn","data": {"action":"14 0"}},{"menuName":"Police Horn","data": {"action":"14 1"}},{"menuName":"Clown Horn","data": {"action":"14 2"}},{"menuName":"Musical Horn 1","data": {"action":"14 3"}},{"menuName":"Musical Horn 2","data": {"action":"14 4"}},{"menuName":"Musical Horn 3","data": {"action":"14 5"}},{"menuName":"Musical Horn 4","data": {"action":"14 6"}},{"menuName":"Musical Horn 5","data": {"action":"14 7"}},{"menuName":"Sadtrombone Horn","data": {"action":"14 8"}},{"menuName":"Calssical Horn 1","data": {"action":"14 9"}},{"menuName":"Calssical Horn 2","data": {"action":"14 10"}},{"menuName":"Calssical Horn 3","data": {"action":"14 11"}},{"menuName":"Calssical Horn 4","data": {"action":"14 12"}},{"menuName":"Calssical Horn 5","data": {"action":"14 13"}},{"menuName":"Calssical Horn 6","data": {"action":"14 14"}},{"menuName":"Calssical Horn 7","data": {"action":"14 15"}},{"menuName":"Scaledo Horn","data": {"action":"14 16"}},{"menuName":"Scalere Horn","data": {"action":"14 17"}},{"menuName":"Scalemi Horn","data": {"action":"14 18"}},{"menuName":"Scalefa Horn","data": {"action":"14 19"}},{"menuName":"Scalesol Horn","data": {"action":"14 20"}},{"menuName":"Scalela Horn","data": {"action":"14 21"}},{"menuName":"Scaleti Horn","data": {"action":"14 22"}},{"menuName":"Scaledo Horn High","data": {"action":"14 23"}},{"menuName":"Jazz Horn 1","data": {"action":"14 25"}},{"menuName":"Jazz Horn 2","data": {"action":"14 26"}},{"menuName":"Jazz Horn 3","data": {"action":"14 27"}},{"menuName":"Jazzloop Horn","data": {"action":"14 28"}},{"menuName":"Starspangban Horn 1","data": {"action":"14 29"}},{"menuName":"Starspangban Horn 2","data": {"action":"14 30"}},{"menuName":"Starspangban Horn 3","data": {"action":"14 31"}},{"menuName":"Starspangban Horn 4","data": {"action":"14 32"}},{"menuName":"Classicalloop Horn 1","data": {"action":"14 33"}},{"menuName":"Classical Horn 8","data": {"action":"14 34"}},{"menuName":"Classicalloop Horn 2","data": {"action":"14 35"}}],
+    "wheel_sport": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Inferno", "data": {"action":"23 0"}},{"menuName" : "Deepfive", "data": {"action":"23 1"}},{"menuName" : "Lozspeed", "data": {"action":"23 2"}},{"menuName" : "Diamondcut", "data": {"action":"23 3"}},{"menuName" : "Chrono", "data": {"action":"23 4"}},{"menuName" : "Feroccirr", "data": {"action":"23 5"}},{"menuName" : "Fiftynine", "data": {"action":"23 6"}},{"menuName" : "Mercie", "data": {"action":"23 7"}},{"menuName" : "Syntheticz", "data": {"action":"23 8"}},{"menuName" : "Organictyped", "data": {"action":"23 9"}},{"menuName" : "Endov1", "data": {"action":"23 10"}},{"menuName" : "Duper7", "data": {"action":"23 11"}},{"menuName" : "Uzer", "data": {"action":"23 12"}},{"menuName" : "Groundride", "data": {"action":"23 13"}},{"menuName" : "Spacer", "data": {"action":"23 14"}},{"menuName" : "Venum", "data": {"action":"23 15"}},{"menuName" : "Cosmo", "data": {"action":"23 16"}},{"menuName" : "Dashvip", "data": {"action":"23 17"}},{"menuName" : "Icekid", "data": {"action":"23 18"}},{"menuName" : "Ruffeld", "data": {"action":"23 19"}},{"menuName" : "Wangenmaster", "data": {"action":"23 20"}},{"menuName" : "Superfive", "data": {"action":"23 21"}},{"menuName" : "Endov2", "data": {"action":"23 22"}},{"menuName" : "Slitsix", "data": {"action":"23 23"}}],
+    "wheel_suv": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Vip", "data": {"action":"23 0"}},{"menuName" : "Benefactor", "data": {"action":"23 1"}},{"menuName" : "Cosmo", "data": {"action":"23 2"}},{"menuName" : "Bippu", "data": {"action":"23 3"}},{"menuName" : "Royalsix", "data": {"action":"23 4"}},{"menuName" : "Fagorme", "data": {"action":"23 5"}},{"menuName" : "Deluxe", "data": {"action":"23 6"}},{"menuName" : "Icedout", "data": {"action":"23 7"}},{"menuName" : "Cognscenti", "data": {"action":"23 8"}},{"menuName" : "Lozspeedten", "data": {"action":"23 9"}},{"menuName" : "Supernova", "data": {"action":"23 10"}},{"menuName" : "Obeyrs", "data": {"action":"23 11"}},{"menuName" : "Lozspeedballer", "data": {"action":"23 12"}},{"menuName" : "Extra vaganzo", "data": {"action":"23 13"}},{"menuName" : "Splitsix", "data": {"action":"23 14"}},{"menuName" : "Empowered", "data": {"action":"23 15"}},{"menuName" : "Sunrise", "data": {"action":"23 16"}},{"menuName" : "Dashvip", "data": {"action":"23 17"}},{"menuName" : "Cutter", "data": {"action":"23 18"}}],
+    "wheel_offroad": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Raider", "data": {"action":"23 0"}},{"menuName" : "Mudslinger", "data": {"action":"23 1"}},{"menuName" : "Nevis", "data": {"action":"23 2"}},{"menuName" : "Cairngorm", "data": {"action":"23 3"}},{"menuName" : "Amazon", "data": {"action":"23 4"}},{"menuName" : "Challenger", "data": {"action":"23 5"}},{"menuName" : "Dunebasher", "data": {"action":"23 6"}},{"menuName" : "Fivestar", "data": {"action":"23 7"}},{"menuName" : "Rockcrawler", "data": {"action":"23 8"}},{"menuName" : "Milspecsteelie", "data": {"action":"23 9"}}],
+    "wheel_tuner": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Cosmo", "data": {"action":"23 0"}},{"menuName" : "Supermesh", "data": {"action":"23 1"}},{"menuName" : "Outsider", "data": {"action":"23 2"}},{"menuName" : "Rollas", "data": {"action":"23 3"}},{"menuName" : "Driffmeister", "data": {"action":"23 4"}},{"menuName" : "Slicer", "data": {"action":"23 5"}},{"menuName" : "Elquatro", "data": {"action":"23 6"}},{"menuName" : "Dubbed", "data": {"action":"23 7"}},{"menuName" : "Fivestar", "data": {"action":"23 8"}},{"menuName" : "Slideways", "data": {"action":"23 9"}},{"menuName" : "Apex", "data": {"action":"23 10"}},{"menuName" : "Stancedeg", "data": {"action":"23 11"}},{"menuName" : "Countersteer", "data": {"action":"23 12"}},{"menuName" : "Endov1", "data": {"action":"23 13"}},{"menuName" : "Endov2dish", "data": {"action":"23 14"}},{"menuName" : "Guppez", "data": {"action":"23 15"}},{"menuName" : "Chokadori", "data": {"action":"23 16"}},{"menuName" : "Chicane", "data": {"action":"23 17"}},{"menuName" : "Saisoku", "data": {"action":"23 18"}},{"menuName" : "Dishedeight", "data": {"action":"23 19"}},{"menuName" : "Fujiwara", "data": {"action":"23 20"}},{"menuName" : "Zokusha", "data": {"action":"23 21"}},{"menuName" : "Battlevill", "data": {"action":"23 22"}},{"menuName" : "Rallymaster", "data": {"action":"23 23"}}],
+    "wheel_highend": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Shadow", "data": {"action":"23 0"}},{"menuName" : "Hyper", "data": {"action":"23 1"}},{"menuName" : "Blade", "data": {"action":"23 2"}},{"menuName" : "Diamond", "data": {"action":"23 3"}},{"menuName" : "Supagee", "data": {"action":"23 4"}},{"menuName" : "Chromaticz", "data": {"action":"23 5"}},{"menuName" : "Merciechlip", "data": {"action":"23 6"}},{"menuName" : "Obeyrs", "data": {"action":"23 7"}},{"menuName" : "Gtchrome", "data": {"action":"23 8"}},{"menuName" : "Cheetahr", "data": {"action":"23 9"}},{"menuName" : "Solar", "data": {"action":"23 10"}},{"menuName" : "Splitten", "data": {"action":"23 11"}},{"menuName" : "Dashvip", "data": {"action":"23 12"}},{"menuName" : "Lozspeedten", "data": {"action":"23 13"}},{"menuName" : "Carboninferno", "data": {"action":"23 14"}},{"menuName" : "Carbonshadow", "data": {"action":"23 15"}},{"menuName" : "Carbonz", "data": {"action":"23 16"}},{"menuName" : "Carbonsolar", "data": {"action":"23 17"}},{"menuName" : "Carboncheetahr", "data": {"action":"23 18"}},{"menuName" : "Carbonsracer", "data": {"action":"23 19"}}],
+    "wheel_lowrider": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Flare", "data": {"action":"23 0"}},{"menuName" : "Wired", "data": {"action":"23 1"}},{"menuName" : "Triplegolds", "data": {"action":"23 2"}},{"menuName" : "Bigworm", "data": {"action":"23 3"}},{"menuName" : "Sevenfives", "data": {"action":"23 4"}},{"menuName" : "Splitsix", "data": {"action":"23 5"}},{"menuName" : "Freshmesh", "data": {"action":"23 6"}},{"menuName" : "Leadsled", "data": {"action":"23 7"}},{"menuName" : "Turbine", "data": {"action":"23 8"}},{"menuName" : "Superfin", "data": {"action":"23 9"}},{"menuName" : "Classicrod", "data": {"action":"23 10"}},{"menuName" : "Dollar", "data": {"action":"23 11"}},{"menuName" : "Dukes", "data": {"action":"23 12"}},{"menuName" : "Lowfive", "data": {"action":"23 13"}},{"menuName" : "Gooch", "data": {"action":"23 14"}}],
+    "wheel_muscle": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Classicfive", "data": {"action":"23 0"}},{"menuName" : "Dukes", "data": {"action":"23 1"}},{"menuName" : "Musclefreak", "data": {"action":"23 2"}},{"menuName" : "Kracka", "data": {"action":"23 3"}},{"menuName" : "Azrea", "data": {"action":"23 4"}},{"menuName" : "Mecha", "data": {"action":"23 5"}},{"menuName" : "Blacktop", "data": {"action":"23 6"}},{"menuName" : "Dragspl", "data": {"action":"23 7"}},{"menuName" : "Revolver", "data": {"action":"23 8"}},{"menuName" : "Classicrod", "data": {"action":"23 9"}},{"menuName" : "Spooner", "data": {"action":"23 10"}},{"menuName" : "Fivestar", "data": {"action":"23 11"}},{"menuName" : "Oldschool", "data": {"action":"23 12"}},{"menuName" : "Eljefe", "data": {"action":"23 13"}},{"menuName" : "Dodman", "data": {"action":"23 14"}},{"menuName" : "Sixgun", "data": {"action":"23 15"}},{"menuName" : "Mercenary", "data": {"action":"23 16"}}],
+    "wheel_front": [{"menuName" : "Stock", "data": {"action":"23 -1"}},{"menuName" : "Speedway", "data": {"action":"23 0"}},{"menuName" : "Streetspecial", "data": {"action":"23 1"}},{"menuName" : "Racer", "data": {"action":"23 2"}},{"menuName" : "Trackstar", "data": {"action":"23 3"}},{"menuName" : "Overlord", "data": {"action":"23 4"}},{"menuName" : "Trident", "data": {"action":"23 5"}},{"menuName" : "Triplethreat", "data": {"action":"23 6"}},{"menuName" : "Stilleto", "data": {"action":"23 7"}},{"menuName" : "Wires", "data": {"action":"23 8"}},{"menuName" : "Bobber", "data": {"action":"23 9"}},{"menuName" : "Solidus", "data": {"action":"23 10"}},{"menuName" : "Iceshield", "data": {"action":"23 11"}},{"menuName" : "Loops", "data": {"action":"23 12"}}],
+    "wheel_back": [{"menuName" : "Stock", "data": {"action":"24 -1"}},{"menuName" : "Speedway", "data": {"action":"24 0"}},{"menuName" : "Streetspecial", "data": {"action":"24 1"}},{"menuName" : "Racer", "data": {"action":"24 2"}},{"menuName" : "Trackstar", "data": {"action":"24 3"}},{"menuName" : "Overlord", "data": {"action":"24 4"}},{"menuName" : "Trident", "data": {"action":"24 5"}},{"menuName" : "Triplethreat", "data": {"action":"24 6"}},{"menuName" : "Stilleto", "data": {"action":"24 7"}},{"menuName" : "Wires", "data": {"action":"24 8"}},{"menuName" : "Bobber", "data": {"action":"24 9"}},{"menuName" : "Solidus", "data": {"action":"24 10"}},{"menuName" : "Iceshield", "data": {"action":"24 11"}},{"menuName" : "Loops", "data": {"action":"24 12"}}],
+    "wheel_benny": [{"menuName": "Stock","data": {"action":"24 -1"}},{"menuName": "OG Hunnets","data": {"action":"24 0"}},{"menuName": "OG Hunnets (Chrome Lip)","data": {"action":"24 1"}}]
+};
+
+
+/***
+ *           _    _____    ____    _   _    __      __                 _           _       _              
+ *          | |  / ____|  / __ \  | \ | |   \ \    / /                (_)         | |     | |             
+ *          | | | (___   | |  | | |  \| |    \ \  / /    __ _   _ __   _    __ _  | |__   | |   ___   ___ 
+ *      _   | |  \___ \  | |  | | | . ` |     \ \/ /    / _` | | '__| | |  / _` | | '_ \  | |  / _ \ / __|
+ *     | |__| |  ____) | | |__| | | |\  |      \  /    | (_| | | |    | | | (_| | | |_) | | | |  __/ \__ \
+ *      \____/  |_____/   \____/  |_| \_|       \/      \__,_| |_|    |_|  \__,_| |_.__/  |_|  \___| |___/
+ *                                                                                                        
+ *                                                                                                        
+ */
 
 
 // Static Request Objects
@@ -1180,8 +1111,21 @@ var requestObjects = {
     "vehicle_mod_paint_wheels": vehicleColors["wheelcolors"],
 
     "vehicle_mod_neon_colors": rgbcolors["neon"],
-    "vehicle_mod_smoke_colors": rgbcolors["smoke"]
-}
+    "vehicle_mod_smoke_colors": rgbcolors["smoke"],
+
+
+    "vehicle_mod_horn" : vehicle_mods['vehiclehorns'],
+    "vehicle_wheel_0": vehicle_mods['wheel_sport'],
+    "vehicle_wheel_1": vehicle_mods['wheel_muscle'],
+    "vehicle_wheel_2": vehicle_mods['wheel_lowrider'],
+    "vehicle_wheel_3": vehicle_mods['wheel_suv'],
+    "vehicle_wheel_4": vehicle_mods['wheel_offroad'],
+    "vehicle_wheel_5": vehicle_mods['wheel_tuner'],
+    "vehicle_wheel_7": vehicle_mods['wheel_highend'],
+    "vehicle_wheel_8": vehicle_mods['wheel_benny'],
+    "vehicle_wheel_front": vehicle_mods['wheel_front'],
+    "vehicle_wheel_back": vehicle_mods['wheel_back']
+};
 
 
 
@@ -1213,14 +1157,14 @@ var requestAction = {
     "vehicle_helicopters" :  "vehspawn",
     "vehicle_boats" :  "vehspawn",
     "vehicle_bicycles" :  "vehspawn",
-    "weapon_melee" : "weapon",
-    "weapon_handguns" : "weapon",
-    "weapon_submachine" : "weapon",
-    "weapon_assault" : "weapon",
-    "weapon_shotgun" : "weapon",
-    "weapon_snipers" : "weapon",
-    "weapon_heavy" : "weapon",
-    "weapon_thrown" : "weapon",
+    "weapon_melee" : "weapon mod",
+    "weapon_handguns" : "weapon mod",
+    "weapon_submachine" : "weapon mod",
+    "weapon_assault" : "weapon mod",
+    "weapon_shotgun" : "weapon mod",
+    "weapon_snipers" : "weapon mod",
+    "weapon_heavy" : "weapon mod",
+    "weapon_thrown" : "weapon mod",
 
 
     "vehicle_mod_paint_primary_normal": "vehmod paint",
@@ -1242,41 +1186,18 @@ var requestAction = {
     "vehicle_mod_paint_wheels": "vehmod paintwheels",
 
     "vehicle_mod_neon_colors" : "vehmod lightcolor",
-    "vehicle_mod_smoke_colors" : "vehmod smokecolor"
-
-}
+    "vehicle_mod_smoke_colors" : "vehmod smokecolor",
 
 
-
-
-
-// Vehicle Modification Objects.
-var vehicle_mods = {
-    "vehiclehorns" : [{'name':"Stock Horn",'modtype':14, 'mod':-1},{'name':"Truck Horn",'modtype':14, 'mod':0},{'name':"Police Horn",'modtype':14, 'mod':1},{'name':"Clown Horn",'modtype':14, 'mod':2},{'name':"Musical Horn 1",'modtype':14, 'mod':3},{'name':"Musical Horn 2",'modtype':14, 'mod':4},{'name':"Musical Horn 3",'modtype':14, 'mod':5},{'name':"Musical Horn 4",'modtype':14, 'mod':6},{'name':"Musical Horn 5",'modtype':14, 'mod':7},{'name':"Sadtrombone Horn",'modtype':14, 'mod':8},{'name':"Calssical Horn 1",'modtype':14, 'mod':9},{'name':"Calssical Horn 2",'modtype':14, 'mod':10},{'name':"Calssical Horn 3",'modtype':14, 'mod':11},{'name':"Calssical Horn 4",'modtype':14, 'mod':12},{'name':"Calssical Horn 5",'modtype':14, 'mod':13},{'name':"Calssical Horn 6",'modtype':14, 'mod':14},{'name':"Calssical Horn 7",'modtype':14, 'mod':15},{'name':"Scaledo Horn",'modtype':14, 'mod':16},{'name':"Scalere Horn",'modtype':14, 'mod':17},{'name':"Scalemi Horn",'modtype':14, 'mod':18},{'name':"Scalefa Horn",'modtype':14, 'mod':19},{'name':"Scalesol Horn",'modtype':14, 'mod':20},{'name':"Scalela Horn",'modtype':14, 'mod':21},{'name':"Scaleti Horn",'modtype':14, 'mod':22},{'name':"Scaledo Horn High",'modtype':14, 'mod':23},{'name':"Jazz Horn 1",'modtype':14, 'mod':25},{'name':"Jazz Horn 2",'modtype':14, 'mod':26},{'name':"Jazz Horn 3",'modtype':14, 'mod':27},{'name':"Jazzloop Horn",'modtype':14, 'mod':28},{'name':"Starspangban Horn 1",'modtype':14, 'mod':29},{'name':"Starspangban Horn 2",'modtype':14, 'mod':30},{'name':"Starspangban Horn 3",'modtype':14, 'mod':31},{'name':"Starspangban Horn 4",'modtype':14, 'mod':32},{'name':"Classicalloop Horn 1",'modtype':14, 'mod':33},{'name':"Classical Horn 8",'modtype':14, 'mod':34},{'name':"Classicalloop Horn 2",'modtype':14, 'mod':35}],
-    "wheel_sport": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Inferno", 'modtype' : 23, 'mod' : 0},{'name' : "Deepfive", 'modtype' : 23, 'mod' : 1},{'name' : "Lozspeed", 'modtype' : 23, 'mod' : 2},{'name' : "Diamondcut", 'modtype' : 23, 'mod' : 3},{'name' : "Chrono", 'modtype' : 23, 'mod' : 4},{'name' : "Feroccirr", 'modtype' : 23, 'mod' : 5},{'name' : "Fiftynine", 'modtype' : 23, 'mod' : 6},{'name' : "Mercie", 'modtype' : 23, 'mod' : 7},{'name' : "Syntheticz", 'modtype' : 23, 'mod' : 8},{'name' : "Organictyped", 'modtype' : 23, 'mod' : 9},{'name' : "Endov1", 'modtype' : 23, 'mod' : 10},{'name' : "Duper7", 'modtype' : 23, 'mod' : 11},{'name' : "Uzer", 'modtype' : 23, 'mod' : 12},{'name' : "Groundride", 'modtype' : 23, 'mod' : 13},{'name' : "Spacer", 'modtype' : 23, 'mod' : 14},{'name' : "Venum", 'modtype' : 23, 'mod' : 15},{'name' : "Cosmo", 'modtype' : 23, 'mod' : 16},{'name' : "Dashvip", 'modtype' : 23, 'mod' : 17},{'name' : "Icekid", 'modtype' : 23, 'mod' : 18},{'name' : "Ruffeld", 'modtype' : 23, 'mod' : 19},{'name' : "Wangenmaster", 'modtype' : 23, 'mod' : 20},{'name' : "Superfive", 'modtype' : 23, 'mod' : 21},{'name' : "Endov2", 'modtype' : 23, 'mod' : 22},{'name' : "Slitsix", 'modtype' : 23, 'mod' : 23}],
-    "wheel_suv": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Vip", 'modtype' : 23, 'mod' : 0},{'name' : "Benefactor", 'modtype' : 23, 'mod' : 1},{'name' : "Cosmo", 'modtype' : 23, 'mod' : 2},{'name' : "Bippu", 'modtype' : 23, 'mod' : 3},{'name' : "Royalsix", 'modtype' : 23, 'mod' : 4},{'name' : "Fagorme", 'modtype' : 23, 'mod' : 5},{'name' : "Deluxe", 'modtype' : 23, 'mod' : 6},{'name' : "Icedout", 'modtype' : 23, 'mod' : 7},{'name' : "Cognscenti", 'modtype' : 23, 'mod' : 8},{'name' : "Lozspeedten", 'modtype' : 23, 'mod' : 9},{'name' : "Supernova", 'modtype' : 23, 'mod' : 10},{'name' : "Obeyrs", 'modtype' : 23, 'mod' : 11},{'name' : "Lozspeedballer", 'modtype' : 23, 'mod' : 12},{'name' : "Extra vaganzo", 'modtype' : 23, 'mod' : 13},{'name' : "Splitsix", 'modtype' : 23, 'mod' : 14},{'name' : "Empowered", 'modtype' : 23, 'mod' : 15},{'name' : "Sunrise", 'modtype' : 23, 'mod' : 16},{'name' : "Dashvip", 'modtype' : 23, 'mod' : 17},{'name' : "Cutter", 'modtype' : 23, 'mod' : 18}],
-    "wheel_offroad": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Raider", 'modtype' : 23, 'mod' : 0},{'name' : "Mudslinger", 'modtype' : 23, 'mod' : 1},{'name' : "Nevis", 'modtype' : 23, 'mod' : 2},{'name' : "Cairngorm", 'modtype' : 23, 'mod' : 3},{'name' : "Amazon", 'modtype' : 23, 'mod' : 4},{'name' : "Challenger", 'modtype' : 23, 'mod' : 5},{'name' : "Dunebasher", 'modtype' : 23, 'mod' : 6},{'name' : "Fivestar", 'modtype' : 23, 'mod' : 7},{'name' : "Rockcrawler", 'modtype' : 23, 'mod' : 8},{'name' : "Milspecsteelie", 'modtype' : 23, 'mod' : 9}],
-    "wheel_tuner": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Cosmo", 'modtype' : 23, 'mod' : 0},{'name' : "Supermesh", 'modtype' : 23, 'mod' : 1},{'name' : "Outsider", 'modtype' : 23, 'mod' : 2},{'name' : "Rollas", 'modtype' : 23, 'mod' : 3},{'name' : "Driffmeister", 'modtype' : 23, 'mod' : 4},{'name' : "Slicer", 'modtype' : 23, 'mod' : 5},{'name' : "Elquatro", 'modtype' : 23, 'mod' : 6},{'name' : "Dubbed", 'modtype' : 23, 'mod' : 7},{'name' : "Fivestar", 'modtype' : 23, 'mod' : 8},{'name' : "Slideways", 'modtype' : 23, 'mod' : 9},{'name' : "Apex", 'modtype' : 23, 'mod' : 10},{'name' : "Stancedeg", 'modtype' : 23, 'mod' : 11},{'name' : "Countersteer", 'modtype' : 23, 'mod' : 12},{'name' : "Endov1", 'modtype' : 23, 'mod' : 13},{'name' : "Endov2dish", 'modtype' : 23, 'mod' : 14},{'name' : "Guppez", 'modtype' : 23, 'mod' : 15},{'name' : "Chokadori", 'modtype' : 23, 'mod' : 16},{'name' : "Chicane", 'modtype' : 23, 'mod' : 17},{'name' : "Saisoku", 'modtype' : 23, 'mod' : 18},{'name' : "Dishedeight", 'modtype' : 23, 'mod' : 19},{'name' : "Fujiwara", 'modtype' : 23, 'mod' : 20},{'name' : "Zokusha", 'modtype' : 23, 'mod' : 21},{'name' : "Battlevill", 'modtype' : 23, 'mod' : 22},{'name' : "Rallymaster", 'modtype' : 23, 'mod' : 23}],
-    "wheel_highend": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Shadow", 'modtype' : 23, 'mod' : 0},{'name' : "Hyper", 'modtype' : 23, 'mod' : 1},{'name' : "Blade", 'modtype' : 23, 'mod' : 2},{'name' : "Diamond", 'modtype' : 23, 'mod' : 3},{'name' : "Supagee", 'modtype' : 23, 'mod' : 4},{'name' : "Chromaticz", 'modtype' : 23, 'mod' : 5},{'name' : "Merciechlip", 'modtype' : 23, 'mod' : 6},{'name' : "Obeyrs", 'modtype' : 23, 'mod' : 7},{'name' : "Gtchrome", 'modtype' : 23, 'mod' : 8},{'name' : "Cheetahr", 'modtype' : 23, 'mod' : 9},{'name' : "Solar", 'modtype' : 23, 'mod' : 10},{'name' : "Splitten", 'modtype' : 23, 'mod' : 11},{'name' : "Dashvip", 'modtype' : 23, 'mod' : 12},{'name' : "Lozspeedten", 'modtype' : 23, 'mod' : 13},{'name' : "Carboninferno", 'modtype' : 23, 'mod' : 14},{'name' : "Carbonshadow", 'modtype' : 23, 'mod' : 15},{'name' : "Carbonz", 'modtype' : 23, 'mod' : 16},{'name' : "Carbonsolar", 'modtype' : 23, 'mod' : 17},{'name' : "Carboncheetahr", 'modtype' : 23, 'mod' : 18},{'name' : "Carbonsracer", 'modtype' : 23, 'mod' : 19}],
-    "wheel_lowrider": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Flare", 'modtype' : 23, 'mod' : 0},{'name' : "Wired", 'modtype' : 23, 'mod' : 1},{'name' : "Triplegolds", 'modtype' : 23, 'mod' : 2},{'name' : "Bigworm", 'modtype' : 23, 'mod' : 3},{'name' : "Sevenfives", 'modtype' : 23, 'mod' : 4},{'name' : "Splitsix", 'modtype' : 23, 'mod' : 5},{'name' : "Freshmesh", 'modtype' : 23, 'mod' : 6},{'name' : "Leadsled", 'modtype' : 23, 'mod' : 7},{'name' : "Turbine", 'modtype' : 23, 'mod' : 8},{'name' : "Superfin", 'modtype' : 23, 'mod' : 9},{'name' : "Classicrod", 'modtype' : 23, 'mod' : 10},{'name' : "Dollar", 'modtype' : 23, 'mod' : 11},{'name' : "Dukes", 'modtype' : 23, 'mod' : 12},{'name' : "Lowfive", 'modtype' : 23, 'mod' : 13},{'name' : "Gooch", 'modtype' : 23, 'mod' : 14}],
-    "wheel_muscle": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Classicfive", 'modtype' : 23, 'mod' : 0},{'name' : "Dukes", 'modtype' : 23, 'mod' : 1},{'name' : "Musclefreak", 'modtype' : 23, 'mod' : 2},{'name' : "Kracka", 'modtype' : 23, 'mod' : 3},{'name' : "Azrea", 'modtype' : 23, 'mod' : 4},{'name' : "Mecha", 'modtype' : 23, 'mod' : 5},{'name' : "Blacktop", 'modtype' : 23, 'mod' : 6},{'name' : "Dragspl", 'modtype' : 23, 'mod' : 7},{'name' : "Revolver", 'modtype' : 23, 'mod' : 8},{'name' : "Classicrod", 'modtype' : 23, 'mod' : 9},{'name' : "Spooner", 'modtype' : 23, 'mod' : 10},{'name' : "Fivestar", 'modtype' : 23, 'mod' : 11},{'name' : "Oldschool", 'modtype' : 23, 'mod' : 12},{'name' : "Eljefe", 'modtype' : 23, 'mod' : 13},{'name' : "Dodman", 'modtype' : 23, 'mod' : 14},{'name' : "Sixgun", 'modtype' : 23, 'mod' : 15},{'name' : "Mercenary", 'modtype' : 23, 'mod' : 16}],
-    "wheel_front": [{'name' : "Stock", 'modtype' : 23, 'mod' : -1},{'name' : "Speedway", 'modtype' : 23, 'mod' : 0},{'name' : "Streetspecial", 'modtype' : 23, 'mod' : 1},{'name' : "Racer", 'modtype' : 23, 'mod' : 2},{'name' : "Trackstar", 'modtype' : 23, 'mod' : 3},{'name' : "Overlord", 'modtype' : 23, 'mod' : 4},{'name' : "Trident", 'modtype' : 23, 'mod' : 5},{'name' : "Triplethreat", 'modtype' : 23, 'mod' : 6},{'name' : "Stilleto", 'modtype' : 23, 'mod' : 7},{'name' : "Wires", 'modtype' : 23, 'mod' : 8},{'name' : "Bobber", 'modtype' : 23, 'mod' : 9},{'name' : "Solidus", 'modtype' : 23, 'mod' : 10},{'name' : "Iceshield", 'modtype' : 23, 'mod' : 11},{'name' : "Loops", 'modtype' : 23, 'mod' : 12}],
-    "wheel_back": [{'name' : "Stock", 'modtype' : 24, 'mod' : -1},{'name' : "Speedway", 'modtype' : 24, 'mod' : 0},{'name' : "Streetspecial", 'modtype' : 24, 'mod' : 1},{'name' : "Racer", 'modtype' : 24, 'mod' : 2},{'name' : "Trackstar", 'modtype' : 24, 'mod' : 3},{'name' : "Overlord", 'modtype' : 24, 'mod' : 4},{'name' : "Trident", 'modtype' : 24, 'mod' : 5},{'name' : "Triplethreat", 'modtype' : 24, 'mod' : 6},{'name' : "Stilleto", 'modtype' : 24, 'mod' : 7},{'name' : "Wires", 'modtype' : 24, 'mod' : 8},{'name' : "Bobber", 'modtype' : 24, 'mod' : 9},{'name' : "Solidus", 'modtype' : 24, 'mod' : 10},{'name' : "Iceshield", 'modtype' : 24, 'mod' : 11},{'name' : "Loops", 'modtype' : 24, 'mod' : 12}],
-    "wheel_benny": [{'name': "Stock",'modtype': 24, 'mod': -1},{'name': "OG Hunnets",'modtype': 24, 'mod': 0},{'name': "OG Hunnets (Chrome Lip)",'modtype': 24, 'mod': 1}]
-}
-
-
-// Modifications that use name,modtype,mod instead of menuName and spawnName.
-var modObjects = {
-    "vehicle_mod_horn" : vehicle_mods['vehiclehorns'],
-    "vehicle_wheel_0": vehicle_mods['wheel_sport'],
-    "vehicle_wheel_1": vehicle_mods['wheel_muscle'],
-    "vehicle_wheel_2": vehicle_mods['wheel_lowrider'],
-    "vehicle_wheel_3": vehicle_mods['wheel_suv'],
-    "vehicle_wheel_4": vehicle_mods['wheel_offroad'],
-    "vehicle_wheel_5": vehicle_mods['wheel_tuner'],
-    "vehicle_wheel_7": vehicle_mods['wheel_highend'],
-    "vehicle_wheel_8": vehicle_mods['wheel_benny'],
-    "vehicle_wheel_front": vehicle_mods['wheel_front'],
-    "vehicle_wheel_back": vehicle_mods['wheel_back']
-}
+    "vehicle_mod_horn" : "vehmodify",
+    "vehicle_wheel_0": "vehmodify",
+    "vehicle_wheel_1": "vehmodify",
+    "vehicle_wheel_2": "vehmodify",
+    "vehicle_wheel_3": "vehmodify",
+    "vehicle_wheel_4": "vehmodify",
+    "vehicle_wheel_5":"vehmodify",
+    "vehicle_wheel_7": "vehmodify",
+    "vehicle_wheel_8": "vehmodify",
+    "vehicle_wheel_front": "vehmodify",
+    "vehicle_wheel_back": "vehmodify" 
+};

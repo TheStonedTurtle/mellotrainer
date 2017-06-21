@@ -16,7 +16,15 @@ function getOnlinePlayersAndNames()
             local playerName = GetPlayerName(i)
             local scoreboardID = GetPlayerServerId(i)
 
-            players[scoreboardID] = {['ped'] = GetPlayerPed(i), ['menuName']=playerName,['spawnName'] = scoreboardID, ['id'] = i}
+            players[scoreboardID] = {
+            	['ped'] = GetPlayerPed(i), 
+            	['menuName']=playerName,
+            	['data'] = {
+            		['sub'] = "onlineplayersoptionmenu",
+            		['share'] = scoreboardID
+            	},
+            	['id'] = i
+            }
         end
     end
     return players
@@ -283,13 +291,22 @@ end)
 RegisterNUICallback("getonlineplayers", function(data,cb)
 	--Citizen.Trace("Get Online Players")
 	local players = getOnlinePlayersAndNames()
-	local playersTable = {onlineplayers = players}
+
+	if(#players < 1)then
+		drawNotification("~r~No players in session.")
+		return
+	end
+
+	local playersTable = {
+		submenu = players
+	}
+
 	local playerJSON = json.encode(playersTable, {indent = true})
 
-
+	--Citizen.Trace(playerJSON)
 	SendNUIMessage({
 		createonlineplayersmenu = true,
-		name = "onlineplayers",
+		menuName = "onlineplayers",
 		menudata = playerJSON
 	})	
 end)
