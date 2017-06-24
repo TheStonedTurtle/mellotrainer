@@ -1,3 +1,25 @@
+<h1>V 0.1.7 (06-23-2017)</h1>
+
+Implemented the working steam-hex admin list and some bug fixes
+
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed Minor Blip/Overhead text issue for own player</li>
+	<li>Fixed the online players menu, was previously not working</li>
+	<li>Fixed Notifications to pull correct name.</li>
+</ul>
+
+
+<h3>Additions</h3>
+<ul>
+	<li>Steam-Hex Admin Functionality</li>
+</ul>
+
+
+
+
+
 <h1>V 0.1.5 (06-23-2017)</h1>
 
 Implemented the functionality behind some trainer options that had todo notes as well as some minor bug fixes

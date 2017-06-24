@@ -5,6 +5,45 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 
+local admins = {
+	"steam:110000106e1eac6"   -- Add all steam hexs heres
+}
+
+
+function isAdmin(identifier)
+	local adminList = {}
+	for _,v in pairs(admins) do
+		adminList[v] = true
+	end
+	identifier = string.lower(identifier)
+	identifier2 = string.upper(identifier)
+
+	if(adminList[identifier] or adminList[identifier2])then
+		return true
+	else
+		return false
+	end
+end
+
+
+
+
+RegisterServerEvent("mellotrainer:isAdmin")
+AddEventHandler("mellotrainer:isAdmin",function()
+	local identifiers = GetPlayerIdentifiers(source)
+	local found = false
+	for i=1,#identifiers,1 do
+		if(isAdmin(identifiers[i]))then
+			TriggerClientEvent("mellotrainer:adminstatus",source,true)
+			found = true
+			break
+		end
+	end
+	if(not found)then
+		TriggerClientEvent("mellotrainer:adminstatus",source,false)
+	end
+end)
+
 local maxPlayers = 32;
 local Users = {};
 --[[

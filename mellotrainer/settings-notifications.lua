@@ -44,8 +44,8 @@ end)
 
 
 RegisterNetEvent('mellotrainer:playerJoined')
-AddEventHandler('mellotrainer:playerJoined', function(toggle)
-	if(featurePlayerNotifications)then
+AddEventHandler('mellotrainer:playerJoined', function(source)
+	if(featurePlayerNotifications and source ~= PlayerId())then
 		local name = GetPlayerName(source)
 		drawNotification("~g~"..name.." ~s~joined.")
 	end
@@ -54,7 +54,7 @@ end)
 
 
 RegisterNetEvent('mellotrainer:playerLeft')
-AddEventHandler('mellotrainer:playerLeft', function(toggle)
+AddEventHandler('mellotrainer:playerLeft', function(source)
 	if(featurePlayerNotifications)then
 		local name = GetPlayerName(source)
 		drawNotification("~r~"..name.." ~s~left.")

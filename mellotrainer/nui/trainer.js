@@ -578,7 +578,9 @@ function handleSelectedOption(requireSkip) {
         sendData(data[0], {action: data[1], newstate: newstate, data: data});
         //sendData("debug",data.join(" "));
     }
-    playSound("SELECT");
+    if(!requireSkip){
+        playSound("SELECT");
+    }
 
     requestStateToggles(item.parent().attr("id"))
 }
@@ -792,7 +794,7 @@ function convertToMenus(){
 
                 if ($(this).data("state") == "ON") {
                     var statedata = $(this).data("action").split(" ");
-                    sendData(statedata[0], {action: statedata[1], newstate: true});
+                    sendData(statedata[0], {action: statedata[1], newstate: true, data: {}});
                 }
                 
                 var page = Math.floor(i / maxVisibleItems);
@@ -872,6 +874,7 @@ function addWeaponTintMenu(containerDiv,spawnName,idName){
 // Adds new attributes for the specified element. Recursive call to handle linking to sub-menu
 function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction){
     // defaultAction is used for static menus
+    //sendData("debug",curIndex+" "+idName+" "+defaultAction+" : curIndex idName defaultAction")
     if(!defaultAction){
         defaultAction = "";
     }
@@ -957,6 +960,10 @@ function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction
             // Option Name for the trainer
             case "menuName":
                 newEle.text(curValue);
+                break
+
+            default:
+                console.log("Nothinhg")
         }
     }
     return newEle

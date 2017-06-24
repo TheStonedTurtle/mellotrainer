@@ -16,15 +16,15 @@ function getOnlinePlayersAndNames()
             local playerName = GetPlayerName(i)
             local scoreboardID = GetPlayerServerId(i)
 
-            players[scoreboardID] = {
+            table.insert(players, {
             	['ped'] = GetPlayerPed(i), 
             	['menuName']=playerName,
             	['data'] = {
-            		['sub'] = "onlineplayersoptionmenu",
+            		['sub'] = "playeroptions",
             		['share'] = scoreboardID
             	},
             	['id'] = i
-            }
+            })
         end
     end
     return players
@@ -231,7 +231,12 @@ RegisterNUICallback("otherplayer", function(data, cb)
 		targetServerID = tonumber(data.data[3])
 	end
 
-	local target = allPlayers[targetServerID]
+	local target = nil
+	for _,value in pairs(allPlayers) do
+		if(tostring(value.data.shareid) == tostring(targetServerID))then
+			target = value
+		end
+	end
 
 	if(target == nil)then
 		drawNotification("Player has ~r~<C>disconnected</C>.")
@@ -292,21 +297,19 @@ RegisterNUICallback("getonlineplayers", function(data,cb)
 	--Citizen.Trace("Get Online Players")
 	local players = getOnlinePlayersAndNames()
 
+
 	if(#players < 1)then
 		drawNotification("~r~No players in session.")
 		return
 	end
 
-	local playersTable = {
-		submenu = players
-	}
 
-	local playerJSON = json.encode(playersTable, {indent = true})
-
+	local playerJSON = json.encode(players, {indent = true})
 	--Citizen.Trace(playerJSON)
+
 	SendNUIMessage({
 		createonlineplayersmenu = true,
-		menuName = "onlineplayers",
+		menuName = "getonlineplayers",
 		menudata = playerJSON
 	})	
 end)

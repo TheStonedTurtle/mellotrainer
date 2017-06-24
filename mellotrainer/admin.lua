@@ -168,14 +168,18 @@ end)
 
 
 
+RegisterNetEvent("mellotrainer:adminstatus")
+AddEventHandler("mellotrainer:adminstatus", function(status)
+	if(status)then
+		SendNUIMessage({adminaccess = true})
+	else
+		drawNotification("~r~You are not an admin!")
+	end		
+end)
+
 -- Only show menu if they are an admin
 RegisterNUICallback("requireadmin", function(data, cb)
-	-- check to be added, currently everyone can access.
-	if false then
-		drawNotification("~r~You are not an admin!")
-	else
-		SendNUIMessage({adminaccess = true})
-	end	
+	TriggerServerEvent("mellotrainer:isAdmin")
 end)
 
 TriggerServerEvent("mellotrainer:firstJoinProper")

@@ -9,7 +9,7 @@
 
 -- Variables used for this part of the trainer.
 local playerdb = {}
-local playerID = PlayerId(-1)
+local playerID = PlayerId()
 
 -- Creates an empty table of tables to hold the blip/ped information for users.
 for i=0, maxPlayers, 1 do
@@ -114,11 +114,11 @@ end)
 function toggleBlips()
 	--Citizen.Trace("ToggleBlips")
 	for i=0,maxPlayers, 1 do
-		if(NetworkIsPlayerConnected(i) and (i ~= playerID)) then
+		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()) ) then
 			checkPlayerInformation(i)
 
 			if (featurePlayerBlips) then
-				if (playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip))) then
+				if (playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip)) ) then
 					createBlip(i)
 				end
 			else
@@ -190,7 +190,7 @@ end
 
 function checkBlipTypes()
 	for i=0,maxPlayers,1 do
-		if(NetworkIsPlayerConnected(i) and (i ~= playerID))then
+		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()))then
 			checkPlayerInformation(i)
 
 			-- Update it to a vehicle sprite if needed.
