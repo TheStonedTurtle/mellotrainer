@@ -1,4 +1,4 @@
-<h1>V 0.1.5 (06-21-2017)</h1>
+<h1>V 0.1.5 (06-23-2017)</h1>
 
 Implemented the functionality behind some trainer options that had todo notes as well as some minor bug fixes
 
