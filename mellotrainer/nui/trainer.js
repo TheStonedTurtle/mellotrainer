@@ -173,6 +173,11 @@ $(function() {
             updateVoices(results);
         }
 
+        if(item.statetoggles){
+            var results = JSON.parse(item.statesdata)
+            updateStateToggles(results,item.menuid)
+        }
+
 
         /***
          *      __  __                             ____            _     _                       
@@ -266,6 +271,10 @@ function init() {
 
     // Find all elements that should be turned into menus.
     convertToMenus();
+
+
+    // Update all state toggles to correct values.
+    requestAllStates();
 }
 
 /***
@@ -570,9 +579,76 @@ function handleSelectedOption(requireSkip) {
         //sendData("debug",data.join(" "));
     }
     playSound("SELECT");
+
+    requestStateToggles(item.parent().attr("id"))
 }
 
 
+
+
+// Updated all state toggles
+function requestStateToggles(menuID){
+    // Menu should be the parent element. Loop over all children element looking for data-toggle
+    // data-state is required for data-toggle
+    var menu = menus[menuID]
+    var values = {};
+    var children = menu.pages;
+
+    for(var page=0;page<children.length;page++){
+        for (var i = 0; i < children[page].length; i++) {
+            var value = children[page][i].attr("data-toggle")
+            if(value){
+                values[value] = true
+                //sendData("debug","Adding "+value+" to the list to check.")
+            }
+        }
+    }
+    //sendData("debug","Requsting state toggles for: "+menuID)
+
+    sendData("statetoggles", {menuid: menuID, data: values})
+}
+
+
+/// Update the requested state toggles
+function updateStateToggles(results,menuID){
+    //sendData("debug","update state toggles")
+
+    var menuObj = menus[menuID]
+    var menu = menuObj.menu;
+    var children = menuObj.pages;
+
+    var objectKeys = Object.keys(results);
+
+    for(var page=0;page<children.length;page++){
+        for(var i=0;i<children[page].length;i++){
+            var value = children[page][i].attr("data-toggle")
+            if(value){
+                if(objectKeys.indexOf(value) > -1){
+                    children[page][i].attr("data-state",results[value])
+                    //sendData("debug","found toggle: "+value+" with the value of: "+results[value])
+
+                    children[page][i].removeClass("stateON");
+                    children[page][i].removeClass("stateOFF");
+
+                    // Update their state class
+                    if (results[value] == "ON") {
+                        children[page][i].addClass("stateON");
+                    } else if (results[value] == "OFF") {
+                        children[page][i].addClass("stateOFF");
+                    }
+
+                }
+            }
+        }
+    }
+
+    var data = {}
+     data.menu = menu
+     data.pages = children
+     data.maxpages = menuObj.maxpages
+
+    menus[menuID] = data
+}
 
 
 // Used to show a specific page of the current menu.
@@ -689,6 +765,15 @@ function refreshMenus(){
 }
 
 
+function requestAllStates(){
+    var keys = Object.keys(menus);
+    for (var i = 0; i < keys.length; i++) {
+        var menuID = keys[i]
+        requestStateToggles(menuID)
+    }
+}
+
+
 // Convert any divs on the page to a detached menu
 function convertToMenus(){
     $("div").each(function(i, obj) {
@@ -730,7 +815,6 @@ function convertToMenus(){
                     dynamicMenus[$(this).attr("id")] = data
                 }
             }
-
         }
     });
 }

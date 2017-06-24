@@ -178,7 +178,10 @@ function createBlip(i)
 
 		if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
 			SetBlipSprite(playerdb[i].blip, sprite)
-			SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
+			BeginTextCommandSetBlipName("STRING")
+			AddTextComponentString(playerdb[i].name)
+			EndTextCommandSetBlipName(playerdb[i].blip)
+			--SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
 		end
 	end
 

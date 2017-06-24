@@ -89,6 +89,17 @@ end
 
 
 
+-- Get value for state toggles
+function GetToggleState(variableName)
+  local value = _G[variableName]
+
+  if(value)then
+    return "ON"
+  else
+    return "OFF"
+  end
+end
+
 
 
 
@@ -235,7 +246,31 @@ end)
 
 -- Callbacks from the trainer.
 RegisterNUICallback("debug", function(data, cb)
-	--Citizen.Trace(tostring(data))
+	Citizen.Trace(tostring(data))
+end)
+
+
+RegisterNUICallback("statetoggles", function(data, cb)
+	--Citizen.Trace("State Toggles NUI Callback")
+	local array = data.data
+	local menuID = data.menuid
+
+	-- Wait 100 should be used in most places so lets wait for them to update variables if needed
+	-- Before checking.
+	Wait(300)
+	local results = {}
+
+	for	k,v in pairs(array) do
+		results[k] = GetToggleState(k)
+		--Citizen.Trace(k.." is "..results[k])
+	end
+	local jsonResult = json.encode(results,{indent = true})
+
+	SendNUIMessage({
+		statetoggles = true,
+		statesdata = jsonResult,
+		menuid = menuID
+	})
 end)
 
 

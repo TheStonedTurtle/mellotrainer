@@ -72,6 +72,16 @@ featureNoHelmet = nil;
 featureVehCosDamage = nil;
 featureVehMechDamage = nil;
 featureVehInvincible = nil;
+featureTurboMode = nil;
+featureCustomTires = nil;
+featureBulletproofWheels = nil;
+featureXeonLights = nil;
+
+featureNeonLeft = nil;
+featureNeonRight = nil;
+featureNeonFront = nil;
+featureNeonRear = nil;
+
 
 
 --Online Player
@@ -151,6 +161,7 @@ featureHC7 = false;
 featureHC8 = false;
 featureHC9 = false;
 featureHC10 = false;
+featureVPTooClose = false;
 featureVPVeryClose = false;
 featureVPClose = false;
 featureVPNearby = false;

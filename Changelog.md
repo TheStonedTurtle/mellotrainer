@@ -10,12 +10,14 @@ Implemented the functionality behind some trainer options that had todo notes as
 	<li>Denied Access to Vehicle Modifications Menu if Not Driver of Vehicle.</li>
 </ul>
 
+
 <h3>Additions</h3>
 <ul>
 	<li>Added Player Notification functionality</li>
 	<li>Added Death Notification functionality</li>
 	<li>Added Voice Options and functionality</li>
 	<li>Added Radio Options and functionality</li>
+	<li>Added Basic ON/OFF Sychronization for trainer options</li>
 </ul>
 
 

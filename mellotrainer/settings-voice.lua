@@ -38,6 +38,7 @@ RegisterNUICallback("voiceopts", function(data, cb)
 			drawNotification("Voice Proximity: All Players")
 		end
 	elseif(action=="voicetoggle")then
+		featureVoiceChat = state
 		NetworkSetVoiceActive(state)		
 		drawNotification("Voice Chat: "..text)
 

@@ -145,10 +145,10 @@ end)
 
 
 function resetVehOptions()
-	bulletWheels = false
-	xeonLightToggle = false
-	customTires = false
-	tireSmoke = false
+	featureBulletproofWheels = false
+	featureXenonLights = false
+	featureCustomTires = false
+	featureTurboMode = false
 
 	windows = {false, false, false, false}
 	neons = {false, false, false, false}
@@ -159,11 +159,6 @@ end
 
 local windows = {false, false, false,false}
 local neons = {false, false, false, false}
-
-local xeonLightToggle = false
-local bulletWheels = false
-local customTires = false
-local tireSmoke = false
 
 
 RegisterNUICallback("veh", function(data, cb)
@@ -315,28 +310,29 @@ RegisterNUICallback("vehmod", function(data, cb)
 
 	-- Toggle Options
 	if action == "bulletwheels" then
-		bulletWheels = not data.newstate	
-		SetVehicleTyresCanBurst(playerVeh, bulletWheels)
+		featureBulletproofWheels = not data.newstate	
+		SetVehicleTyresCanBurst(playerVeh, featureBulletproofWheels)
 
 		drawNotification("Bulletproof Tires: "..text)
 
 	elseif action == "xenonlights" then
-		xeonLightToggle = data.newstate	
-		ToggleVehicleMod(playerVeh, 22, xeonLightToggle)
+		featureXeonLights = data.newstate	
+		ToggleVehicleMod(playerVeh, 22, featureXeonLights)
 
 
 		drawNotification("Xenon headlights: "..text)
 
 	elseif action == "customtires" then
-		customTires = data.newstate
-		SetVehicleMod(playerVeh, 23, GetVehicleMod(playerVeh, 23), customTires)
-		if ( (customTires and not GetVehicleModVariation(playerVeh, 23)) or (not customTires and GetVehicleModVariation(playerVeh, 23)) ) then
+		featureCustomTires = data.newstate
+		SetVehicleMod(playerVeh, 23, GetVehicleMod(playerVeh, 23), featureCustomTires)
+		if ( (featureCustomTires and not GetVehicleModVariation(playerVeh, 23)) or (not featureCustomTires and GetVehicleModVariation(playerVeh, 23)) ) then
 			SendNUIMessage({toggleerror = true})
 		end
 
 		drawNotification("Custom Tires: "..text)
 
 	elseif action == "turbomode" then
+		featureTurboMode = data.newstate
 		ToggleVehicleMod(playerVeh, 18, data.newstate)
 
 		drawNotification("Turbo Mode: "..text)
@@ -374,10 +370,23 @@ RegisterNUICallback("vehmod", function(data, cb)
 
 	-- Neon underglow
 	elseif action == "neonlights" then
-		local ID = tonumber(data.data[3])
-		SetVehicleNeonLightEnabled(playerVeh, ID, data.newstate)
+		local location = data.data[3]
+		local id
+		if(location == "left")then
+			featureNeonLeft = data.newstate
+			id = 0
+		elseif(location == "right")then
+			featureNeonRight = data.newstate
+			id = 1
+		elseif(location == "front")then
+			featureNeonFront = data.newstate
+			id = 2
+		elseif(location == "rear")then
+			featureNeonRear = data.newstate
+			id = 3
+		end
 
-
+		SetVehicleNeonLightEnabled(playerVeh, id, data.newstate)
 	elseif action == "lightcolor" then
 		local color1 = tonumber(data.data[3])
 		local color2 = tonumber(data.data[4])

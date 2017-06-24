@@ -104,23 +104,23 @@ RegisterNUICallback("player", function(data, cb)
 		drawNotification("Keep Wet: "..tostring(text))
 
 	elseif action == "fastswim" then
-		fastSwimEnabled = newstate
-		fastSwimEnabledUpdated = true;
+		featurePlayerFastSwim = newstate
+		featurePlayerFastSwimUpdated = true;
 		drawNotification("Fast Swim: "..tostring(text))
 
 	elseif action == "fastrun" then
-		fastRunEnabled = newstate
-		fastRunEnabledUpdated = true;
+		featurePlayerFastRun = newstate
+		featurePlayerFastRunUpdated = true;
 		drawNotification("Fast Run: "..tostring(text))
 
 	elseif action == "superjump" then
-		featureSuperJumpEnabled = newstate
+		featurePlayerSuperJump = newstate
 
 		drawNotification("Super Jump: "..tostring(text))
 
 	elseif action == "noragdoll" then
-		featureNoRagdoll = newstate
-		featureNoRagdollUpdated = true;
+		featureNoRagDoll = newstate
+		featureNoRagDollUpdated = true;
 		drawNotification("No Ragdoll: "..tostring(text))
 
 	elseif action == "nightvision" then
@@ -176,38 +176,38 @@ Citizen.CreateThread(function()
 
 
 			-- Fast Swim
-			if(fastSwimEnabledUpdated)then
-				if(fastSwimEnabled)then
+			if(featurePlayerFastSwimUpdated)then
+				if(featurePlayerFastSwim)then
 					SetSwimMultiplierForPlayer(playerID, 1.49)
 				else
 					SetSwimMultiplierForPlayer(playerID, 1.0)
 				end
-				fastSwimEnabledUpdated = false
+				featurePlayerFastSwimUpdated = false
 			end
 
 
 			-- Fast Run
-			if(fastRunEnabledUpdated)then
-				if(fastRunEnabled)then
+			if(featurePlayerFastRunUpdated)then
+				if(featurePlayerFastRun)then
 					SetRunSprintMultiplierForPlayer(playerID, 1.49)
 				else
 					SetRunSprintMultiplierForPlayer(playerID, 1.0)
 				end
-				fastRunEnabledUpdated = false
+				featurePlayerFastRunUpdated = false
 			end
 
 
 			-- Super Jump
-			if (featureSuperJumpEnabled)then
+			if (featurePlayerSuperJump)then
 				SetSuperJumpThisFrame(playerID)
 			end
 
 
 			-- No Ragdoll
-			if (featureNoRagdollUpdated)then
-				SetPedCanRagdoll(playerPed, featureNoRagdoll)
+			if (featureNoRagDollUpdated)then
+				SetPedCanRagdoll(playerPed, featureNoRagDoll)
 
-				featureNoRagdollUpdated = false;
+				featureNoRagDollUpdated = false;
 			end
 
 
