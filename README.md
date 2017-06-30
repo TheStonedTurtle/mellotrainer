@@ -80,15 +80,18 @@ This section is only intended for people with LUA experience and a basic underst
 
 
 <h2>JSON/Table Format</h2>
+
+```json
 {
-	"menuName" = String,
-	"data" = {
-		"action" = String,
-		"sub" = String,
-		"state" = "ON"/"OFF"
+	"menuName": "Example Text",
+	"data": {
+		"action": "String",
+		"sub": "String",
+		"state": "String"
 	},
-	"submenu" = Array (of similarly formatted objects)
+	"submenu": []
 }
+```
 
 
 <table>
