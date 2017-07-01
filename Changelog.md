@@ -1,3 +1,14 @@
+<h1>V 0.1.8 (06-30-2017)</h1>
+
+Fixed an error with dynamic menus
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed losing pages of current menu when creating dynamic menu.</li>
+</ul>
+
+
+
 <h1>V 0.1.7 (06-23-2017)</h1>
 
 Implemented the working steam-hex admin list and some bug fixes

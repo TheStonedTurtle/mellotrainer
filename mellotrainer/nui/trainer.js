@@ -1044,6 +1044,12 @@ function createDynamicMenu(menuArray,name){
     }
     container.append(choiceMenu);
 
+
+    // Remove old menu div to prevent losing pages
+    if (content != null) {
+        content.menu.detach();
+    }
+
     // Add all new menus to the menus object.
     refreshMenus();
 
