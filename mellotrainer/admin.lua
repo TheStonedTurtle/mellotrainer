@@ -182,4 +182,14 @@ RegisterNUICallback("requireadmin", function(data, cb)
 	TriggerServerEvent("mellotrainer:isAdmin")
 end)
 
-TriggerServerEvent("mellotrainer:firstJoinProper")
+-- Wait until in game to trigger proper join
+Citizen.CreateThread(function()
+	while true do
+		Wait(0)
+
+		if NetworkIsSessionStarted() then
+			TriggerServerEvent("mellotrainer:firstJoinProper")
+			return
+		end
+	end
+end)
