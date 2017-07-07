@@ -1,3 +1,15 @@
+<h1>V 0.1.9 (07-07-2017)</h1>
+
+Fixed an error with online players always being detected as offline.
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed online player check, was always returning false</li>
+</ul>
+
+
+
+
 <h1>V 0.1.8 (06-30-2017)</h1>
 
 Fixed an error with dynamic menus

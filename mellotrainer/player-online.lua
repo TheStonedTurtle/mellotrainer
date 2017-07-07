@@ -233,7 +233,7 @@ RegisterNUICallback("otherplayer", function(data, cb)
 
 	local target = nil
 	for _,value in pairs(allPlayers) do
-		if(tostring(value.data.shareid) == tostring(targetServerID))then
+		if(tostring(value.data.share) == tostring(targetServerID))then
 			target = value
 		end
 	end
