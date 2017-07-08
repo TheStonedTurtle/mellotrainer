@@ -473,6 +473,14 @@ RegisterNUICallback("vehmodify", function(data, cb)
 	if(modID == 48)then
 		SetVehicleLivery(playerVeh, modIndex)
 	end
+
+
+	-- For some reason this is getting called when entering modification menu with nil values.
+	-- I've added this check here to ensure we don't randomly change the vehicle when entering the menu
+	if(modID == nil or modIndex == nil)then
+		return
+	end
+
 	SetVehicleMod(playerVeh, modID, modIndex, customTires)
 	drawNotification("Mod Applied.")
 end)
@@ -744,14 +752,14 @@ RegisterNUICallback("vehopts", function(data, cb)
 	-- Power Options
 	elseif(action == "powerboost")then
 		powerMultiplier = tonumber(data.data[3])
-		SetVehicleEnginePowerMultiplier(playerVeh, powerMultiplier)
+		SetVehicleEnginePowerMultiplier(playerVeh, powerMultiplier + 0.00)
 
 		drawNotification("Power Boost Multiplier: "..tostring(powerMultiplier))
 
 	-- Torque Options
 	elseif(action == "torqueboost")then
 		torqueMultiplier = tonumber(data.data[3])
-		SetVehicleEngineTorqueMultiplier(playerVeh, torqueMultiplier)
+		SetVehicleEngineTorqueMultiplier(playerVeh, torqueMultiplier + 0.00)
 
 		drawNotification("Torque Multiplier: "..tostring(torqueMultiplier))
 

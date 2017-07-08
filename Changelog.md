@@ -1,3 +1,16 @@
+<h1>V 0.2.0 (07-08-2017)</h1>
+
+Bug fixes
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed vehicle modification menu so it no longer applies a mod when entering the menu</li>
+	<li>Fixed the vehicle power boost options</li>
+	<li>Fixed the vehicle torque boost options</li>
+</ul>
+
+
+
 <h1>V 0.1.9 (07-07-2017)</h1>
 
 Fixed an error with online players always being detected as offline.
