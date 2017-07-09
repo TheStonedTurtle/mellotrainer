@@ -1,3 +1,15 @@
+<h1>V 0.2.1 (07-08-2017)</h1>
+
+Added variable in general.lua for admin-only trainer access.
+
+
+<h3>Additions</h3>
+<ul>
+	<li>Added a Admin Only trainer toggle</li>
+</ul>
+
+
+
 <h1>V 0.2.0 (07-08-2017)</h1>
 
 Bug fixes

@@ -1,3 +1,5 @@
+local adminOnlyTrainer = false -- Should this trainer only show for admins?
+
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
@@ -160,6 +162,26 @@ end
 --]]
 
 
+
+-- Admin only trainer?
+local adminStatus = nil
+RegisterNetEvent("mellotrainer:adminStatusReceived")
+AddEventHandler("mellotrainer:adminStatusReceived", function(status)
+	Citizen.Trace("Your Admin Status: "..tostring(status))
+	adminStatus = status
+end)
+
+-- Get their admin status once they load in game.
+AddEventHandler('onClientMapStart', function()
+	TriggerServerEvent("mellotrainer:getAdminStatus")
+end)
+
+-- In case the resource is restarted while someone in online this will ensure it rechecks their admin status
+TriggerServerEvent("mellotrainer:getAdminStatus")
+
+
+
+
 -- should the trainer be shown?
 local showtrainer = false
 
@@ -170,7 +192,7 @@ Citizen.CreateThread(function()
 
 		Wait(1)
 
-		if IsControlJustReleased(1, 167) and not blockinput then -- f6
+		if IsControlJustReleased(1, 167) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({
@@ -184,7 +206,7 @@ Citizen.CreateThread(function()
 			end
 		end
 
-		if IsControlJustReleased(1, 170) and not blockinput then -- f3
+		if IsControlJustReleased(1, 170) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f3
 		--if IsControlJustReleased(1, 168) and not blockinput then -- f7 for testing
 			teleportToWaypoint()
 		end

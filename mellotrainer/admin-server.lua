@@ -26,8 +26,7 @@ function isAdmin(identifier)
 end
 
 
-
-
+-- Used for data-require
 RegisterServerEvent("mellotrainer:isAdmin")
 AddEventHandler("mellotrainer:isAdmin",function()
 	local identifiers = GetPlayerIdentifiers(source)
@@ -43,6 +42,24 @@ AddEventHandler("mellotrainer:isAdmin",function()
 		TriggerClientEvent("mellotrainer:adminstatus",source,false)
 	end
 end)
+
+
+-- Used for admin-only trainer.
+RegisterServerEvent("mellotrainer:getAdminStatus")
+AddEventHandler("mellotrainer:getAdminStatus",function()
+	local identifiers = GetPlayerIdentifiers(source)
+	local found = false
+	for i=1,#identifiers,1 do
+		if(isAdmin(identifiers[i]))then
+			found = true
+			break
+		end
+	end
+	TriggerClientEvent("mellotrainer:adminStatusReceived",source,found)
+end)
+
+
+
 
 local maxPlayers = 32;
 local Users = {};
