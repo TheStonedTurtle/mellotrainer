@@ -45,6 +45,7 @@ end)
 
 RegisterNetEvent('mellotrainer:playerJoined')
 AddEventHandler('mellotrainer:playerJoined', function(source)
+	local source = tonumber(source)
 	if(featurePlayerNotifications and source ~= PlayerId())then
 		local name = GetPlayerName(source)
 		drawNotification("~g~"..name.." ~s~joined.")

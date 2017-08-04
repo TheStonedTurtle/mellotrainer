@@ -188,7 +188,7 @@ Citizen.CreateThread(function()
 		Wait(0)
 
 		if NetworkIsSessionStarted() then
-			TriggerServerEvent("mellotrainer:firstJoinProper")
+			TriggerServerEvent("mellotrainer:firstJoinProper", me)
 			return
 		end
 	end

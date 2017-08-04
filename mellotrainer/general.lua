@@ -176,11 +176,16 @@ AddEventHandler('onClientMapStart', function()
 	TriggerServerEvent("mellotrainer:getAdminStatus")
 end)
 
--- In case the resource is restarted while someone in online this will ensure it rechecks their admin status
-TriggerServerEvent("mellotrainer:getAdminStatus")
 
 
-
+-- Requests admin status 10 seconds after script restart. 
+-- If player is joining this should fire via onClientMapStart.
+Citizen.CreateThread(function()
+	Wait(10000)
+	if(adminStatus == nil)then
+		TriggerServerEvent("mellotrainer:getAdminStatus")
+	end
+end)
 
 -- should the trainer be shown?
 local showtrainer = false

@@ -77,7 +77,7 @@ local Users = {};
 -- Called whenever someone loads into the server. Users created in variables.lua
 
 RegisterServerEvent('mellotrainer:firstJoinProper')
-AddEventHandler('mellotrainer:firstJoinProper', function()
+AddEventHandler('mellotrainer:firstJoinProper', function(id)
 	local identifiers = GetPlayerIdentifiers(source)
 	for i = 1, #identifiers do
 		if(Users[source] == nil)then
@@ -86,7 +86,7 @@ AddEventHandler('mellotrainer:firstJoinProper', function()
 	end
 
 
-	TriggerClientEvent('mellotrainer:playerJoined', -1, source)
+	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
 end)
 
 

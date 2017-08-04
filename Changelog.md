@@ -1,3 +1,24 @@
+<h1>V 0.2.2 (08-03-2017)</h1>
+
+FXServer Compatibility & minor fixes.
+
+
+
+<h3>Additions</h3>
+<ul>
+	<li>Added Sting Ray to the Animal Category</li>
+</ul>
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed the player joined message</li>
+	<li>Fixed compatibility issues with FXServer</li>
+</ul>
+
+
+
+
+
 <h1>V 0.2.1 (07-08-2017)</h1>
 
 Added variable in general.lua for admin-only trainer access.
