@@ -116,15 +116,6 @@ end)
 -- Update player information.
 function checkPlayerInformation(i)
 	if(NetworkIsPlayerConnected(i) == false)then
-
-		if(featurePlayerBlips)then
-			clearBlip(i)
-		end
-
-		if(featurePlayerHeadDisplay)then
-			clearHead(i)
-		end
-
 		playerdb[i] = {}
 		return
 	end
@@ -221,6 +212,10 @@ function checkBlipTypes()
 	for i=0,maxPlayers,1 do
 		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()))then
 			checkPlayerInformation(i)
+
+			if(playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip)))then
+				createBlip(i)
+			end
 
 			-- Update it to a vehicle sprite if needed.
 			local sprite = 1
