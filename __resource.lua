@@ -13,6 +13,7 @@ files {
 	"nui/Roboto-Black.ttf"
 }
 
+client_script 'utils.lua'
 
 client_scripts {
 	"variables.lua",      		  -- Create all default variables. 
