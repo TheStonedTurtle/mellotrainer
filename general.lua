@@ -202,12 +202,11 @@ local showtrainer = false
 
 
 -- Constantly check for trainer movement.
-Citizen.CreateThread(function()
+Citizen.CreateThread( function()
 	while true do
+		Citizen.Wait( 0 )
 
-		Wait(1)
-
-		if IsControlJustReleased(1, 167) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f6
+		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({
@@ -222,44 +221,42 @@ Citizen.CreateThread(function()
 		end
 
 		if IsControlJustReleased(1, 170) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f3
-		--if IsControlJustReleased(1, 168) and not blockinput then -- f7 for testing
 			teleportToWaypoint()
 		end
 
 		if showtrainer and not blockinput then
-
-			if (IsControlJustPressed(1, 199) or IsControlJustPressed(1, 200)) then -- ESC
+			if ( IsControlJustPressed( 1, 199 ) or IsControlJustPressed( 1, 200 ) ) then 
 				showtrainer = false
 				SendNUIMessage({
 					hidetrainer = true
 				})				
 			end
 
-			if IsControlJustReleased(1, 201) then -- enter
+			if ( IsControlJustReleased( 1, 201 ) or IsDisabledControlJustReleased( 1, 201 ) ) then -- enter
 				SendNUIMessage({
 					trainerenter = true
 				})
-			elseif IsControlJustReleased(1, 202) then -- back
+			elseif ( IsControlJustReleased( 1, 202 ) or IsDisabledControlJustReleased( 1, 202 ) ) then -- back
 				SendNUIMessage({
 					trainerback = true
 				})
 			end
 
-			if IsControlJustReleased(1, 172) then -- up
+			if ( IsControlJustReleased( 1, 172 ) or IsDisabledControlJustReleased( 1, 172 ) ) then -- up
 				SendNUIMessage({
 					trainerup = true
 				})
-			elseif IsControlJustReleased(1, 173) then -- down
+			elseif ( IsControlJustReleased( 1, 173 ) or IsDisabledControlJustReleased( 1, 173 ) ) then -- down
 				SendNUIMessage({
 					trainerdown = true
 				})
 			end
 
-			if IsControlJustReleased(1, 174) then -- left
+			if ( IsControlJustReleased( 1, 174 ) or IsDisabledControlJustReleased( 1, 174 ) ) then -- left
 				SendNUIMessage({
 					trainerleft = true
 				})
-			elseif IsControlJustReleased(1, 175) then -- right
+			elseif ( IsControlJustReleased( 1, 175 ) or IsDisabledControlJustReleased( 1, 175 ) ) then -- right
 				SendNUIMessage({
 					trainerright = true
 				})
