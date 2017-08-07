@@ -271,18 +271,17 @@ end
 function createHead(i)
 	if(playerdb[i].head == nil) then
 		--Citizen.Trace("Head Display created for:"..playerdb[i].name)
-		playerdb[i].head = N_0xbfefe3321a3f5015(playerdb[i].ped, playerdb[i].name, false, false, "", false) -- Create head display
+		playerdb[i].head = CreateMpGamerTag(playerdb[i].ped, playerdb[i].name, false, false, "", false) -- Create head display
 	end
 
-	N_0x63bb75abedc1f6a0(playerdb[i].head, 0, true) -- _SetHeadDisplayFlag
+	SetMpGamerTagVisibility(playerdb[i].head, 0, true) -- _SetHeadDisplayFlag
 end
 
 
 -- Remove player head display
-function clearHead(i)-- If there was a head display remove it.
-	if (N_0x4e929e7a5796fd26(playerdb[i].head)) then
-		--Citizen.Trace("removed head ID: "..tostring(playerdb[i].head))
-		N_0x31698aa80e0223f8(playerdb[i].head)
+function clearHead( i )-- If there was a head display remove it.
+	if ( IsMpGamerTagActive( playerdb[i].head ) ) then
+		RemoveMpGamerTag( playerdb[i].head )
 		playerdb[i].head = nil
 	end
 end
