@@ -776,7 +776,7 @@ RegisterNUICallback("vehopts", function(data, cb)
 	--
 	elseif(action == "cosdamage")then
 		featureVehCosDamage = state
-		SetVehicleCanBeVisiblyDamage(playerVeh, not featureVehCosDamage)
+		SetVehicleCanBeVisiblyDamaged(playerVeh, not featureVehCosDamage)
 		SetVehicleStrong(playerVeh, featureVehCosDamage)
 		SetVehicleDoorBreakable(playerVeh, 0, not featureVehCosDamage)
 		SetVehicleDoorBreakable(playerVeh, 1, not featureVehCosDamage)

@@ -1,3 +1,16 @@
+<h1>V 0.2.3 (08-07-2017)</h1>
+
+Minor bug fixes and player blip fixes.
+
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed the player join and leave messages</li>
+	<li>Fixed the player blip issues</li>
+	<li>Minor CSS update for WolfKnight</li>
+</ul>
+
+
 <h1>V 0.2.2 (08-03-2017)</h1>
 
 FXServer Compatibility & minor fixes.

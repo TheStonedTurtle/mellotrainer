@@ -296,9 +296,9 @@ end)
 RegisterNUICallback("getonlineplayers", function(data,cb)
 	--Citizen.Trace("Get Online Players")
 	local players = getOnlinePlayersAndNames()
+	local playerCount = getTableLength(players)
 
-
-	if(#players < 1)then
+	if(playerCount < 1)then
 		drawNotification("~r~No players in session.")
 		return
 	end

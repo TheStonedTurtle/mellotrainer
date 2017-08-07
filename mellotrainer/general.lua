@@ -90,6 +90,16 @@ function sortByValue(custTable)
 end
 
 
+-- Get Table Length
+function getTableLength(T)
+	local count = 0
+	for _ in pairs(T) do 
+		count = count + 1
+	end
+	return count
+end
+
+
 
 -- Get value for state toggles
 function GetToggleState(variableName)
@@ -225,11 +235,11 @@ Citizen.CreateThread(function()
 				})				
 			end
 
-			if IsControlJustReleased(1, 176) then -- enter
+			if IsControlJustReleased(1, 201) then -- enter
 				SendNUIMessage({
 					trainerenter = true
 				})
-			elseif IsControlJustReleased(1, 177) then -- back / right click
+			elseif IsControlJustReleased(1, 202) then -- back
 				SendNUIMessage({
 					trainerback = true
 				})

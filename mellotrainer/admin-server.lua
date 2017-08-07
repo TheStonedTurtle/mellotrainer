@@ -81,10 +81,9 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 	local identifiers = GetPlayerIdentifiers(source)
 	for i = 1, #identifiers do
 		if(Users[source] == nil)then
-			Users[source] = true -- Update to user object?
+			Users[source] = GetPlayerName(source) -- Update to user object?
 		end
 	end
-
 
 	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
 end)
@@ -92,8 +91,8 @@ end)
 
 -- Remove User on playerDropped.
 AddEventHandler('playerDropped', function()
-	TriggerClientEvent('mellotrainer:playerLeft', -1, source)
 	if(Users[source])then
+		TriggerClientEvent('mellotrainer:playerLeft', -1, Users[source])
 		Users[source] = nil
 	end
 end)

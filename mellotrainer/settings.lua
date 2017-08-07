@@ -111,8 +111,38 @@ end)
  |_|    \__,_| |_| |_|  \___|  \__| |_|  \___/  |_| |_| |___/
 --]]
 
+
+
+-- Update player information.
+function checkPlayerInformation(i)
+	if(NetworkIsPlayerConnected(i) == false)then
+
+		if(featurePlayerBlips)then
+			clearBlip(i)
+		end
+
+		if(featurePlayerHeadDisplay)then
+			clearHead(i)
+		end
+
+		playerdb[i] = {}
+		return
+	end
+	
+	local name = GetPlayerName(i)
+	local playerPed = GetPlayerPed(i)
+
+	-- Player has changed since last load, lets save the user information.
+	if( (playerdb[i].ped ~= playerPed) or (playerdb[i].name ~= name) ) then
+		playerdb[i].ped = playerPed
+		playerdb[i].name = name
+	end
+end
+
+
+
+-- Toggle Blips on/off
 function toggleBlips()
-	--Citizen.Trace("ToggleBlips")
 	for i=0,maxPlayers, 1 do
 		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()) ) then
 			checkPlayerInformation(i)
@@ -130,22 +160,7 @@ end
 
 
 
-function toggleHeadDisplay()
-	for i=0,maxPlayers, 1 do
-		if(NetworkIsPlayerConnected(i) and (i ~= playerID)) then
-			checkPlayerInformation(i)
-
-			if (featurePlayerHeadDisplay) then
-				createHead(i)
-			else
-				clearHead(i)
-			end
-		end
-	end
-end
-
-
-
+-- Create player blip
 function createBlip(i)
 	-- Create the player blip for the current indexed ped.
 	playerdb[i].blip = AddBlipForEntity(playerdb[i].ped)
@@ -153,11 +168,13 @@ function createBlip(i)
 	SetBlipScale(playerdb[i].blip, 0.8)
 	SetBlipNameToPlayerName(playerdb[i].blip, i)
 	SetBlipCategory(playerdb[i].blip, 7)
+
 	N_0x5fbca48327b914df(playerdb[i].blip, 1) --ShowHeadingIndicator
 
 
 	-- Update it to a vehicle sprite if needed.
 	if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
+		N_0x5fbca48327b914df(playerdb[i].blip, 0) --ShowHeadingIndicator
 		local sprite = 1
 		local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
 		local vehClass = GetVehicleClass(veh)
@@ -184,17 +201,28 @@ function createBlip(i)
 			--SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
 		end
 	end
-
 end
 
 
+
+-- Removes player blip
+function clearBlip(i) -- If there was a blip remove it.
+	if (DoesBlipExist(playerdb[i].blip)) then
+		RemoveBlip(playerdb[i].blip)
+	end
+	playerdb[i].blip = nil
+	checkPlayerInformation(i)
+end
+
+
+
+-- Check player blips for any changes. Includes adding/removing new blips.
 function checkBlipTypes()
 	for i=0,maxPlayers,1 do
 		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()))then
 			checkPlayerInformation(i)
 
 			-- Update it to a vehicle sprite if needed.
-
 			local sprite = 1
 			if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
 				local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
@@ -219,39 +247,32 @@ function checkBlipTypes()
 				SetBlipSprite(playerdb[i].blip, sprite)
 				SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
 			end
+		else
+			clearBlip(i)
 		end
 	end
-
 end
 
 
 
-function clearBlip(i) -- If there was a blip remove it.
-	if (DoesBlipExist(playerdb[i].blip)) then
-		RemoveBlip(playerdb[i].blip)
-	end
-	playerdb[i].blip = nil
-	checkPlayerInformation(i)
-end
+-- Toggle head display on/off
+function toggleHeadDisplay()
+	for i=0,maxPlayers, 1 do
+		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId())) then
+			checkPlayerInformation(i)
 
-
-function checkPlayerInformation(i)
-	if(NetworkIsPlayerConnected(i) == false)then
-		playerdb[i] = {}
-		return
-	end
-	
-	local name = GetPlayerName(i)
-	local playerPed = GetPlayerPed(i)
-
-	-- Player has changed since last load, lets save the user information.
-	if( (playerdb[i].ped ~= playerPed) or (playerdb[i].name ~= name) ) then
-		playerdb[i].ped = playerPed
-		playerdb[i].name = name
+			if (featurePlayerHeadDisplay) then
+				createHead(i)
+			else
+				clearHead(i)
+			end
+		end
 	end
 end
 
 
+
+-- Create player head
 function createHead(i)
 	if(playerdb[i].head == nil) then
 		--Citizen.Trace("Head Display created for:"..playerdb[i].name)
@@ -262,6 +283,7 @@ function createHead(i)
 end
 
 
+-- Remove player head display
 function clearHead(i)-- If there was a head display remove it.
 	if (N_0x4e929e7a5796fd26(playerdb[i].head)) then
 		--Citizen.Trace("removed head ID: "..tostring(playerdb[i].head))
@@ -269,6 +291,7 @@ function clearHead(i)-- If there was a head display remove it.
 		playerdb[i].head = nil
 	end
 end
+
 
 
 
