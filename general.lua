@@ -4,13 +4,22 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
-local adminOnlyTrainer = Config.settings.adminOnlyTrainer
+local adminOnlyTrainer  = nil
+
+
+RegisterNetEvent("mellotrainer:receiveConfigSetting")
+AddEventHandler("mellotrainer:receiveConfigSetting",function(name,value)
+	if(name == "adminOnlyTrainer")then
+		adminOnlyTrainer = value
+	end
+end)
 
 
 
 -- Used to turn on global server settings
 function initServerConfig()
 	NetworkSetFriendlyFireOption(true)
+	TriggerServerEvent("mellotrainer:getConfigSetting","adminOnlyTrainer")
 end
 
 

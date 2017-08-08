@@ -14,7 +14,6 @@ files {
 }
 
 client_script 'utils.lua'
-client_script 'config.lua'
 
 client_scripts {
 	"variables.lua",      		  -- Create all default variables. 
@@ -30,6 +29,11 @@ client_scripts {
 	"weapons.lua",        		  -- Weapon Spawning/Attachments
 	"admin.lua" 		  		  -- Handles Admin Menu Access & Options
 }
+
+
+
+server_script 'config.lua'
+
 
 server_scripts{
 	"admin-server.lua"    		  -- Handles Cross-Player Admin Commands
