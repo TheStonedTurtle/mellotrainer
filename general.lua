@@ -4,14 +4,13 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
-local adminOnlyTrainer  = nil
+
+local settings = {}
 
 
 RegisterNetEvent("mellotrainer:receiveConfigSetting")
 AddEventHandler("mellotrainer:receiveConfigSetting",function(name,value)
-	if(name == "adminOnlyTrainer")then
-		adminOnlyTrainer = value
-	end
+	settings[name] = value
 end)
 
 
@@ -125,7 +124,7 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f6
+		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((settings.adminOnlyTrainer == true and adminStatus == true) or settings.adminOnlyTrainer == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({
@@ -139,7 +138,7 @@ Citizen.CreateThread( function()
 			end
 		end
 
-		if IsControlJustReleased(1, 170) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f3
+		if IsControlJustReleased(1, 170) and not blockinput and ((settings.adminOnlyTrainer == true and adminStatus == true) or settings.adminOnlyTrainer == false) then -- f3
 			teleportToWaypoint()
 		end
 
