@@ -1,13 +1,10 @@
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+local admins = Config.settings.admins
 
-
-local admins = {
-	"steam:110000106e1eac6"   -- Add all steam hexs heres
-}
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 
 function isAdmin(identifier)

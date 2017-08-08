@@ -1,10 +1,10 @@
-local adminOnlyTrainer = false -- Should this trainer only show for admins?
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+local adminOnlyTrainer = Config.settings.adminOnlyTrainer
 
 
 
@@ -22,96 +22,6 @@ end
  | |__| | | | | (_) | | |_) | | (_| | | |   | |      | |_| | | | | | | (__  | |_  | | | (_) | | | | | \__ \
   \_____| |_|  \___/  |_.__/   \__,_| |_|   |_|       \__,_| |_| |_|  \___|  \__| |_|  \___/  |_| |_| |___/
 --]]
-
-
--- Used to show notifications on the screen.
-function drawNotification(text)
-	SetNotificationTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawNotification(false, false)
-end
-
-
--- String splits by the separator.
-function stringsplit(inputstr, sep)
-    if sep == nil then
-            sep = "%s"
-    end
-    local t={} ; i=1
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-            t[i] = str
-            i = i + 1
-    end
-    return t
-end
-
-
--- Request Input from the user
-function requestInput(exampleText, maxLength)
-	DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", exampleText, "", "", "", maxLength + 1)
-	blockinput = true
-
-	while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
-		Wait(1)
-	end
-
-	local result = GetOnscreenKeyboardResult()
-	blockinput = false
-
-	if result then
-		return result
-	else
-		return false
-	end
-end
-
-
--- Sort a table by values.
-function sortByValue(custTable)
-  local Keys = {}
-
-  for k,_ in pairs(custTable) do
-    Keys[#Keys+1] = _
-  end
-
-  table.sort(Keys)
-  
-  local newObj = {}
-  for k,v in ipairs(Keys) do
-    for key,value in pairs(custTable) do
-      if value == v then
-        newObj[key] = value
-        break
-      end
-    end
-  end
-
-  return newObj
-end
-
-
--- Get Table Length
-function getTableLength(T)
-	local count = 0
-	for _ in pairs(T) do 
-		count = count + 1
-	end
-	return count
-end
-
-
-
--- Get value for state toggles
-function GetToggleState(variableName)
-  local value = _G[variableName]
-
-  if(value)then
-    return "ON"
-  else
-    return "OFF"
-  end
-end
-
 
 
 
@@ -141,7 +51,7 @@ function teleportToWaypoint()
 
 	for i,height in ipairs(groundCheckHeights) do
 		SetEntityCoordsNoOffset(targetPed, x,y,height, 0, 0, 1)
-		Wait(50)
+		Wait(10)
 
 		ground,z = GetGroundZFor_3dCoord(x,y,height)
 		if(ground) then

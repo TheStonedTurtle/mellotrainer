@@ -9,7 +9,6 @@
 
 -- Variables used for this part of the trainer.
 local playerdb = {}
-local playerID = PlayerId()
 
 -- Creates an empty table of tables to hold the blip/ped information for users.
 for i=0, maxPlayers, 1 do
