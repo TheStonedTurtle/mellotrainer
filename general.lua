@@ -18,7 +18,6 @@ end)
 -- Used to turn on global server settings
 function initServerConfig()
 	NetworkSetFriendlyFireOption(true)
-	TriggerServerEvent("mellotrainer:getConfigSetting","adminOnlyTrainer")
 end
 
 

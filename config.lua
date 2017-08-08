@@ -1,5 +1,6 @@
 local pvpEnabled = false
 local adminOnlyTrainer = false
+local maxPlayers = 32
 local admins = {
 	"steam:110000106e1eac6",   -- Add all steam hexs heres.
 	"steam:110000103920a31",   -- Must be in steam:XXXXX format
@@ -29,6 +30,47 @@ AddEventHandler("mellotrainer:getConfigSetting",function(stringname)
 	local value = Config.settings[stringname]
 	TriggerClientEvent("mellotrainer:receiveConfigSetting", source, stringname, value)
 end)
+
+
+
+
+
+--[[
+  _    _                         __  __                                                              _   
+ | |  | |                       |  \/  |                                                            | |  
+ | |  | |  ___    ___   _ __    | \  / |   __ _   _ __     __ _    __ _   _ __ ___     ___   _ __   | |_ 
+ | |  | | / __|  / _ \ | '__|   | |\/| |  / _` | | '_ \   / _` |  / _` | | '_ ` _ \   / _ \ | '_ \  | __|
+ | |__| | \__ \ |  __/ | |      | |  | | | (_| | | | | | | (_| | | (_| | | | | | | | |  __/ | | | | | |_ 
+  \____/  |___/  \___| |_|      |_|  |_|  \__,_| |_| |_|  \__,_|  \__, | |_| |_| |_|  \___| |_| |_|  \__|
+                                                                   __/ |                                 
+                                                                  |___/                                  
+--]]
+
+
+-- Called whenever someone loads into the server. Users created in variables.lua
+RegisterServerEvent('mellotrainer:firstJoinProper')
+AddEventHandler('mellotrainer:firstJoinProper', function(id)
+	local identifiers = GetPlayerIdentifiers(source)
+	for i = 1, #identifiers do
+		if(Users[source] == nil)then
+			Users[source] = GetPlayerName(source) -- Update to user object?
+		end
+	end
+
+	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
+	riggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
+end)
+
+
+-- Remove User on playerDropped.
+AddEventHandler('playerDropped', function()
+	if(Users[source])then
+		TriggerClientEvent('mellotrainer:playerLeft', -1, Users[source])
+		Users[source] = nil
+	end
+end)
+
+
 
 
 
