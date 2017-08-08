@@ -14,6 +14,7 @@ files {
 }
 
 client_script 'utils.lua'
+client_script 'config.lua'
 
 client_scripts {
 	"variables.lua",      		  -- Create all default variables. 
