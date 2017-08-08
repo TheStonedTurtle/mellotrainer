@@ -125,7 +125,7 @@ function handlePlayerDeathMessage(pedID,currentPed)
 	local entity,weaponHash = NetworkGetEntityKillerOfPlayer(pedID)
 	local name = GetPlayerName(pedID)
 
-	local msg = "~o~"..name.." ~s~ died."
+	local msg = "~o~<C>" .. name .. "</C> ~s~died."
 	if(IsPedAPlayer(entity))then
 		local killer = N_0x6c0e2e0125610278(entity)
 		local kname = GetPlayerName(killer)
