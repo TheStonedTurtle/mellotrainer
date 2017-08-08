@@ -47,6 +47,8 @@ end)
 --]]
 
 
+
+local Users = {}
 -- Called whenever someone loads into the server. Users created in variables.lua
 RegisterServerEvent('mellotrainer:firstJoinProper')
 AddEventHandler('mellotrainer:firstJoinProper', function(id)
