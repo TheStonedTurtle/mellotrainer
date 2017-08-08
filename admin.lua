@@ -185,10 +185,10 @@ end)
 -- Wait until in game to trigger proper join
 Citizen.CreateThread(function()
 	while true do
-		Wait(0)
+		Citizen.Wait( 0 )
 
 		if NetworkIsSessionStarted() then
-			TriggerServerEvent("mellotrainer:firstJoinProper", me)
+			TriggerServerEvent( "mellotrainer:firstJoinProper", PlayerId() )
 			return
 		end
 	end

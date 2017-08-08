@@ -39,28 +39,21 @@ RegisterNUICallback("notifications", function(data, cb)
 	if(cb)then cb("ok") end
 end)
 
-
-
-
-
-RegisterNetEvent('mellotrainer:playerJoined')
-AddEventHandler('mellotrainer:playerJoined', function(ID)
-	local ID = tonumber(ID)
-	if(featurePlayerNotifications and ID ~= PlayerId())then
-		local name = GetPlayerName(ID)
-		drawNotification("~g~"..name.." ~s~joined.")
+RegisterNetEvent( 'mellotrainer:playerJoined' )
+AddEventHandler( 'mellotrainer:playerJoined', function( ID )
+	local id = tonumber( ID )
+	if ( featurePlayerNotifications and id ~= PlayerId() ) then
+		local name = GetPlayerName( id )
+		drawNotification( "~g~<C>"..name.."</C> ~s~joined." )
 	end
-end)
+end )
 
-
-
-RegisterNetEvent('mellotrainer:playerLeft')
-AddEventHandler('mellotrainer:playerLeft', function(name)
-	if(featurePlayerNotifications)then
-		drawNotification("~r~"..name.." ~s~left.")
+RegisterNetEvent( 'mellotrainer:playerLeft' )
+AddEventHandler( 'mellotrainer:playerLeft', function( name )
+	if ( featurePlayerNotifications ) then
+		drawNotification( "~r~<C>" .. name .. "</C> ~s~left." )
 	end
-end)
-
+end )
 
 -- Better Death Messages
 function killActionFromWeaponHash(weaponHash)
