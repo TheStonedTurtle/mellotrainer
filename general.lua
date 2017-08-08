@@ -124,7 +124,7 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((settings.adminOnlyTrainer == true and adminStatus == true) or settings.adminOnlyTrainer == false) then -- f6
+		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({
@@ -138,7 +138,7 @@ Citizen.CreateThread( function()
 			end
 		end
 
-		if IsControlJustReleased(1, 170) and not blockinput and ((settings.adminOnlyTrainer == true and adminStatus == true) or settings.adminOnlyTrainer == false) then -- f3
+		if IsControlJustReleased(1, 170) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
 			teleportToWaypoint()
 		end
 
