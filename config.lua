@@ -60,7 +60,7 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 	end
 
 	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
-	riggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
+	TriggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
 end)
 
 
