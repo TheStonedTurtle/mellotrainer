@@ -157,28 +157,28 @@ p {
 }
 
 
-
-#voicecontainer{
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    left: 40%;
+/* Voice CSS */
+#voicecontainer {
+    margin: auto
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 300px;
+    width: 50%;
 }
 
-.voiceHeader{
-    padding: 0;
-    margin: 0;
-    font-size: 25px;
-    color: red;
+.voiceHeader {
+    margin: auto;
+    font-size: 20px;
+    color: white;
     font-weight:bolder;
+    text-shadow: 2px 2px 2px #000000;
 }
 
-.voicename{
-    font-size: 16px;
-    color: red;
+.voicename {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 18px;
+    color: white;
     font-weight: bolder;
+    text-shadow: 2px 2px 2px #000000;
 }

@@ -1073,7 +1073,7 @@ function createDynamicMenu(menuArray,name){
 
 // Update voice div with active talking players
 function updateVoices(custArray){
-    sendData("debug","updatedVoices")
+    // sendData("debug","updatedVoices")
 
     // Remove all players to be readded.
     voicePlayers.children().remove()
@@ -1084,7 +1084,8 @@ function updateVoices(custArray){
         newEle.text(custArray[i]);
         voicePlayers.append(newEle);
     }
-    sendData("debug","done")
+
+    // sendData("debug","done")
 }
 
 
