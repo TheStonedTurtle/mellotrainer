@@ -4,14 +4,8 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
-
-
 local selfDeathMessage = "~o~You ~s~died."
 local deathSuicideMessage = "~o~You ~s~commited suicide."
-
-
-
-
 
 RegisterNUICallback("notifications", function(data, cb)
 	local action = data.action
@@ -39,28 +33,21 @@ RegisterNUICallback("notifications", function(data, cb)
 	if(cb)then cb("ok") end
 end)
 
-
-
-
-
-RegisterNetEvent('mellotrainer:playerJoined')
-AddEventHandler('mellotrainer:playerJoined', function(ID)
-	local ID = tonumber(ID)
-	if(featurePlayerNotifications and ID ~= PlayerId())then
-		local name = GetPlayerName(ID)
-		drawNotification("~g~"..name.." ~s~joined.")
+RegisterNetEvent( 'mellotrainer:playerJoined' )
+AddEventHandler( 'mellotrainer:playerJoined', function( ID )
+	local id = tonumber( ID )
+	if ( featurePlayerNotifications and id ~= PlayerId() ) then
+		local name = GetPlayerName( id )
+		drawNotification( "~g~<C>"..name.."</C> ~s~joined." )
 	end
-end)
+end )
 
-
-
-RegisterNetEvent('mellotrainer:playerLeft')
-AddEventHandler('mellotrainer:playerLeft', function(name)
-	if(featurePlayerNotifications)then
-		drawNotification("~r~"..name.." ~s~left.")
+RegisterNetEvent( 'mellotrainer:playerLeft' )
+AddEventHandler( 'mellotrainer:playerLeft', function( name )
+	if ( featurePlayerNotifications ) then
+		drawNotification( "~r~<C>" .. name .. "</C> ~s~left." )
 	end
-end)
-
+end )
 
 -- Better Death Messages
 function killActionFromWeaponHash(weaponHash)
@@ -103,71 +90,53 @@ function killActionFromWeaponHash(weaponHash)
 	return "murdered";
 end
 
-
-
--- You died
-function handleDeathMessage()
-	local playerID = PlayerId(-1)
-	local entity, weaponHash = NetworkGetEntityKillerOfPlayer(playerID)
-
-	local msg = selfDeathMessage
-	if(IsPedAPlayer(entity))then
-		local killer = N_0x6c0e2e0125610278(entity)
-		local kname = GetPlayerName(killer)
-		if(kname)then
-			if(kname == GetPlayerName(playerID))then
-				msg = deathSuicideMessage
-			else
-				msg = "~y~"..kname.." ~s~"..killActionFromWeaponHash(weaponHash).." ~o~You~s~."
-			end
-		end
-	end
-
-	drawNotification(msg)
-end
-
 -- Other Player died
-function handlePlayerDeathMessage(pedID,currentPed)
-	local me = PlayerId(-1)
-	local entity,weaponHash = NetworkGetEntityKillerOfPlayer(pedID)
-	local name = GetPlayerName(pedID)
+function handlePlayerDeathMessage( pedID, currentPed )
+	local me = PlayerId()
+	local entity, weaponHash = NetworkGetEntityKillerOfPlayer( pedID )
+	local name = GetPlayerName( pedID )
 
-	local msg = "~o~"..name.." ~s~ died."
-	if(IsPedAPlayer(entity))then
-		local killer = N_0x6c0e2e0125610278(entity)
-		local kname = GetPlayerName(killer)
-		if(kname == name)then
-			msg = "~o~"..name.." ~s~commited suicide."
-		elseif(kname == GetPlayerName(me))then
-			msg = "~o~You ~s"..killActionFromWeaponHash(weaponHash).." ~o~"..name.."~s~."
+	local msg = "~o~<C>" .. name .. "</C> ~s~died."
+
+	if ( IsPedAPlayer( entity ) ) then
+		local killer = NetworkGetPlayerIndexFromPed( entity )
+		local kname = GetPlayerName( killer )
+
+		if ( kname == name ) then
+			msg = "~o~<C>" .. name .. "</C> ~s~commited suicide."
+		elseif ( kname == GetPlayerName( me ) )then
+			msg = "~o~<C>You</C> ~s~" .. killActionFromWeaponHash( weaponHash ) .. " ~o~<C>" .. name .. "</C>~s~."
 		else
-			msg = "~y~"..kname.." ~s~"..killActionFromWeaponHash(weaponHash).." ~o~"..name.."~s~."
+			msg = "~y~<C>" .. kname .. "</C> ~s~" .. killActionFromWeaponHash( weaponHash ) .. " ~o~<C>" .. name .. "</C>~s~."
 		end
 	end
 
-	drawNotification(msg)
+	drawNotification( msg )
 end
 
 
 -- Check for death messages
 function checkForDeaths()
-    local me = PlayerId(-1)
-    for i=0, maxPlayers, 1 do
-        if(NetworkIsPlayerConnected(i)) then
-        	local currentPed = GetPlayerPed(i)
-        	if(IsEntityDead(currentPed) and DoesEntityExist(currentPed))then
-       			handlePlayerDeathMessage(i,currentPed)
+    local me = PlayerId()
+
+    for i = 0, maxPlayers, 1 do
+        if ( NetworkIsPlayerConnected( i ) ) then
+        	local currentPed = GetPlayerPed( i )
+
+        	if ( DoesEntityExist( currentPed ) and IsEntityDead( currentPed ) ) then 
+       			handlePlayerDeathMessage( i, currentPed )
 			end
 		end
 	end
 end
 
 
-Citizen.CreateThread(function()
+Citizen.CreateThread( function()
 	while true do
-		Wait(500)
-		if(featureDeathNotifications)then
+		Citizen.Wait( 0 )
+
+		if ( featureDeathNotifications ) then
 			checkForDeaths()
 		end
 	end
-end)
+end )

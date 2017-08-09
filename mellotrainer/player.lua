@@ -120,7 +120,7 @@ RegisterNUICallback("player", function(data, cb)
 
 	elseif action == "noragdoll" then
 		featureNoRagDoll = newstate
-		featureNoRagDollUpdated = true;
+		featureNoRagDollUpdated = true
 		drawNotification("No Ragdoll: "..tostring(text))
 
 	elseif action == "nightvision" then
@@ -204,11 +204,11 @@ Citizen.CreateThread(function()
 
 
 			-- No Ragdoll
-			if (featureNoRagDollUpdated)then
-				SetPedCanRagdoll(playerPed, featureNoRagDoll)
-
-				featureNoRagDollUpdated = false;
-			end
+			if ( featureNoRagDoll ) then 
+				SetPedCanRagdoll( playerPed, false )
+			else 
+				SetPedCanRagdoll( playerPed, true )
+			end 
 
 
 			-- Night Vision
@@ -256,21 +256,20 @@ Citizen.CreateThread(function()
 
 
 			-- Drunk
-			if(featurePlayerDrunkUpdated) then
-				SetPedIsDrunk(playerPed, drunk)
-				if(featurePlayerDrunk) then
-					RequestClipSet("move_m@drunk@verydrunk")
+			if ( featurePlayerDrunkUpdated ) then
+				SetPedIsDrunk( playerPed, drunk )
 
-					while (HasClipSetLoaded("move_m@drunk@verydrunk") == false) do
-						Wait(1)
-					end
+				if ( featurePlayerDrunk ) then
+					_LoadClipSet( "move_m@drunk@verydrunk" )
 
-					--Citizen.Trace("Drunk Movement")
-					SetPedMovementClipset(playerPed, "move_m@drunk@verydrunk", 0.0)
+					SetPedMovementClipset( playerPed, "move_m@drunk@verydrunk", 1.0 )
+					ShakeGameplayCam( "DRUNK_SHAKE", 1.0 )
 				else
-					ResetPedMovementClipset(playerPed, 0.0)
-					RemoveClipSet("move_m@drunk@verydrunk")
+					ResetPedMovementClipset( playerPed, 1.0 )
+					StopGameplayCamShaking( true )
+					RemoveClipSet( "move_m@drunk@verydrunk" )
 				end
+
 				featurePlayerDrunkUpdated = false;
 			end
 

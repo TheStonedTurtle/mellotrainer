@@ -752,14 +752,12 @@ RegisterNUICallback("vehopts", function(data, cb)
 	-- Power Options
 	elseif(action == "powerboost")then
 		powerMultiplier = tonumber(data.data[3])
-		SetVehicleEnginePowerMultiplier(playerVeh, powerMultiplier + 0.00)
 
 		drawNotification("Power Boost Multiplier: "..tostring(powerMultiplier))
 
 	-- Torque Options
 	elseif(action == "torqueboost")then
 		torqueMultiplier = tonumber(data.data[3])
-		SetVehicleEngineTorqueMultiplier(playerVeh, torqueMultiplier + 0.00)
 
 		drawNotification("Torque Multiplier: "..tostring(torqueMultiplier))
 
@@ -807,8 +805,23 @@ RegisterNUICallback("vehopts", function(data, cb)
 	if(cb)then cb("ok") end
 end)
 
+-- Vehicle Settings that need to be applied every frame 
+Citizen.CreateThread( function()
+	while true do 
+		local ped = GetPlayerPed( -1 )
 
+		if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
+			local veh = GetVehiclePedIsIn( ped, false )
 
+			if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
+				SetVehicleEngineTorqueMultiplier( veh, torqueMultiplier + 0.001 )
+				SetVehicleEnginePowerMultiplier( veh, powerMultiplier + 0.001 )
+			end 
+		end 
+
+		Citizen.Wait( 0 )
+	end 
+end )
 
 -- Vehicle Options Thread
 Citizen.CreateThread(function()

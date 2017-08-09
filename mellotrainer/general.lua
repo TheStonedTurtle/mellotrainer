@@ -1,10 +1,17 @@
-local adminOnlyTrainer = false -- Should this trainer only show for admins?
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+-- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+
+local settings = {}
+
+
+RegisterNetEvent("mellotrainer:receiveConfigSetting")
+AddEventHandler("mellotrainer:receiveConfigSetting",function(name,value)
+	settings[name] = value
+end)
 
 
 
@@ -22,96 +29,6 @@ end
  | |__| | | | | (_) | | |_) | | (_| | | |   | |      | |_| | | | | | | (__  | |_  | | | (_) | | | | | \__ \
   \_____| |_|  \___/  |_.__/   \__,_| |_|   |_|       \__,_| |_| |_|  \___|  \__| |_|  \___/  |_| |_| |___/
 --]]
-
-
--- Used to show notifications on the screen.
-function drawNotification(text)
-	SetNotificationTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawNotification(false, false)
-end
-
-
--- String splits by the separator.
-function stringsplit(inputstr, sep)
-    if sep == nil then
-            sep = "%s"
-    end
-    local t={} ; i=1
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-            t[i] = str
-            i = i + 1
-    end
-    return t
-end
-
-
--- Request Input from the user
-function requestInput(exampleText, maxLength)
-	DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", exampleText, "", "", "", maxLength + 1)
-	blockinput = true
-
-	while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
-		Wait(1)
-	end
-
-	local result = GetOnscreenKeyboardResult()
-	blockinput = false
-
-	if result then
-		return result
-	else
-		return false
-	end
-end
-
-
--- Sort a table by values.
-function sortByValue(custTable)
-  local Keys = {}
-
-  for k,_ in pairs(custTable) do
-    Keys[#Keys+1] = _
-  end
-
-  table.sort(Keys)
-  
-  local newObj = {}
-  for k,v in ipairs(Keys) do
-    for key,value in pairs(custTable) do
-      if value == v then
-        newObj[key] = value
-        break
-      end
-    end
-  end
-
-  return newObj
-end
-
-
--- Get Table Length
-function getTableLength(T)
-	local count = 0
-	for _ in pairs(T) do 
-		count = count + 1
-	end
-	return count
-end
-
-
-
--- Get value for state toggles
-function GetToggleState(variableName)
-  local value = _G[variableName]
-
-  if(value)then
-    return "ON"
-  else
-    return "OFF"
-  end
-end
-
 
 
 
@@ -141,7 +58,7 @@ function teleportToWaypoint()
 
 	for i,height in ipairs(groundCheckHeights) do
 		SetEntityCoordsNoOffset(targetPed, x,y,height, 0, 0, 1)
-		Wait(50)
+		Wait(10)
 
 		ground,z = GetGroundZFor_3dCoord(x,y,height)
 		if(ground) then
@@ -202,12 +119,11 @@ local showtrainer = false
 
 
 -- Constantly check for trainer movement.
-Citizen.CreateThread(function()
+Citizen.CreateThread( function()
 	while true do
+		Citizen.Wait( 0 )
 
-		Wait(1)
-
-		if IsControlJustReleased(1, 167) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f6
+		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({
@@ -221,45 +137,43 @@ Citizen.CreateThread(function()
 			end
 		end
 
-		if IsControlJustReleased(1, 170) and not blockinput and ((adminOnlyTrainer == true and adminStatus == true) or adminOnlyTrainer == false) then -- f3
-		--if IsControlJustReleased(1, 168) and not blockinput then -- f7 for testing
+		if IsControlJustReleased(1, 170) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
 			teleportToWaypoint()
 		end
 
 		if showtrainer and not blockinput then
-
-			if (IsControlJustPressed(1, 199) or IsControlJustPressed(1, 200)) then -- ESC
+			if ( IsControlJustPressed( 1, 199 ) or IsControlJustPressed( 1, 200 ) ) then 
 				showtrainer = false
 				SendNUIMessage({
 					hidetrainer = true
 				})				
 			end
 
-			if IsControlJustReleased(1, 201) then -- enter
+			if ( IsControlJustReleased( 1, 201 ) or IsDisabledControlJustReleased( 1, 201 ) ) then -- enter
 				SendNUIMessage({
 					trainerenter = true
 				})
-			elseif IsControlJustReleased(1, 202) then -- back
+			elseif ( IsControlJustReleased( 1, 202 ) or IsDisabledControlJustReleased( 1, 202 ) ) then -- back
 				SendNUIMessage({
 					trainerback = true
 				})
 			end
 
-			if IsControlJustReleased(1, 172) then -- up
+			if ( IsControlJustReleased( 1, 172 ) or IsDisabledControlJustReleased( 1, 172 ) ) then -- up
 				SendNUIMessage({
 					trainerup = true
 				})
-			elseif IsControlJustReleased(1, 173) then -- down
+			elseif ( IsControlJustReleased( 1, 173 ) or IsDisabledControlJustReleased( 1, 173 ) ) then -- down
 				SendNUIMessage({
 					trainerdown = true
 				})
 			end
 
-			if IsControlJustReleased(1, 174) then -- left
+			if ( IsControlJustReleased( 1, 174 ) or IsDisabledControlJustReleased( 1, 174 ) ) then -- left
 				SendNUIMessage({
 					trainerleft = true
 				})
-			elseif IsControlJustReleased(1, 175) then -- right
+			elseif ( IsControlJustReleased( 1, 175 ) or IsDisabledControlJustReleased( 1, 175 ) ) then -- right
 				SendNUIMessage({
 					trainerright = true
 				})

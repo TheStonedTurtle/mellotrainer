@@ -5,11 +5,6 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 
-
-
-local me = PlayerId(-1)
-
-
 --    _______ _                    ____        _   _                 
 --   |__   __(_)                  / __ \      | | (_)                
 --      | |   _ _ __ ___   ___   | |  | |_ __ | |_ _  ___  _ __  ___ 
@@ -71,7 +66,7 @@ RegisterNUICallback("time", function(data, cb)
 		m=0
 		s=0
 	end
-	TriggerServerEvent("mellotrainer:adminTime", me, h,m,s)
+	TriggerServerEvent("mellotrainer:adminTime", PlayerId(), h,m,s)
 	drawNotification("~g~Time changed to "..tostring(h)..":"..string.format("%02d", tostring(m)))
 end)
 
@@ -144,14 +139,14 @@ RegisterNUICallback("weatheroptions", function(data, cb)
 	if(action == "wind")then
 		featureWeatherWind = newstate
 		local heading = GetEntityHeading(PlayerPedId())
-		TriggerServerEvent("mellotrainer:adminWind", me, featureWeatherWind, heading)
+		TriggerServerEvent("mellotrainer:adminWind", PlayerId(), featureWeatherWind, heading)
 		drawNotification("Wind "..text)
 	elseif(action == "freeze")then
 		featureWeatherFreeze = newstate
 		drawNotification("Persistent Weather "..text.."~w~, Select weather to apply")
 	elseif(action == "blackout")then
 		featureBlackout = newstate
-		TriggerServerEvent("mellotrainer:adminBlackout", me, featureBlackout)
+		TriggerServerEvent("mellotrainer:adminBlackout", PlayerId(), featureBlackout)
 		drawNotification("Blackout "..text)
 	end
 
@@ -160,7 +155,7 @@ end)
 RegisterNUICallback("weather", function(data, cb)
 	local weather = data.action
 
-	TriggerServerEvent("mellotrainer:adminWeather", me, weather, featureWeatherFreeze)
+	TriggerServerEvent("mellotrainer:adminWeather", PlayerId(), weather, featureWeatherFreeze)
 
 	drawNotification("Weather changed to ~g~" .. weather .. ".")
 	cb("ok")
@@ -185,10 +180,10 @@ end)
 -- Wait until in game to trigger proper join
 Citizen.CreateThread(function()
 	while true do
-		Wait(0)
+		Citizen.Wait( 0 )
 
 		if NetworkIsSessionStarted() then
-			TriggerServerEvent("mellotrainer:firstJoinProper", me)
+			TriggerServerEvent( "mellotrainer:firstJoinProper", PlayerId() )
 			return
 		end
 	end

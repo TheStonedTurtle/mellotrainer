@@ -9,7 +9,6 @@
 
 -- Variables used for this part of the trainer.
 local playerdb = {}
-local playerID = PlayerId()
 
 -- Creates an empty table of tables to hold the blip/ped information for users.
 for i=0, maxPlayers, 1 do
@@ -116,15 +115,6 @@ end)
 -- Update player information.
 function checkPlayerInformation(i)
 	if(NetworkIsPlayerConnected(i) == false)then
-
-		if(featurePlayerBlips)then
-			clearBlip(i)
-		end
-
-		if(featurePlayerHeadDisplay)then
-			clearHead(i)
-		end
-
 		playerdb[i] = {}
 		return
 	end
@@ -216,39 +206,65 @@ end
 
 
 
--- Check player blips for any changes. Includes adding/removing new blips.
-function checkBlipTypes()
+-- Check for any changes in player information.
+function checkPlayerTypes()
 	for i=0,maxPlayers,1 do
 		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()))then
+
+
+			-- Update player information.
 			checkPlayerInformation(i)
 
-			-- Update it to a vehicle sprite if needed.
-			local sprite = 1
-			if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
-				local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
-				local vehClass = GetVehicleClass(veh)
 
-				if(vehClass == 8 or vehClass == 13)then
-					sprite = 226 -- Bikes
-				elseif(vehClass == 14)then
-					sprite = 410 -- Boats
-				elseif(vehClass == 15)then
-					sprite = 422 -- Helicopters
-				elseif(vehClass == 16)then
-					sprite = 423 -- Airplanes
-				elseif(vehClass == 19)then
-					sprite = 421 -- Military
+			-- Player Blips
+			if(featurePlayerBlips)then
+				-- Create new blip or update blip sprite.
+				if(playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip)))then
+					createBlip(i)
 				else
-					sprite = 225 -- Car
+
+					-- Update it to a vehicle sprite if needed.
+					local sprite = 1
+					if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
+						local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
+						local vehClass = GetVehicleClass(veh)
+
+						if(vehClass == 8 or vehClass == 13)then
+							sprite = 226 -- Bikes
+						elseif(vehClass == 14)then
+							sprite = 410 -- Boats
+						elseif(vehClass == 15)then
+							sprite = 422 -- Helicopters
+						elseif(vehClass == 16)then
+							sprite = 423 -- Airplanes
+						elseif(vehClass == 19)then
+							sprite = 421 -- Military
+						else
+							sprite = 225 -- Car
+						end
+					end
+
+					if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
+						SetBlipSprite(playerdb[i].blip, sprite)
+						
+						-- Blip name sometimes gets overriden by sprite name
+						SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name)
+					end
 				end
 			end
 
-			if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
-				SetBlipSprite(playerdb[i].blip, sprite)
-				SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
+
+			-- Player Heads
+			if(featurePlayerHeadDisplay)then
+				if(playerdb[i].head == nil)then
+					createHead(i)
+				end
 			end
+
+
 		else
 			clearBlip(i)
+			clearHead(i)
 		end
 	end
 end
@@ -276,18 +292,17 @@ end
 function createHead(i)
 	if(playerdb[i].head == nil) then
 		--Citizen.Trace("Head Display created for:"..playerdb[i].name)
-		playerdb[i].head = N_0xbfefe3321a3f5015(playerdb[i].ped, playerdb[i].name, false, false, "", false) -- Create head display
+		playerdb[i].head = CreateMpGamerTag(playerdb[i].ped, playerdb[i].name, false, false, "", false) -- Create head display
 	end
 
-	N_0x63bb75abedc1f6a0(playerdb[i].head, 0, true) -- _SetHeadDisplayFlag
+	SetMpGamerTagVisibility(playerdb[i].head, 0, true) -- _SetHeadDisplayFlag
 end
 
 
 -- Remove player head display
-function clearHead(i)-- If there was a head display remove it.
-	if (N_0x4e929e7a5796fd26(playerdb[i].head)) then
-		--Citizen.Trace("removed head ID: "..tostring(playerdb[i].head))
-		N_0x31698aa80e0223f8(playerdb[i].head)
+function clearHead( i )-- If there was a head display remove it.
+	if ( IsMpGamerTagActive( playerdb[i].head ) ) then
+		RemoveMpGamerTag( playerdb[i].head )
 		playerdb[i].head = nil
 	end
 end
@@ -351,13 +366,19 @@ Citizen.CreateThread(function()
 				toggleBlips()
 				blipToggle = true
 			end
-			checkBlipTypes()
 		else
 			if (blipToggle) then
 				blipToggle = false
 				toggleBlips()
 			end
 		end
+
+
+		-- Constantly check online player blips & head displays.
+		if(featurePlayerBlips or featurePlayerHeadDisplay)then
+			checkPlayerTypes()
+		end
+
 	end
 end)
 

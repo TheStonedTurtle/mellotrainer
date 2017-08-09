@@ -1,4 +1,4 @@
-resource_manifest_version '77731fab-63ca-442c-a67b-abc70f28dfa5'
+resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
 
 description "Server Side Trainer to replace the Lambda Menu. Created by TheStonedTurtle/Michael Goodwin."
 
@@ -13,6 +13,7 @@ files {
 	"nui/Roboto-Black.ttf"
 }
 
+client_script 'utils.lua'
 
 client_scripts {
 	"variables.lua",      		  -- Create all default variables. 
@@ -28,6 +29,11 @@ client_scripts {
 	"weapons.lua",        		  -- Weapon Spawning/Attachments
 	"admin.lua" 		  		  -- Handles Admin Menu Access & Options
 }
+
+
+
+server_script 'config.lua'
+
 
 server_scripts{
 	"admin-server.lua"    		  -- Handles Cross-Player Admin Commands

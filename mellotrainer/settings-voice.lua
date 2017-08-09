@@ -5,6 +5,37 @@
 -- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
 
 
+-- Update voice feature variables
+function updateVoiceDistanceVariables(distance)
+	featureVPTooClose = false
+	featureVPVeryClose = false
+	featureVPClose = false
+	featureVPNearby = false
+	featureVPDistant = false
+	featureVPFar = false
+	featureVPVeryFar = false
+	featureVPAllPlayers = false
+	if(distance == 0)then
+		featureVPAllPlayers = true;
+	elseif(distance == 5)then
+		featureVPTooClose = true
+	elseif(distance == 25)then
+		featureVPVeryClose = true
+	elseif(distance == 75)then
+		featureVPClose = true
+	elseif(distance == 200)then
+		featureVPNearby = true
+	elseif(distance == 500)then
+		featureVPDistant = true
+	elseif(distance == 2500)then
+		featureVPFar = true
+	elseif(distance == 8000)then
+		featureVPVeryFar = true
+	end
+end
+
+
+
 RegisterNUICallback("voiceopts", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local action = data.action
@@ -32,6 +63,7 @@ RegisterNUICallback("voiceopts", function(data, cb)
 		local distance = tonumber(request) + 0.00
 
 		NetworkSetTalkerProximity(distance)
+		updateVoiceDistanceVariables(distance)
 		if(distance > 0)then
 			drawNotification("Voice Proximity: "..distance.." meters")
 		else
@@ -60,20 +92,22 @@ end)
 Citizen.CreateThread(function()
 	local me = PlayerId(-1)
 	while true do 
-		Wait(250)
+		Citizen.Wait(0)
 
 		if(featureShowVoiceChatSpeaker)then
 			local names = {}
+			local nameCount = 0
 
 			for i=0, maxPlayers, 1 do
 	    		if(NetworkIsPlayerConnected(i)) then
 					if(NetworkIsPlayerTalking(i))then
 						table.insert(names, GetPlayerName(i))
+						nameCount = nameCount + 1
 					end
 				end
 			end
 
-			if(#names > 0)then
+			if(nameCount > 0)then
 				local results = json.encode(names, {indent=true})	
 
 				SendNUIMessage({
