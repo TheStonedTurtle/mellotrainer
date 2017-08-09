@@ -60,20 +60,22 @@ end)
 Citizen.CreateThread(function()
 	local me = PlayerId(-1)
 	while true do 
-		Wait(250)
+		Citizen.Wait(0)
 
 		if(featureShowVoiceChatSpeaker)then
 			local names = {}
+			local nameCount = 0
 
 			for i=0, maxPlayers, 1 do
 	    		if(NetworkIsPlayerConnected(i)) then
 					if(NetworkIsPlayerTalking(i))then
 						table.insert(names, GetPlayerName(i))
+						nameCount = nameCount + 1
 					end
 				end
 			end
 
-			if(#names > 0)then
+			if(nameCount > 0)then
 				local results = json.encode(names, {indent=true})	
 
 				SendNUIMessage({

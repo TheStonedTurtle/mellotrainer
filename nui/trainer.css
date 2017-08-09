@@ -163,7 +163,9 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: absolute;
     width: 50%;
+    left: 25%;
 }
 
 .voiceHeader {

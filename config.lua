@@ -1,11 +1,13 @@
-local pvpEnabled = false
 local adminOnlyTrainer = false
-local maxPlayers = 32
 local admins = {
 	"steam:110000106e1eac6",   -- Add all steam hexs heres.
-	"steam:110000103920a31",   -- Must be in steam:XXXXX format
+	"steam:110000103920a31",   -- MUST FOLLOW EXAMPLE FORMAT
 	"ip:0.0.0.0",              -- IP possible but not recommended
 }
+
+
+--local pvpEnabled = true
+--local maxPlayers = 32
 
 
 
@@ -18,7 +20,9 @@ local admins = {
 
 Config = {}
 Config.settings = {
-	pvpEnabled = pvpEnabled,
+	--pvpEnabled = pvpEnabled,
+	--maxPlayers = maxPlayers,
+
 	adminOnlyTrainer = adminOnlyTrainer,
 	admins = admins
 }
