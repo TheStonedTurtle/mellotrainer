@@ -1,3 +1,30 @@
+<h1>V 0.3.0 (08-09-2017)</h1>
+
+Many updates and code optimizations. New member <a href="https://github.com/WolfKnight98" target="_blank">WoflKnight98</a> added to the team.
+
+
+<h3>Changes</h3>
+<ul>
+	<li>Fixed trainer controls</li>
+	<li>Updated resource manifest version and native names</li>
+	<li>More Player Blip and Overhead Name Optimizations</li>
+	<li>Slightly updated Menu Spawn names</li>
+	<li>Fixed No Ragdoll Mode</li>
+	<li>Fixed Torque and Power Boost</li>
+	<li>Fixed Player Join/Leave messages</li>
+	<li>Player Death message optimizations</li>
+	<li>Updated voice name overlay</li>
+	<li>Localized config settings</li>
+	<li>Code Restructure and Optimizations</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+	<li>New config.lua file for settings</li>
+	<li>New util.lua file for utility functions</li>
+</ul>
+
+
 <h1>V 0.2.3 (08-07-2017)</h1>
 
 Minor bug fixes and player blip fixes.
