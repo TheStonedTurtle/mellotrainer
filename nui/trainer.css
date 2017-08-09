@@ -159,7 +159,7 @@ p {
 
 /* Voice CSS */
 #voicecontainer {
-    margin: auto
+    margin: auto; 
     display: flex;
     flex-direction: column;
     align-items: center;
