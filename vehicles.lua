@@ -109,6 +109,14 @@ end )
 
 RegisterNUICallback( "loadsavedvehs", function( data, cb ) 
 	Citizen.Trace( "Attempting to load vehicles." )
+
+	SendNUIMessage({
+		createmenu = true,
+		menuName = "loadsavedvehs",
+		menudata = "{}"
+	})
+	
+	if ( cb ) then cb( "ok" ) end
 end )
 
 RegisterNUICallback( "vehiclesave", function( data, cb )
