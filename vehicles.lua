@@ -95,8 +95,22 @@ RegisterNUICallback("vehspawn", function(data, cb)
 	if(cb)then cb("ok") end
 end)
 
--- THIS IS JUST A TEST 
--- WILL BE CHANGED A LOT 
+--[[------------------------------------------------------------------------
+	Vehicle Saving and Loading 
+------------------------------------------------------------------------]]--
+local vehicles = {}
+local vehicleCount = 0
+
+RegisterNetEvent( 'wk:RecieveSavedVehicles' )
+AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable ) 
+	vehicleCount = getTableLength( dataTable )
+	Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
+end )
+
+RegisterNUICallback( "loadsavedvehs", function( data, cb ) 
+	Citizen.Trace( "Attempting to load vehicles." )
+end )
+
 RegisterNUICallback( "vehiclesave", function( data, cb )
     Citizen.CreateThread( function() 
     	local ped = GetPlayerPed( -1 )
@@ -126,8 +140,6 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                                 end 
                             end 
                         end 
-                    else 
-                        table.insert( extras, "empty" )
                     end 
 
                     vehicleTableData[ "saveName" ] = saveName -- EscapeStringData( saveName )
