@@ -17,8 +17,8 @@ function DATASAVE:GetSteamId( source )
     return nil
 end 
 
-function DATASAVE:DoesSaveExist( steamid )
-    local dir = self.dir .. steamid .. ".txt"
+function DATASAVE:DoesFileExist( name )
+    local dir = self.dir .. name
     local file = io.open( dir, "r" )
 
     if ( file ~= nil ) then 
@@ -29,45 +29,58 @@ function DATASAVE:DoesSaveExist( steamid )
     end 
 end 
 
-function DATASAVE:CreateSaveFile( steamid )
-    local dir = self.dir .. steamid .. ".txt"
+function DATASAVE:CreateFile( name )
+    local dir = self.dir .. name
 
-    local save, err = io.open( dir, 'w' )
+    local file = io.open( dir, 'w' )
 
-    if ( not save ) then print( err ) end 
+    if ( not file ) then RconPrint( err ) end
 
-    -- save:write( "this is a test for " .. steamid )
-    save:close()
-end 
-
-function DATASAVE:WriteToFile( steamid, data )
-    local dir = self.dir .. steamid .. ".txt"
-
-    local file, err = io.open( dir, 'a' ) 
-
-    if ( not file ) then print( err ) end 
-
-    file:write( tostring( data ) .. ";" )
     file:close()
 end 
 
-function DATASAVE:LoadSaveFile( steamid )
-    local dir = self.dir .. steamid .. ".txt"
+function DATASAVE:LoadFile( name )
+    local dir = self.dir .. name 
 
     local file, err = io.open( dir, 'r' )
 
-    if ( not file ) then print( err ) return nil end 
+    if ( not file ) then RconPrint( err ) return nil end 
+
+    file:close()
 
     local contents = stringsplit( file, ";" )
 
     return contents 
 end 
 
+function DATASAVE:WriteToFile( name, data )
+    local dir = self.dir .. name
+
+    local file, err = io.open( dir, 'a' ) 
+
+    if ( not file ) then RconPrint( err ) end 
+
+    file:write( tostring( data ) .. ";" )
+    file:close()
+end 
+
+function DATASAVE:SendSaveData( source )
+    local id = DATASAVE:GetSteamIdFromSource( source )
+
+    if ( id ~= nil ) then 
+        local data = DATASAVE:LoadSaveFile( source )
+    else 
+        RconPrint( "MELLOTRAINER: Attempted to load save data for " .. GetPlayerName( source ) .. ", but does not have a steam id." ) 
+    end 
+end 
+
 function DATASAVE:GetSteamIdFromSource( source )
-    print( "DATASAVE:GetSteamIdFromSource - GOT " .. self.players[source] )
+    RconPrint( "DATASAVE:GetSteamIdFromSource - GOT " .. self.players[source] )
 
     if ( self.players[source] ) then 
         return self.players[source] 
+    else 
+        return nil 
     end 
 end 
 
@@ -78,39 +91,41 @@ AddEventHandler( 'wk:AddPlayerToDataSave', function()
     if ( steamId ~= nil ) then 
         -- local newid = ( source & 0xFFFF ) + 1
         DATASAVE.players[source] = steamId
-        print( "Setting " .. source .. " to " .. steamId )
+        RconPrint( "Setting " .. source .. " to " .. steamId )
 
         local exists = DATASAVE:DoesSaveExist( steamId )
 
         if ( exists ) then 
             RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " has a save file.\n" )
+            TriggerEvent( 'wk:SendSaveData' )
         else 
             RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " does not have a save file, creating one.\n" )
             DATASAVE:CreateSaveFile( steamId )
         end 
     else 
+        DATASAVE.players[source] = nil 
         RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load.\n" )
     end 
 end )
 
-RegisterServerEvent( 'wk:SendSaveData' )
-AddEventHandler( 'wk:SendSaveData', function( source, data )
+RegisterServerEvent( 'wk:DataSave' )
+AddEventHandler( 'wk:DataSave', function( type, data )
+    RconPrint( "Got wk:DataSave from " .. GetPlayerName( source ) .. " " .. source  )
+    RconPrint( "SteamID: " .. DATASAVE.players[source] )
+    local id = DATASAVE:GetSteamIdFromSource( source ) 
 
+    if ( id ~= nil ) then 
+        DATASAVE:WriteToFile( id, data )
+    else 
+        RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " attempted to save, but does not have a steam id." ) 
+    end 
 end )
 
 AddEventHandler( 'playerDropped', function()
     if ( DATASAVE.players[source] ) then 
-        print( "Cleared table slot for source " .. source )
+        RconPrint( "Cleared table slot for source " .. source )
         DATASAVE.players[source] = nil 
     end 
-end )
-
-RegisterServerEvent( 'wk:DataSave' )
-AddEventHandler( 'wk:DataSave', function( data )
-    print( "Got wk:DataSave from " .. GetPlayerName( source ) .. " " .. source  )
-    print( "SteamID: " .. DATASAVE.players[source] )
-    local id = DATASAVE:GetSteamIdFromSource( source ) 
-    DATASAVE:WriteToFile( id, data )
 end )
 
 function startsWith( string, start )

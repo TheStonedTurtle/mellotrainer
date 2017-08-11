@@ -189,8 +189,3 @@ Citizen.CreateThread(function()
 		end
 	end
 end )
-
-Citizen.CreateThread( function()
-	Citizen.Wait( 5000 )
-	TriggerServerEvent( 'wk:AddPlayerToDataSave' )
-end )
