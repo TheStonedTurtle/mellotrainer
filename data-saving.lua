@@ -49,6 +49,10 @@ function DATASAVE:LoadFile( name )
     local contents = file:read( "*all" )
     contents = stringsplit( contents, ";" )
 
+    for k, v in pairs( contents ) do 
+        contents[k] = json.decode( v )
+    end 
+
     file:close()
 
     return contents 

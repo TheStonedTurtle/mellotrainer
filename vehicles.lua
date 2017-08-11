@@ -102,21 +102,39 @@ local vehicles = {}
 local vehicleCount = 0
 
 RegisterNetEvent( 'wk:RecieveSavedVehicles' )
-AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable ) 
-	vehicleCount = getTableLength( dataTable )
-	Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
+AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable )
+    vehicles = dataTable
+    vehicleCount = getTableLength( dataTable )
+    Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
 end )
-
-RegisterNUICallback( "loadsavedvehs", function( data, cb ) 
-	Citizen.Trace( "Attempting to load vehicles." )
-
-	SendNUIMessage({
-		createmenu = true,
-		menuName = "loadsavedvehs",
-		menudata = "{}"
-	})
-	
-	if ( cb ) then cb( "ok" ) end
+ 
+RegisterNUICallback( "loadsavedvehs", function( data, cb )
+    Citizen.Trace( "Attempting to load vehicles." )
+ 
+    local validOptions = {}
+ 
+    for k,v in pairs(vehicles) do
+        table.insert(validOptions,{
+            ["menuName"] = v["saveName"],
+            ["data"] = {
+                ["action"] = "spawnsavedveh "..k
+            }
+        })
+    end
+ 
+    local customJSON = "{}"
+    if (getTableLength(validOptions) > 0) then
+        customJSON = json.encode(validOptions,{indent = true})
+    end
+ 
+ 
+    SendNUIMessage({
+        createmenu = true,
+        menuName = "loadsavedvehs",
+        menudata = customJSON
+    })
+   
+    if ( cb ) then cb( "ok" ) end
 end )
 
 RegisterNUICallback( "vehiclesave", function( data, cb )
