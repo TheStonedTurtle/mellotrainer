@@ -130,7 +130,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                         table.insert( extras, "empty" )
                     end 
 
-                    vehicleTableData[ "saveName" ] = EscapeStringData( saveName )
+                    vehicleTableData[ "saveName" ] = saveName -- EscapeStringData( saveName )
                     vehicleTableData[ "model" ] = tostring( model )
                     vehicleTableData[ "extras" ] = extras
 
@@ -141,7 +141,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     -- saveStr = EscapeStringData( saveName ) .. "," .. model .. "," .. extras:sub( 1, -2 ) .. ";"
 
                     -- Citizen.Trace( saveStr )
-                    TriggerServerEvent( 'wk:DataSave', data )
+                    TriggerServerEvent( 'wk:DataSave', "vehicles", data )
                 end 
     		end 
     	end 

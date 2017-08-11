@@ -22,7 +22,7 @@ function DATASAVE:DoesFileExist( name )
     local file = io.open( dir, "r" )
 
     if ( file ~= nil ) then 
-        io.close()
+        file:close()
         return true 
     else 
         return false 
@@ -68,15 +68,17 @@ function DATASAVE:SendSaveData( source )
     local id = DATASAVE:GetSteamIdFromSource( source )
 
     if ( id ~= nil ) then 
-        local data = DATASAVE:LoadSaveFile( source )
+        local vehFileName = id .. "_vehicles.txt"
+        local skinFileName = id .. "_skins.txt"
+
+        local vehicleData = DATASAVE:LoadFile( vehFileName )
+        local skinData = DATASAVE:LoadFile( skinFileName )
     else 
-        RconPrint( "MELLOTRAINER: Attempted to load save data for " .. GetPlayerName( source ) .. ", but does not have a steam id." ) 
+        RconPrint( "MELLOTRAINER: Attempted to load save data for " .. GetPlayerName( source ) .. ", but does not have a steam id.\n" ) 
     end 
 end 
 
 function DATASAVE:GetSteamIdFromSource( source )
-    RconPrint( "DATASAVE:GetSteamIdFromSource - GOT " .. self.players[source] )
-
     if ( self.players[source] ) then 
         return self.players[source] 
     else 
@@ -89,18 +91,23 @@ AddEventHandler( 'wk:AddPlayerToDataSave', function()
     local steamId = DATASAVE:GetSteamId( source )
     
     if ( steamId ~= nil ) then 
-        -- local newid = ( source & 0xFFFF ) + 1
         DATASAVE.players[source] = steamId
-        RconPrint( "Setting " .. source .. " to " .. steamId )
 
-        local exists = DATASAVE:DoesSaveExist( steamId )
+        local vehFileName = steamId .. "_vehicles.txt"
+        local skinFileName = steamId .. "_skins.txt"
+
+        RconPrint( "Setting " .. source .. " to " .. steamId .. "\n" )
+
+        local exists = DATASAVE:DoesFileExist( vehFileName ) and DATASAVE:DoesFileExist( skinFileName )
 
         if ( exists ) then 
             RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " has a save file.\n" )
             TriggerEvent( 'wk:SendSaveData' )
         else 
             RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " does not have a save file, creating one.\n" )
-            DATASAVE:CreateSaveFile( steamId )
+
+            DATASAVE:CreateFile( vehFileName )
+            DATASAVE:CreateFile( skinFileName )
         end 
     else 
         DATASAVE.players[source] = nil 
@@ -110,20 +117,21 @@ end )
 
 RegisterServerEvent( 'wk:DataSave' )
 AddEventHandler( 'wk:DataSave', function( type, data )
-    RconPrint( "Got wk:DataSave from " .. GetPlayerName( source ) .. " " .. source  )
-    RconPrint( "SteamID: " .. DATASAVE.players[source] )
+    RconPrint( "Got wk:DataSave from " .. GetPlayerName( source ) .. " " .. source .. "\n"  )
+    RconPrint( "SteamID: " .. DATASAVE.players[source] .. "\n" )
     local id = DATASAVE:GetSteamIdFromSource( source ) 
 
     if ( id ~= nil ) then 
-        DATASAVE:WriteToFile( id, data )
+        local file = id .. "_" .. type .. ".txt"
+        DATASAVE:WriteToFile( file, data )
     else 
-        RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " attempted to save, but does not have a steam id." ) 
+        RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " attempted to save, but does not have a steam id.\n" ) 
     end 
 end )
 
 AddEventHandler( 'playerDropped', function()
     if ( DATASAVE.players[source] ) then 
-        RconPrint( "Cleared table slot for source " .. source )
+        RconPrint( "Cleared table slot for source " .. source .. "\n" )
         DATASAVE.players[source] = nil 
     end 
 end )
