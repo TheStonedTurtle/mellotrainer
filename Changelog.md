@@ -1,6 +1,6 @@
 <h1>V 0.3.0 (08-09-2017)</h1>
 
-Many updates and code optimizations. New member <a href="https://github.com/WolfKnight98" target="_blank">WolfKnight98</a> added to the team.
+Many updates and code optimizations. New member <a href="https://github.com/WolfKnight98" target="_blank">WoflKnight98</a> added to the team.
 
 
 <h3>Changes</h3>
