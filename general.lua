@@ -17,7 +17,7 @@ end)
 
 -- Used to turn on global server settings
 function initServerConfig()
-	NetworkSetFriendlyFireOption(false)
+	NetworkSetFriendlyFireOption(true)
 end
 
 
@@ -123,7 +123,7 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
+		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({

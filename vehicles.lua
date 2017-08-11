@@ -95,49 +95,6 @@ RegisterNUICallback("vehspawn", function(data, cb)
 	if(cb)then cb("ok") end
 end)
 
--- THIS IS JUST A TEST 
--- WILL BE CHANGED A LOT 
-RegisterNUICallback( "vehiclesave", function( data, cb )
-    Citizen.CreateThread( function() 
-    	local ped = GetPlayerPed( -1 )
-        local saveStr = ""
-        local extras = ""
-        local saveName = nil 
-
-    	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
-    		local veh = GetVehiclePedIsIn( ped, false )
-
-    		if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
-                while ( saveName == nil ) do 
-                    saveName = requestInput( "Enter save name ...", 24 )
-                    Citizen.Wait( 1 )
-                end 
-
-                if ( saveName ) then 
-                    -- Get the model 
-                    local model = GetEntityModel( veh )
-
-                    -- Get the extras 
-                    if ( DoesVehicleHaveExtras( veh ) ) then 
-            			for i = 1, 30 do 
-                            if ( DoesExtraExist( veh, i ) ) then 
-                                extras = extras .. i .. ":" .. tostring( IsVehicleExtraTurnedOn( veh, i ) ) .. "."
-                            end 
-                        end 
-                    else 
-                        extras = "none"
-                    end 
-
-                    saveStr = EscapeStringData( saveName ) .. "," .. model .. "," .. extras:sub( 1, -2 ) .. ";"
-
-                    Citizen.Trace( saveStr )
-                    TriggerServerEvent( 'wk:DataSave', saveStr )
-                end 
-    		end 
-    	end 
-    end )
-end )
-
 RegisterNUICallback("vehcolor", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local playerVeh = GetVehiclePedIsIn(playerPed, false)
@@ -652,16 +609,6 @@ function checkValidVehicleExtras()
 	return valid
 end
 
-function DoesVehicleHaveExtras( veh )
-    for i = 1, 30 do 
-        if ( DoesExtraExist( veh, i ) ) then 
-            return true 
-        end 
-    end 
-
-    return false 
-end 
-
 
 function checkValidVehicleMods(modID)
 	local playerPed = GetPlayerPed(-1)
@@ -822,8 +769,7 @@ RegisterNUICallback("vehopts", function(data, cb)
 		end
 
 		lowerForce = tonumber(data.data[3])
-
-		drawNotification( "Lowering: level " .. lowerForce )
+		ApplyForceToEntity(playerVeh, true, 0.0, 0.0, lowerForces[lowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true);
 
 	--
 	elseif(action == "cosdamage")then
@@ -870,10 +816,6 @@ Citizen.CreateThread( function()
 			if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
 				SetVehicleEngineTorqueMultiplier( veh, torqueMultiplier + 0.001 )
 				SetVehicleEnginePowerMultiplier( veh, powerMultiplier + 0.001 )
-
-				if ( lowerForce ~= 0 ) then 
-					ApplyForceToEntity( veh, true, 0.0, 0.0, lowerForces[lowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true )
-				end 
 			end 
 		end 
 
