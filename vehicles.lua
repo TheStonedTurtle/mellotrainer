@@ -25,7 +25,6 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 
 		local veh = CreateVehicle(model, x, y, z + 1, heading, true, true)
 
-
 		if featureSpawnInsideCar then
 			SetPedIntoVehicle(ped, veh, -1)
 		end
@@ -75,7 +74,8 @@ end)
 
 RegisterNUICallback("vehspawn", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
-	local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(playerPed, 0.0, 7.5, 0.0))
+	-- local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(playerPed, 0.0, 7.5, 0.0))
+	local x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
 	local heading = GetEntityHeading(playerPed)
 
 	if data.action == "input" then
@@ -108,31 +108,36 @@ AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable )
     Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
 end )
  
-RegisterNUICallback( "loadsavedvehs", function( data, cb )
-    Citizen.Trace( "Attempting to load vehicles." )
- 
+RegisterNUICallback( "loadsavedvehs", function( data, cb ) 
     local validOptions = {}
  
-    for k,v in pairs(vehicles) do
-        table.insert(validOptions,{
-            ["menuName"] = v["saveName"],
-            ["data"] = {
-                ["action"] = "spawnsavedveh "..k
+    for k, v in pairs( vehicles ) do
+        table.insert( validOptions, {
+            [ "menuName" ] = v[ "saveName" ],
+            [ "data" ] = {
+                [ "action" ] = "spawnsavedveh " .. k
             }
-        })
+        } )
     end
+
+    table.insert( validOptions, {
+    	[ "menuName" ] = "Create New Vehicle Save", 
+    	[ "data" ] = {
+    		[ "action" ] = "vehiclesave"
+    	}
+    } )
  
     local customJSON = "{}"
-    if (getTableLength(validOptions) > 0) then
-        customJSON = json.encode(validOptions,{indent = true})
+
+    if ( getTableLength( validOptions ) > 0 ) then
+        customJSON = json.encode( validOptions, { indent = true } )
     end
  
- 
-    SendNUIMessage({
+    SendNUIMessage( {
         createmenu = true,
         menuName = "loadsavedvehs",
         menudata = customJSON
-    })
+    } )
    
     if ( cb ) then cb( "ok" ) end
 end )
@@ -179,6 +184,9 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     -- saveStr = EscapeStringData( saveName ) .. "," .. model .. "," .. extras:sub( 1, -2 ) .. ";"
 
                     -- Citizen.Trace( saveStr )
+                    table.insert( vehicles, data )
+                    vehicleCount = vehicleCount + 1
+                    resetTrainerMenus( "loadsavedvehs" )
                     TriggerServerEvent( 'wk:DataSave', "vehicles", data )
                 end 
     		end 
