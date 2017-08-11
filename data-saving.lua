@@ -1,5 +1,3 @@
-os.execute( "mkdir mtsaves" )
-
 DATASAVE = {}
 
 DATASAVE.dir = "mtsaves/"
@@ -49,8 +47,20 @@ function DATASAVE:WriteToFile( steamid, data )
 
     if ( not file ) then print( err ) end 
 
-    file:write( tostring( data ) )
+    file:write( tostring( data ) .. ";" )
     file:close()
+end 
+
+function DATASAVE:LoadSaveFile( steamid )
+    local dir = self.dir .. steamid .. ".txt"
+
+    local file, err = io.open( dir, 'r' )
+
+    if ( not file ) then print( err ) return nil end 
+
+    local contents = stringsplit( file, ";" )
+
+    return contents 
 end 
 
 function DATASAVE:GetSteamIdFromSource( source )
@@ -61,13 +71,14 @@ function DATASAVE:GetSteamIdFromSource( source )
     end 
 end 
 
-AddEventHandler( 'playerConnecting', function( playerName, setKickReason )
+RegisterServerEvent( 'wk:AddPlayerToDataSave' )
+AddEventHandler( 'wk:AddPlayerToDataSave', function()
     local steamId = DATASAVE:GetSteamId( source )
     
     if ( steamId ~= nil ) then 
-        local newid = ( source & 0xFFFF ) + 1
-        DATASAVE.players[newid] = steamId
-        print( "Setting " .. newid .. " to " .. steamId )
+        -- local newid = ( source & 0xFFFF ) + 1
+        DATASAVE.players[source] = steamId
+        print( "Setting " .. source .. " to " .. steamId )
 
         local exists = DATASAVE:DoesSaveExist( steamId )
 
@@ -80,7 +91,12 @@ AddEventHandler( 'playerConnecting', function( playerName, setKickReason )
     else 
         RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load.\n" )
     end 
-end)
+end )
+
+RegisterServerEvent( 'wk:SendSaveData' )
+AddEventHandler( 'wk:SendSaveData', function( source, data )
+
+end )
 
 AddEventHandler( 'playerDropped', function()
     if ( DATASAVE.players[source] ) then 

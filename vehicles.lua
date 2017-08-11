@@ -100,8 +100,9 @@ end)
 RegisterNUICallback( "vehiclesave", function( data, cb )
     Citizen.CreateThread( function() 
     	local ped = GetPlayerPed( -1 )
+    	local vehicleTableData = {}
         local saveStr = ""
-        local extras = ""
+        local extras = {}
         local saveName = nil 
 
     	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
@@ -114,24 +115,33 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                 end 
 
                 if ( saveName ) then 
-                    -- Get the model 
                     local model = GetEntityModel( veh )
 
-                    -- Get the extras 
                     if ( DoesVehicleHaveExtras( veh ) ) then 
             			for i = 1, 30 do 
                             if ( DoesExtraExist( veh, i ) ) then 
-                                extras = extras .. i .. ":" .. tostring( IsVehicleExtraTurnedOn( veh, i ) ) .. "."
+                                -- extras = extras .. i .. ":" .. tostring( IsVehicleExtraTurnedOn( veh, i ) ) .. "."
+                                if ( IsVehicleExtraTurnedOn( veh, i ) ) then 
+                                	table.insert( extras, i )
+                                end 
                             end 
                         end 
                     else 
-                        extras = "none"
+                        table.insert( extras, "empty" )
                     end 
 
-                    saveStr = EscapeStringData( saveName ) .. "," .. model .. "," .. extras:sub( 1, -2 ) .. ";"
+                    vehicleTableData[ "saveName" ] = EscapeStringData( saveName )
+                    vehicleTableData[ "model" ] = tostring( model )
+                    vehicleTableData[ "extras" ] = extras
 
-                    Citizen.Trace( saveStr )
-                    TriggerServerEvent( 'wk:DataSave', saveStr )
+                    local data = json.encode( vehicleTableData )
+
+                    Citizen.Trace( data )
+
+                    -- saveStr = EscapeStringData( saveName ) .. "," .. model .. "," .. extras:sub( 1, -2 ) .. ";"
+
+                    -- Citizen.Trace( saveStr )
+                    TriggerServerEvent( 'wk:DataSave', data )
                 end 
     		end 
     	end 
