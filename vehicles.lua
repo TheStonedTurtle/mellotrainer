@@ -335,7 +335,6 @@ function ApplySavedSettingsToVehicle( veh, data )
 	end 
 
 	for k, v in pairs( mods ) do 
-		-- Citizen.Trace( "Type of k: " .. type(k) .. " " .. k .. " " .. tostring( v ) )
 		local k = tonumber( k )
 		local isToggle = ( k >= 17 ) and ( k <= 22 )
 
@@ -370,10 +369,14 @@ function ApplySavedSettingsToVehicle( veh, data )
 
 	SetVehicleNeonLightsColour( veh, neonColour[1], neonColour[2], neonColour[3] )
 
-	SetVehicleNeonLightEnabled( veh, 0, (neonToggles[1] == 1) )
-	SetVehicleNeonLightEnabled( veh, 1, (neonToggles[2] == 1) )
-	SetVehicleNeonLightEnabled( veh, 2, (neonToggles[3] == 1) )
-	SetVehicleNeonLightEnabled( veh, 3, (neonToggles[4] == 1) )
+	for i = 0, 3 do 
+		SetVehicleNeonLightEnabled( veh, i, false )
+	end 
+
+	for k, v in pairs( neonToggles ) do 
+		local index = tonumber( v )
+		SetVehicleNeonLightEnabled( veh, index, true )
+	end 
 
 	SetVehicleDirtLevel( veh, 0.0 )
 end 
