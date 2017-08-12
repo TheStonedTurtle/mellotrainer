@@ -18,12 +18,13 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 	end
 
 	if IsModelValid(model) then
-		RequestModel(model)
-		while not HasModelLoaded(model) do
-			Wait(1)
-		end
+		RequestModel( model )
+		while ( not HasModelLoaded( model ) ) do 
+			RequestModel( model )
+			Citizen.Wait( 0 )
+		end 
 
-		local veh = CreateVehicle(model, x, y, z + 1, heading, true, true)
+		local veh = CreateVehicle( model, x, y, z + 1, heading, true, true )
 
 		if featureSpawnInsideCar then
 			SetPedIntoVehicle(ped, veh, -1)
@@ -98,9 +99,11 @@ RegisterNUICallback("vehspawn", function(data, cb)
 	local playerVeh = GetVehiclePedIsIn(playerPed, true)
 	local vehhash = GetHashKey(data.action)
 
-	SpawnVehicle(vehhash, x, y, z, heading, playerPed)
+	local vehicle = SpawnVehicle(vehhash, x, y, z, heading, playerPed)
 
-	if(cb)then cb("ok") end
+	UpdateVehicleFeatureVariables( vehicle )
+
+	if ( cb ) then cb( "ok" ) end
 end)
 
 --[[------------------------------------------------------------------------
@@ -162,7 +165,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 
     		if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
                 while ( saveName == nil ) do 
-                    saveName = requestInput( "Enter save name ...", 24 )
+                    saveName = requestInput( "Enter save name", 24 )
                     Citizen.Wait( 1 )
                 end 
 
@@ -271,8 +274,6 @@ RegisterNUICallback( "spawnsavedveh", function( data, cb )
 	local livery = tonumber( saveData[ "livery" ] )
 	local model = tonumber( saveData[ "model" ] )
 
-	Citizen.Trace( model .. " " .. spawnName )
-
 	local ped = GetPlayerPed( -1 )
 
 	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
@@ -289,6 +290,7 @@ RegisterNUICallback( "spawnsavedveh", function( data, cb )
 		local vehicle = SpawnVehicle( model, x, y, z, heading, ped )
 
 		ApplySavedSettingsToVehicle( vehicle, saveData )
+		UpdateVehicleFeatureVariables( vehicle )
 	end 
 end )
 
@@ -379,6 +381,23 @@ function ApplySavedSettingsToVehicle( veh, data )
 	end 
 
 	SetVehicleDirtLevel( veh, 0.0 )
+end 
+
+function UpdateVehicleFeatureVariables( veh )
+	featureBulletproofWheels = GetVehicleTyresCanBurst( veh )
+	featureXenonLights = IsToggleModOn( veh, 22 )
+	featureCustomTires = GetVehicleModVariation( veh, 23 )
+	featureTurboMode = IsToggleModOn( veh, 18 )
+
+	for i = 0, 3 do 
+		if ( IsVehicleNeonLightEnabled( veh, i ) ) then 
+			neons[i] = true 
+		else 
+			neons[i] = false 
+		end
+	end 
+
+	resetTrainerMenus( "vehmods" )
 end 
 
 RegisterNUICallback("vehcolor", function(data, cb)
