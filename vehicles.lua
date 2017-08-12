@@ -384,18 +384,15 @@ function ApplySavedSettingsToVehicle( veh, data )
 end 
 
 function UpdateVehicleFeatureVariables( veh )
-	featureBulletproofWheels = GetVehicleTyresCanBurst( veh )
-	featureXenonLights = IsToggleModOn( veh, 22 )
+	featureBulletproofWheels = not GetVehicleTyresCanBurst( veh )
+	featureXeonLights = IsToggleModOn( veh, 22 )
 	featureCustomTires = GetVehicleModVariation( veh, 23 )
 	featureTurboMode = IsToggleModOn( veh, 18 )
 
-	for i = 0, 3 do 
-		if ( IsVehicleNeonLightEnabled( veh, i ) ) then 
-			neons[i] = true 
-		else 
-			neons[i] = false 
-		end
-	end 
+	featureNeonLeft = IsVehicleNeonLightEnabled( veh, 0 )
+	featureNeonRight = IsVehicleNeonLightEnabled( veh, 1 )
+	featureNeonFront = IsVehicleNeonLightEnabled( veh, 2 )
+	featureNeonRear = IsVehicleNeonLightEnabled( veh, 3 )
 
 	resetTrainerMenus( "vehmods" )
 end 
