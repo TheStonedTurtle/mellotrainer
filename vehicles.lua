@@ -191,11 +191,37 @@ end )
 
 RegisterNUICallback( "spawnsavedveh", function( data, cb ) 
 	local veh = vehicles[ tonumber( data.action ) ]
-	local model = veh[ "model" ]
+	local model = tonumber( veh[ "model" ] )
 	local spawnName = veh[ "saveName" ]
 	local extras = veh[ "extras" ]
 
 	Citizen.Trace( model .. " " .. spawnName )
+
+	local ped = GetPlayerPed( -1 )
+
+	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
+		local x, y, z = table.unpack( GetEntityCoords( ped, true ) )
+		local heading = GetEntityHeading( ped )
+
+		SpawnVehicle( model, x, y, z, heading, ped )
+
+		local vehicle = GetVehiclePedIsIn( ped, false )
+
+		SetVehicleModKit( vehicle, 0 )
+
+		-- do cool shit to the car
+		for i = 1, 30 do 
+			if ( DoesExtraExist( vehicle, i ) ) then 
+				SetVehicleExtra( vehicle, i, true )
+			end 
+		end 
+
+		for k, v in pairs( extras ) do 
+			Citizen.Trace( k .. " " .. v )
+			local extra = tonumber( v )
+			SetVehicleExtra( vehicle, extra, false )
+		end 
+	end 
 end )
 
 RegisterNUICallback("vehcolor", function(data, cb)
