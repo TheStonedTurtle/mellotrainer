@@ -180,12 +180,8 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     local data = json.encode( vehicleTableData )
 
                     Citizen.Trace( data )
-
-                    -- saveStr = EscapeStringData( saveName ) .. "," .. model .. "," .. extras:sub( 1, -2 ) .. ";"
-
-                    -- Citizen.Trace( saveStr )
-                    table.insert( vehicles, data )
-                    vehicleCount = vehicleCount + 1
+                    
+                    table.insert( vehicles, vehicleTableData )
                     resetTrainerMenus( "loadsavedvehs" )
                     TriggerServerEvent( 'wk:DataSave', "vehicles", data )
                 end 
