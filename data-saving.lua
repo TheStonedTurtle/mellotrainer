@@ -22,7 +22,7 @@ function DATASAVE:DoesFileExist( name )
     local file = io.open( dir, "r" )
 
     if ( file ~= nil ) then 
-        file:close()
+        io.close( file )
         return true 
     else 
         return false 
@@ -32,7 +32,7 @@ end
 function DATASAVE:CreateFile( name )
     local dir = self.dir .. name
 
-    local file = io.open( dir, 'w' )
+    local file, err = io.open( dir, 'w' )
 
     if ( not file ) then RconPrint( err ) end
 
