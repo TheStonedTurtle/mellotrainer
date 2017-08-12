@@ -1,3 +1,5 @@
+os.execute( "mkdir mtsaves" )
+
 DATASAVE = {}
 
 DATASAVE.dir = "mtsaves/"
