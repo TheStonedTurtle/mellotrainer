@@ -165,7 +165,6 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     if ( DoesVehicleHaveExtras( veh ) ) then 
             			for i = 1, 30 do 
                             if ( DoesExtraExist( veh, i ) ) then 
-                                -- extras = extras .. i .. ":" .. tostring( IsVehicleExtraTurnedOn( veh, i ) ) .. "."
                                 if ( IsVehicleExtraTurnedOn( veh, i ) ) then 
                                 	table.insert( extras, i )
                                 end 
@@ -180,7 +179,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     local data = json.encode( vehicleTableData )
 
                     Citizen.Trace( data )
-                    
+
                     table.insert( vehicles, vehicleTableData )
                     resetTrainerMenus( "loadsavedvehs" )
                     TriggerServerEvent( 'wk:DataSave', "vehicles", data )
@@ -188,6 +187,15 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
     		end 
     	end 
     end )
+end )
+
+RegisterNUICallback( "spawnsavedveh", function( data, cb ) 
+	local veh = vehicles[ tonumber( data.action ) ]
+	local model = veh[ "model" ]
+	local spawnName = veh[ "saveName" ]
+	local extras = veh[ "extras" ]
+
+	Citizen.Trace( model .. " " .. spawnName )
 end )
 
 RegisterNUICallback("vehcolor", function(data, cb)
