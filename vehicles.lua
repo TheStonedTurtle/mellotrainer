@@ -290,7 +290,6 @@ RegisterNUICallback( "spawnsavedveh", function( data, cb )
 		local vehicle = SpawnVehicle( model, x, y, z, heading, ped )
 
 		ApplySavedSettingsToVehicle( vehicle, saveData )
-		UpdateVehicleFeatureVariables( vehicle )
 	end 
 end )
 
@@ -381,6 +380,8 @@ function ApplySavedSettingsToVehicle( veh, data )
 	end 
 
 	SetVehicleDirtLevel( veh, 0.0 )
+
+	UpdateVehicleFeatureVariables( veh )
 end 
 
 function UpdateVehicleFeatureVariables( veh )
