@@ -238,6 +238,20 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 
                     vehicleTableData[ "extras" ] = extras 
 
+                    local mods = {}
+
+                    for i = 0, 49 do 
+                    	local isToggle = ( i >= 17 ) and ( i <= 22 )
+
+                    	if ( isToggle ) then 
+                    		mods[i] = IsToggleModOn( veh, i )
+                    	else 
+                    		mods[i] = GetVehicleMod( veh, i )
+                    	end 
+                    end 
+
+                    vehicleTableData[ "mods" ] = mods 
+
                     local data = json.encode( vehicleTableData )
 
                     Citizen.Trace( data )
@@ -298,6 +312,7 @@ function ApplySavedSettingsToVehicle( veh, data )
     local smokeColour = data[ "smokeColour" ]
     local neonToggles = data[ "neonToggles" ]
     local extras = data[ "extras" ]
+    local mods = data[ "mods" ]
 
     -- Set the mod kit to 0, this is so we can do shit to the car 
     SetVehicleModKit( veh, 0 )
@@ -319,7 +334,17 @@ function ApplySavedSettingsToVehicle( veh, data )
 		SetVehicleExtra( veh, extra, false )
 	end 
 
-	-- TODO: apply mods 
+	for k, v in pairs( mods ) do 
+		-- Citizen.Trace( "Type of k: " .. type(k) .. " " .. k .. " " .. tostring( v ) )
+		local k = tonumber( k )
+		local isToggle = ( k >= 17 ) and ( k <= 22 )
+
+		if ( isToggle ) then 
+			ToggleVehicleMod( veh, k, v )
+		else 
+			SetVehicleMod( veh, k, v, 0 )
+		end
+	end 
 
 	local currentMod = GetVehicleMod( veh, 23 )
 	SetVehicleMod( veh, 23, currentMod, customTyres )
