@@ -719,6 +719,7 @@ function showMenu(menu, memoryPrevention) {
 
     showPage(0);
     resetSelected();
+    requestStateToggles($(content.menu).attr( "id" )); 
 }
 
 
