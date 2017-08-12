@@ -46,6 +46,8 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 		lastVehicle = veh
 		resetVehOptions()
 		toggleRadio(ped)
+
+		return veh 
 	else
 		drawNotification("~r~Invalid Model!")
 	end
@@ -74,8 +76,14 @@ end)
 
 RegisterNUICallback("vehspawn", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
-	-- local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(playerPed, 0.0, 7.5, 0.0))
-	local x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
+	local x, y, z
+
+	if ( featureSpawnInsideCar ) then 
+		x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
+	else 
+		x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( playerPed, 0.0, 7.5, 0.0 ) )
+	end 
+
 	local heading = GetEntityHeading(playerPed)
 
 	if data.action == "input" then
@@ -147,7 +155,6 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
     	local ped = GetPlayerPed( -1 )
     	local vehicleTableData = {}
         local saveStr = ""
-        local extras = {}
         local saveName = nil 
 
     	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
@@ -160,7 +167,64 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                 end 
 
                 if ( saveName ) then 
-                    local model = GetEntityModel( veh )
+					local model = GetEntityModel( veh )
+					local primaryColour, secondaryColour = GetVehicleColours( veh )
+					local pearlColour, wheelColour = GetVehicleExtraColours( veh )
+					local mod1a, mod1b, mod1c = GetVehicleModColor_1( veh )
+					local mod2a, mod2b = GetVehicleModColor_2( veh )
+					local custR1, custG2, custB3, custR2, custG2, custB2
+
+					if ( GetIsVehiclePrimaryColourCustom( veh ) ) then 
+						custR1, custG1, custB1 = GetVehicleCustomPrimaryColour( veh )
+					end 
+
+					if ( GetIsVehicleSecondaryColourCustom( veh ) ) then
+						custR2, custG2, custB2 = GetVehicleCustomSecondaryColour( veh )
+					end 
+
+					vehicleTableData[ "saveName" ] = saveName 
+					vehicleTableData[ "model" ] = tostring( model )
+					vehicleTableData[ "primaryColour" ] = primaryColour 
+					vehicleTableData[ "secondaryColour" ] = secondaryColour
+					vehicleTableData[ "pearlColour" ] = pearlColour
+					vehicleTableData[ "wheelColour" ] = wheelColour
+					vehicleTableData[ "mod1Colour" ] = { mod1a, mod1b, mod1c }
+					vehicleTableData[ "mod2Colour" ] = { mod2a, mod2b }
+					vehicleTableData[ "custPrimaryColour" ] =  { custR1, custG1, custB1 }
+					vehicleTableData[ "custSecondaryColour" ] = { custR2, custG2, custB2 }
+
+					local livery = GetVehicleLivery( veh )
+					local plateText = GetVehicleNumberPlateText( veh )
+					local plateType = GetVehicleNumberPlateTextIndex( veh )
+					local wheelType = GetVehicleWheelType( veh )
+					local windowTint = GetVehicleWindowTint( veh )
+					local burstableTyres = GetVehicleTyresCanBurst( veh )
+					local customTyres = GetVehicleModVariation( veh, 23 )
+
+					vehicleTableData[ "livery" ] = livery
+					vehicleTableData[ "plateText" ] = plateText 
+					vehicleTableData[ "plateType" ] = plateType 
+					vehicleTableData[ "wheelType" ] = wheelType
+					vehicleTableData[ "windowTint" ] = windowTint
+					vehicleTableData[ "burstableTyres" ] = burstableTyres
+					vehicleTableData[ "customTyres" ] = customTyres
+
+					local neonR, neonG, neonB = GetVehicleNeonLightsColour( veh )
+					local smokeR, smokeG, smokeB = GetVehicleTyreSmokeColor( veh )
+
+					local neonToggles = {}
+
+					for i = 0, 3 do 
+						if ( IsVehicleNeonLightEnabled( veh, i ) ) then 
+							table.insert( neonToggles, i )
+						end 
+					end 
+
+					vehicleTableData[ "neonColour" ] = { neonR, neonG, neonB }
+					vehicleTableData[ "smokeColour" ] = { smokeR, smokeG, smokeB }
+					vehicleTableData[ "neonToggles" ] = neonToggles
+
+					local extras = {}
 
                     if ( DoesVehicleHaveExtras( veh ) ) then 
             			for i = 1, 30 do 
@@ -172,9 +236,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                         end 
                     end 
 
-                    vehicleTableData[ "saveName" ] = saveName -- EscapeStringData( saveName )
-                    vehicleTableData[ "model" ] = tostring( model )
-                    vehicleTableData[ "extras" ] = extras
+                    vehicleTableData[ "extras" ] = extras 
 
                     local data = json.encode( vehicleTableData )
 
@@ -190,39 +252,106 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 end )
 
 RegisterNUICallback( "spawnsavedveh", function( data, cb ) 
-	local veh = vehicles[ tonumber( data.action ) ]
-	local model = tonumber( veh[ "model" ] )
-	local spawnName = veh[ "saveName" ]
-	local extras = veh[ "extras" ]
+	local saveData = vehicles[ tonumber( data.action ) ]
+	local spawnName = saveData[ "saveName" ]
+	local livery = tonumber( saveData[ "livery" ] )
+	local model = tonumber( saveData[ "model" ] )
 
 	Citizen.Trace( model .. " " .. spawnName )
 
 	local ped = GetPlayerPed( -1 )
 
 	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
-		local x, y, z = table.unpack( GetEntityCoords( ped, true ) )
+		local x, y, z 
+
+		if ( featureSpawnInsideCar ) then 
+			x, y, z = table.unpack( GetEntityCoords( ped, true ) )
+		else 
+			x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( ped, 0.0, 7.5, 0.0 ) )
+		end
+
 		local heading = GetEntityHeading( ped )
 
-		SpawnVehicle( model, x, y, z, heading, ped )
+		local vehicle = SpawnVehicle( model, x, y, z, heading, ped )
 
-		local vehicle = GetVehiclePedIsIn( ped, false )
-
-		SetVehicleModKit( vehicle, 0 )
-
-		-- do cool shit to the car
-		for i = 1, 30 do 
-			if ( DoesExtraExist( vehicle, i ) ) then 
-				SetVehicleExtra( vehicle, i, true )
-			end 
-		end 
-
-		for k, v in pairs( extras ) do 
-			Citizen.Trace( k .. " " .. v )
-			local extra = tonumber( v )
-			SetVehicleExtra( vehicle, extra, false )
-		end 
+		ApplySavedSettingsToVehicle( vehicle, saveData )
 	end 
 end )
+
+function ApplySavedSettingsToVehicle( veh, data )
+    local primaryColour = data[ "primaryColour" ]
+    local secondaryColour = data[ "secondaryColour" ]
+    local pearlColour = data[ "pearlColour" ]
+    local wheelColour = data[ "wheelColour" ]
+    local mod1Colour = data[ "mod1Colour" ]
+    local mod2Colour = data[ "mod2Colour" ]
+    local custPrimaryColour = data[ "custPrimaryColour" ]
+    local custSecondaryColour = data[ "custSecondaryColour" ]
+    local livery = data[ "livery" ]
+    local plateText = data[ "plateText" ]
+    local plateType = data[ "plateType" ]
+    local wheelType = data[ "wheelType" ]
+    local windowTint = data[ "windowTint" ]
+    local burstableTyres = data[ "burstableTyres" ]
+    local customTyres = data[ "customTyres" ]
+    local neonColour = data[ "neonColour" ]
+    local smokeColour = data[ "smokeColour" ]
+    local neonToggles = data[ "neonToggles" ]
+    local extras = data[ "extras" ]
+
+    -- Set the mod kit to 0, this is so we can do shit to the car 
+    SetVehicleModKit( veh, 0 )
+
+    SetVehicleTyresCanBurst( veh, burstableTyres )
+    SetVehicleNumberPlateTextIndex( veh,  plateType )
+    SetVehicleNumberPlateText( veh, plateText )
+    SetVehicleWindowTint( veh, windowTint )
+    SetVehicleWheelType( veh, wheelType )
+
+    for i = 1, 30 do 
+		if ( DoesExtraExist( veh, i ) ) then 
+			SetVehicleExtra( veh, i, true )
+		end 
+	end 
+
+	for k, v in pairs( extras ) do 
+		local extra = tonumber( v )
+		SetVehicleExtra( veh, extra, false )
+	end 
+
+	-- TODO: apply mods 
+
+	local currentMod = GetVehicleMod( veh, 23 )
+	SetVehicleMod( veh, 23, currentMod, customTyres )
+	SetVehicleMod( veh, 24, currentMod, customTyres )
+
+	if ( livery ~= -1 ) then 
+		SetVehicleLivery( veh, livery )
+	end 
+
+	SetVehicleExtraColours( veh, pearlColour, wheelColour )
+	SetVehicleModColor_1( veh, mod1Colour[1], mod1Colour[2], mod1Colour[3] )
+	SetVehicleModColor_2( veh, mod2Colour[1], mod2Colour[2] )
+
+	SetVehicleColours( veh, primaryColour, secondaryColour )
+
+	if ( custPrimaryColour[1] ~= nil and custPrimaryColour[2] ~= nil and custPrimaryColour[3] ~= nil ) then 
+		SetVehicleCustomPrimaryColour( veh, custPrimaryColour[1], custPrimaryColour[2], custPrimaryColour[3] )
+	end 
+
+	if ( custSecondaryColour[1] ~= nil and custSecondaryColour[2] ~= nil and custSecondaryColour[3] ~= nil ) then 
+		SetVehicleCustomPrimaryColour( veh, custSecondaryColour[1], custSecondaryColour[2], custSecondaryColour[3] )
+	end 
+
+	SetVehicleNeonLightsColour( veh, neonColour[1], neonColour[2], neonColour[3] )
+
+	SetVehicleNeonLightEnabled( veh, 0, (neonToggles[1] == 1) )
+	SetVehicleNeonLightEnabled( veh, 1, (neonToggles[2] == 1) )
+	SetVehicleNeonLightEnabled( veh, 2, (neonToggles[3] == 1) )
+	SetVehicleNeonLightEnabled( veh, 3, (neonToggles[4] == 1) )
+
+	SetVehicleDirtLevel( veh, 0.0 )
+end 
 
 RegisterNUICallback("vehcolor", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
