@@ -316,9 +316,21 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     	vehicleCount = vehicleCount + 1
                     	vehicles[vehicleCount] = vehicleTableData
                     	TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, vehicleCount )
+
+                    	SendNUIMessage({
+							trainerback = true 
+						})
                     else 
                     	vehicles[index] = vehicleTableData
                     	TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, index )
+
+                    	SendNUIMessage({
+							trainerback = true 
+						})
+
+						SendNUIMessage({
+							trainerback = true 
+						})
                     end 
 
                     resetTrainerMenus( "loadsavedvehs" )
@@ -359,6 +371,14 @@ RegisterNUICallback( "deletesavedveh", function( data, cb )
 	if ( vehicleCount > 0 ) then 
 		vehicles[index] = nil 
 		TriggerServerEvent( 'wk:DataSave', "vehicles", nil, index )
+
+		SendNUIMessage({
+			trainerback = true 
+		})
+
+		SendNUIMessage({
+			trainerback = true 
+		})
 
 		resetTrainerMenus( "loadsavedvehs" )
 	end 
