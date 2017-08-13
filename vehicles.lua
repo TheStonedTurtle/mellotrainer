@@ -359,6 +359,7 @@ RegisterNUICallback( "deletesavedveh", function( data, cb )
 	if ( vehicleCount > 0 ) then 
 		vehicles[index] = nil 
 		TriggerServerEvent( 'wk:DataSave', "vehicles", nil, index )
+
 		resetTrainerMenus( "loadsavedvehs" )
 	end 
 end )
@@ -864,7 +865,7 @@ local vehicleMods = {
 	["Front Bumper"] =  1,
 	["Rear Bumper"] =  2,
 	["Side Skirt"] =  3,
-	["Exhuast"] =  4,
+	["Exhaust"] =  4,
 	["Frame"] =  5,
 	["Grille"] =  6,
 	["Hood"] =  7,
@@ -883,7 +884,7 @@ local vehicleMods = {
 	["Plaques"] =  35,
 	["Speakers"] =  36,
 	["Trunk"] =  37,
-	["Hydrulics"] =  38,
+	["Hydraulics"] =  38,
 	["Engine Block"] =  39,
 	["Air Filter"] =  40,
 	["Struts"] =  41,
