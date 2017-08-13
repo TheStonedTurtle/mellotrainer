@@ -118,16 +118,53 @@ AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable )
     vehicleCount = getTableLength( dataTable )
     Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
 end )
- 
+
+function CreateVehicleOptions( index )
+	local spawnCar = {
+		[ "menuName" ] = "Spawn Car", 
+		[ "data" ] = {
+			[ "action" ] = "spawnsavedveh " .. index
+		}
+	}
+
+	local overwriteSave = {
+		[ "menuName" ] = "Overwrite With Current", 
+		[ "data" ] = {
+			[ "action" ] = "spawnsavedveh " .. index
+		}
+	}
+
+	local renameCar = {
+		[ "menuName" ] = "Rename Save", 
+		[ "data" ] = {
+			[ "action" ] = "spawnsavedveh " .. index
+		}
+	}
+
+	local deleteCar = {
+		[ "menuName" ] = "Delete", 
+		[ "data" ] = {
+			[ "action" ] = "spawnsavedveh " .. index
+		}
+	}
+
+	local options = { spawnCar, overwriteSave, renameCar, deleteCar }
+
+	return options 
+end 
+
 RegisterNUICallback( "loadsavedvehs", function( data, cb ) 
     local validOptions = {}
  
     for k, v in pairs( vehicles ) do
+    	local vehicleOptions = CreateVehicleOptions( k )
+
         table.insert( validOptions, {
             [ "menuName" ] = v[ "saveName" ],
             [ "data" ] = {
-                [ "action" ] = "spawnsavedveh " .. k
-            }
+                [ "sub" ] = k -- [ "action" ] = "spawnsavedveh " .. k
+            },
+            [ "submenu" ] = vehicleOptions
         } )
     end
 
@@ -255,13 +292,11 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 
                     vehicleTableData[ "mods" ] = mods 
 
-                    local data = json.encode( vehicleTableData )
-
-                    Citizen.Trace( data )
-
-                    table.insert( vehicles, vehicleTableData )
+                    vehicleCount = vehicleCount + 1
+                    vehicles[vehicleCount] = vehicleTableData
+                    -- table.insert( vehicles, vehicleTableData )
                     resetTrainerMenus( "loadsavedvehs" )
-                    TriggerServerEvent( 'wk:DataSave', "vehicles", data )
+                    TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, vehicleCount )
                 end 
     		end 
     	end 

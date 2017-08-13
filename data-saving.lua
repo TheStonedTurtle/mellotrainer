@@ -38,6 +38,7 @@ function DATASAVE:CreateFile( name )
 
     if ( not file ) then RconPrint( err ) end
 
+    file:write( "{}" ) 
     file:close()
 end 
 
@@ -49,25 +50,30 @@ function DATASAVE:LoadFile( name )
     if ( not file ) then RconPrint( err ) return nil end 
 
     local contents = file:read( "*all" )
-    contents = stringsplit( contents, ";" )
 
-    for k, v in pairs( contents ) do 
-        contents[k] = json.decode( v )
-    end 
+    contents = json.decode( contents )
 
     file:close()
 
     return contents 
 end 
 
-function DATASAVE:WriteToFile( name, data )
+function DATASAVE:WriteToFile( name, data, index )
     local dir = self.dir .. name
 
-    local file, err = io.open( dir, 'a' ) 
+    local fileTable = self:LoadFile( name ) 
 
-    if ( not file ) then RconPrint( err ) end 
+    if ( not fileTable ) then return end 
 
-    file:write( tostring( data ) .. ";" )
+    fileTable[index] = data
+
+    local fileString = json.encode( fileTable )
+
+    local file, err = io.open( dir, 'w+' )
+
+    if ( not file ) then RconPrint( err ) return end 
+
+    file:write( fileString )
     file:close()
 end 
 
@@ -130,14 +136,14 @@ AddEventHandler( 'wk:AddPlayerToDataSave', function()
 end )
 
 RegisterServerEvent( 'wk:DataSave' )
-AddEventHandler( 'wk:DataSave', function( type, data )
+AddEventHandler( 'wk:DataSave', function( type, data, index )
     RconPrint( "Got wk:DataSave from " .. GetPlayerName( source ) .. " " .. source .. "\n"  )
     RconPrint( "SteamID: " .. DATASAVE.players[source] .. "\n" )
     local id = DATASAVE:GetSteamIdFromSource( source ) 
 
     if ( id ~= nil ) then 
         local file = id .. "_" .. type .. ".txt"
-        DATASAVE:WriteToFile( file, data )
+        DATASAVE:WriteToFile( file, data, index )
     else 
         RconPrint( "MELLOTRAINER: " .. GetPlayerName( source ) .. " attempted to save, but does not have a steam id.\n" ) 
     end 
