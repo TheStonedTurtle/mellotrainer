@@ -116,7 +116,7 @@ RegisterNetEvent( 'wk:RecieveSavedVehicles' )
 AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable )
     vehicles = dataTable
     vehicleCount = getTableLength( dataTable )
-    Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
+    -- Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
 end )
 
 function CreateVehicleOptions( index )
@@ -366,7 +366,7 @@ end )
 RegisterNUICallback( "deletesavedveh", function( data, cb ) 
 	local index = tonumber( data.action )
 
-	Citizen.Trace( "Found " .. index .. " with type " .. type( index ) )
+	-- Citizen.Trace( "Found " .. index .. " with type " .. type( index ) )
 
 	if ( vehicleCount > 0 ) then 
 		vehicles[index] = nil 
