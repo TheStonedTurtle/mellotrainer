@@ -130,21 +130,21 @@ function CreateVehicleOptions( index )
 	local overwriteSave = {
 		[ "menuName" ] = "Overwrite With Current", 
 		[ "data" ] = {
-			[ "action" ] = "spawnsavedveh " .. index
+			[ "action" ] = "vehiclesave " .. index
 		}
 	}
 
 	local renameCar = {
 		[ "menuName" ] = "Rename Save", 
 		[ "data" ] = {
-			[ "action" ] = "spawnsavedveh " .. index
+			[ "action" ] = "renamesavedveh " .. index
 		}
 	}
 
 	local deleteCar = {
 		[ "menuName" ] = "Delete", 
 		[ "data" ] = {
-			[ "action" ] = "spawnsavedveh " .. index
+			[ "action" ] = "deletesavedveh " .. index
 		}
 	}
 
@@ -196,17 +196,26 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
     	local vehicleTableData = {}
         local saveStr = ""
         local saveName = nil 
+        local overwriting 
+        local index 
+
+        if ( data.action == nil ) then 
+        	overwriting = false 
+        else 
+        	overwriting = true 
+        	index = tonumber( data.action )
+        end 
 
     	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
     		local veh = GetVehiclePedIsIn( ped, false )
 
     		if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
-                while ( saveName == nil ) do 
+                while ( saveName == nil and not overwriting ) do 
                     saveName = requestInput( "Enter save name", 24 )
                     Citizen.Wait( 1 )
                 end 
 
-                if ( saveName ) then 
+                if ( saveName or overwriting ) then 
 					local model = GetEntityModel( veh )
 					local primaryColour, secondaryColour = GetVehicleColours( veh )
 					local pearlColour, wheelColour = GetVehicleExtraColours( veh )
@@ -222,7 +231,12 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 						custR2, custG2, custB2 = GetVehicleCustomSecondaryColour( veh )
 					end 
 
-					vehicleTableData[ "saveName" ] = saveName 
+					if ( not overwriting ) then 
+						vehicleTableData[ "saveName" ] = saveName 
+					else 
+						vehicleTableData[ "saveName" ] = vehicles[index][ "saveName" ]
+					end 
+
 					vehicleTableData[ "model" ] = tostring( model )
 					vehicleTableData[ "primaryColour" ] = primaryColour 
 					vehicleTableData[ "secondaryColour" ] = secondaryColour
@@ -292,11 +306,16 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 
                     vehicleTableData[ "mods" ] = mods 
 
-                    vehicleCount = vehicleCount + 1
-                    vehicles[vehicleCount] = vehicleTableData
-                    -- table.insert( vehicles, vehicleTableData )
+                    if ( not overwriting ) then 
+                    	vehicleCount = vehicleCount + 1
+                    	vehicles[vehicleCount] = vehicleTableData
+                    	TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, vehicleCount )
+                    else 
+                    	vehicles[index] = vehicleTableData
+                    	TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, index )
+                    end 
+
                     resetTrainerMenus( "loadsavedvehs" )
-                    TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, vehicleCount )
                 end 
     		end 
     	end 
@@ -326,6 +345,14 @@ RegisterNUICallback( "spawnsavedveh", function( data, cb )
 
 		ApplySavedSettingsToVehicle( vehicle, saveData )
 	end 
+end )
+
+RegisterNUICallback( "renamesavedveh", function( data, cb ) 
+
+end )
+
+RegisterNUICallback( "deletesavedveh", function( data, cb ) 
+
 end )
 
 function ApplySavedSettingsToVehicle( veh, data )
