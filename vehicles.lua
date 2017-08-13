@@ -137,7 +137,7 @@ function CreateVehicleOptions( index )
 	local renameCar = {
 		[ "menuName" ] = "Rename Save", 
 		[ "data" ] = {
-			[ "action" ] = "renamesavedveh " .. index
+			[ "action" ] = "vehiclesave " .. index .. " r"
 		}
 	}
 
@@ -194,15 +194,21 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
     Citizen.CreateThread( function() 
     	local ped = GetPlayerPed( -1 )
     	local vehicleTableData = {}
-        local saveStr = ""
         local saveName = nil 
         local overwriting 
+        local renaming 
         local index 
 
         if ( data.action == nil ) then 
         	overwriting = false 
+        	renaming = false 
         else 
-        	overwriting = true 
+        	if ( data.data[3] ~= nil ) then 
+        		renaming = true 
+        	else 
+        		overwriting = true 
+        	end 
+
         	index = tonumber( data.action )
         end 
 
@@ -210,12 +216,12 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
     		local veh = GetVehiclePedIsIn( ped, false )
 
     		if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
-                while ( saveName == nil and not overwriting ) do 
+                while ( (saveName == nil and not overwriting) or (saveName == nil and renaming) ) do 
                     saveName = requestInput( "Enter save name", 24 )
                     Citizen.Wait( 1 )
                 end 
 
-                if ( saveName or overwriting ) then 
+                if ( saveName or overwriting or renaming ) then 
 					local model = GetEntityModel( veh )
 					local primaryColour, secondaryColour = GetVehicleColours( veh )
 					local pearlColour, wheelColour = GetVehicleExtraColours( veh )
@@ -231,7 +237,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 						custR2, custG2, custB2 = GetVehicleCustomSecondaryColour( veh )
 					end 
 
-					if ( not overwriting ) then 
+					if ( renaming or not overwriting ) then 
 						vehicleTableData[ "saveName" ] = saveName 
 					else 
 						vehicleTableData[ "saveName" ] = vehicles[index][ "saveName" ]
@@ -306,7 +312,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 
                     vehicleTableData[ "mods" ] = mods 
 
-                    if ( not overwriting ) then 
+                    if ( not renaming and not overwriting ) then 
                     	vehicleCount = vehicleCount + 1
                     	vehicles[vehicleCount] = vehicleTableData
                     	TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, vehicleCount )
@@ -318,7 +324,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     resetTrainerMenus( "loadsavedvehs" )
                 end 
     		end 
-    	end 
+    	end
     end )
 end )
 
