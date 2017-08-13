@@ -129,6 +129,7 @@
 
             <!-- Player Skin Menu -->
             <div id="playerskinmenu" data-parent="playermenu">
+                <p class="traineroption" data-sub="playerskinsavedconfigs">Saved Configs</p>
                 <p class="traineroption" data-sub="playerskinmenucharacters">Players</p>
                 <p class="traineroption" data-sub="playerskinmenuanimals">Animals</p>
                 <p class="traineroption" data-sub="playerskinmenunpcs">NPCs</p>
@@ -142,7 +143,9 @@
                 <p class="traineroption" data-action="playerskin input">Change player model by name</p>
             </div>
 
-
+            <!-- Player Skins: Saved Configs -->
+            <div id="playerskinsavedconfigs" data-parent="playerskinmenu" data-dynamicmenu="loadsavedskins">
+            </div>
 
             <!-- Player Skins: Characters --> 
             <div id="playerskinmenucharacters" data-parent="playerskinmenu" data-staticmenu="player_skins_characters">

@@ -97,6 +97,10 @@ function DATASAVE:SendSaveData( source )
         if ( next( vehicleData ) ~= nil ) then 
             TriggerClientEvent( 'wk:RecieveSavedVehicles', source, vehicleData )
         end 
+
+        if ( next( skinData ) ~= nil ) then 
+            TriggerClientEvent( 'wk:RecieveSavedSkins', source, skinData )
+        end 
     else 
         RconPrint( "MELLOTRAINER: Attempted to load save data for " .. GetPlayerName( source ) .. ", but does not have a steam id.\n" ) 
     end 

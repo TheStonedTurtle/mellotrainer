@@ -33,7 +33,35 @@ local propComponents = {
 -- Error message
 local modifyEmpty = "~r~Nothing to modify!"
 
+-- Set Skin Function 
+function SetSkin( skin )
+	local ped = GetPlayerPed( -1 )
 
+	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
+		_LoadModel( skin )
+		SetPlayerModel( PlayerId(), skin )
+		SetModelAsNoLongerNeeded( skin )
+	end 
+end 
+
+--[[------------------------------------------------------------------------
+	Skin Saving and Loading 
+------------------------------------------------------------------------]]--
+local skins = {}
+local skinsCount = 0
+
+RegisterNetEvent( 'wk:RecieveSavedSkins' )
+AddEventHandler( 'wk:RecieveSavedSkins', function( dataTable )
+    skins = dataTable
+    skinsCount = getTableLength( dataTable )
+    Citizen.Trace( "Got table data from server, num of skins: " .. skinsCount )
+end )
+
+RegisterNUICallback( "loadsavedskins", function( data, cb ) 
+	Citizen.CreateThread( function()
+
+	end )
+end )
 
 -- Change players skin.
 RegisterNUICallback("playerskin", function(data, cb)
