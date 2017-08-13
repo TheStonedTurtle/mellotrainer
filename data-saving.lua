@@ -65,7 +65,11 @@ function DATASAVE:WriteToFile( name, data, index )
 
     if ( not fileTable ) then return end 
 
-    fileTable[index] = data
+    if ( data == nil ) then 
+        table.remove( fileTable, index ) -- table.remove reindexes all values after removing 
+    else 
+        fileTable[index] = data
+    end 
 
     local fileString = json.encode( fileTable )
 

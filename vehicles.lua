@@ -330,8 +330,6 @@ end )
 
 RegisterNUICallback( "spawnsavedveh", function( data, cb ) 
 	local saveData = vehicles[ tonumber( data.action ) ]
-	local spawnName = saveData[ "saveName" ]
-	local livery = tonumber( saveData[ "livery" ] )
 	local model = tonumber( saveData[ "model" ] )
 
 	local ped = GetPlayerPed( -1 )
@@ -353,12 +351,16 @@ RegisterNUICallback( "spawnsavedveh", function( data, cb )
 	end 
 end )
 
-RegisterNUICallback( "renamesavedveh", function( data, cb ) 
-
-end )
-
 RegisterNUICallback( "deletesavedveh", function( data, cb ) 
+	local index = tonumber( data.action )
 
+	Citizen.Trace( "Found " .. index .. " with type " .. type( index ) )
+
+	if ( vehicleCount > 0 ) then 
+		vehicles[index] = nil 
+		TriggerServerEvent( 'wk:DataSave', "vehicles", nil, index )
+		resetTrainerMenus( "loadsavedvehs" )
+	end 
 end )
 
 function ApplySavedSettingsToVehicle( veh, data )
