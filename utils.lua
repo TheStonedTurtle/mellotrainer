@@ -1,23 +1,30 @@
 function _LoadAnimDict( dict )
-	while ( not HasAnimDictLoaded( dict ) ) do 
-		RequestAnimDict( dict )
-		Citizen.Wait( 5 )
-	end 
+    while ( not HasAnimDictLoaded( dict ) ) do 
+        RequestAnimDict( dict )
+        Citizen.Wait( 5 )
+    end 
 end 
 
 function _LoadClipSet( set )
-	while ( not HasClipSetLoaded( set ) ) do 
-		RequestClipSet( set )
-		Citizen.Wait( 5 )
-	end 
+    while ( not HasClipSetLoaded( set ) ) do 
+        RequestClipSet( set )
+        Citizen.Wait( 5 )
+    end 
+end 
+
+function _LoadModel( mdl )
+    while ( not HasModelLoaded( mdl ) ) do 
+        RequestModel( mdl )
+        Citizen.Wait( 5 )
+    end 
 end 
 
 
 -- Used to show notifications on the screen.
 function drawNotification(text)
-	SetNotificationTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawNotification(false, false)
+    SetNotificationTextEntry("STRING")
+    AddTextComponentString(text)
+    DrawNotification(false, false)
 end
 
 
@@ -60,11 +67,11 @@ end
 
 -- Get Table Length
 function getTableLength(T)
-	local count = 0
-	for _ in pairs(T) do 
-		count = count + 1
-	end
-	return count
+    local count = 0
+    for _ in pairs(T) do 
+        count = count + 1
+    end
+    return count
 end
 
 
