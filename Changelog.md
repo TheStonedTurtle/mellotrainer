@@ -1,3 +1,19 @@
+<h1>v0.4.1 (08-##-2017)</h1>
+Bug Fixes
+
+<h3>Changes</h3>
+<ul>
+    <li>Fixed SNS Pistol Menu issues</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+	<li></li>
+</ul>
+
+
+
+
 <h1>v0.4.0 (08-15-2017)</h1>
 New vehicle and skin saving system, a few bug fixes.
 
