@@ -1,4 +1,4 @@
-<h1>v0.4.0 (15-08-2017)</h1>
+<h1>v0.4.0 (08-15-2017)</h1>
 New vehicle and skin saving system, a few bug fixes.
 
 <h3>Changes</h3>
