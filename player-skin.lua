@@ -213,7 +213,7 @@ RegisterNUICallback( "skinsave", function( data, cb )
 					})
                 end 
 
-                resetTrainerMenus( "loadsavedvskins" )
+                resetTrainerMenus( "loadsavedskins" )
             end 
 		end 
 	end )
