@@ -77,9 +77,7 @@ RegisterNUICallback("vehspawn", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local x, y, z
 
-	if ( featureSpawnInsideCar ) then 
-		x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
-	elseif ( featureSpawnCarInFront ) then 
+	if ( featureSpawnCarInFront ) then 
 		x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( playerPed, 0.0, 7.5, 0.0 ) )
 	else
 		x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
