@@ -33,6 +33,7 @@ client_scripts {
 
 
 server_script 'config.lua'
+server_script 'data-saving.lua'
 
 
 server_scripts{

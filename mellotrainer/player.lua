@@ -237,10 +237,12 @@ Citizen.CreateThread(function()
 
 
 			-- Godmode
-			if(featurePlayerInvincibleUpdated) then
-				SetEntityInvincible(playerPed, featurePlayerInvincible)
-				featurePlayerInvincibleUpdated = false;
-			end
+			-- if ( featurePlayerInvincible ) then
+			-- 	SetEntityInvincible( playerPed, true )
+			-- else 
+			-- 	SetEntityInvincible( playerPed, true )
+			-- end 
+			SetEntityInvincible( playerPed, featurePlayerInvincible )
 
 
 			-- Stamina

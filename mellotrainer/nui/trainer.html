@@ -129,6 +129,7 @@
 
             <!-- Player Skin Menu -->
             <div id="playerskinmenu" data-parent="playermenu">
+                <p class="traineroption" data-sub="playerskinsavedconfigs">Saved Configs</p>
                 <p class="traineroption" data-sub="playerskinmenucharacters">Players</p>
                 <p class="traineroption" data-sub="playerskinmenuanimals">Animals</p>
                 <p class="traineroption" data-sub="playerskinmenunpcs">NPCs</p>
@@ -142,7 +143,9 @@
                 <p class="traineroption" data-action="playerskin input">Change player model by name</p>
             </div>
 
-
+            <!-- Player Skins: Saved Configs -->
+            <div id="playerskinsavedconfigs" data-parent="playerskinmenu" data-dynamicmenu="loadsavedskins">
+            </div>
 
             <!-- Player Skins: Characters --> 
             <div id="playerskinmenucharacters" data-parent="playerskinmenu" data-staticmenu="player_skins_characters">
@@ -179,7 +182,7 @@
             <div id="vehiclesmenu" data-parent="mainmenu">
                 <p class="traineroption" data-sub="vehiclesspawnmenu">Vehicle Spawner</p>
                 <p class="traineroption" data-sub="vehiclesspawnoptionsmenu">Spawn Options</p>
-                <!-- <p class="traineroption" data-sub="vehiclessavedmenu">Saved Vehicles </p> -->
+                <p class="traineroption" data-sub="vehiclessavedmenu">Saved Vehicles</p>
                 <!-- <p class="traineroption" data-sub="vehiclesownedmenu">Owned Vehicles </p> -->
                 <p class="traineroption" data-sub="vehiclesmodmenu" data-require="vehicle">Modifications</p>
                 <p class="traineroption" data-sub="vehiclespaintoptions">Paint Options</p>
@@ -205,8 +208,8 @@
 
 
             <!-- Saved Vehicles Menu -->
-             <div id="vehiclessavedmenu" data-parent="vehiclesmenu">
-                 <p class="traineroption" data-action="vehiclesave">Create New Vehicle Save</p>    <!-- TODO -->
+             <div id="vehiclessavedmenu" data-parent="vehiclesmenu" data-dynamicmenu="loadsavedvehs">
+                 <!-- <p class="traineroption" data-action="vehiclesave">Create New Vehicle Save</p> -->
              </div>
 
             
@@ -278,6 +281,7 @@
             <div id="vehiclesspawnoptionsmenu" data-parent="vehiclesmenu">
                 <p class="traineroption" data-action="vehspawnoptions insidecar" data-state="OFF" data-toggle="featureSpawnInsideCar">Spawn Into Vehicle</p>
                 <p class="traineroption" data-action="vehspawnoptions despawn" data-state="OFF" data-toggle="featureDeleteLastVehicle">Delete Previous Vehicle</p>
+                <p class="traineroption" data-action="vehspawnoptions infront" data-state="OFF" data-toggle="featureSpawnCarInFront">Spawn Vehicle In Front</p>
             </div>
         
 
@@ -984,10 +988,10 @@
 
             <!-- About menu -->
             <div id="aboutmenu" data-parent="mainmenu">
-                <p class="traineroption">Mello Trainer Version 0.3.0</p>
+                <p class="traineroption">Mello Trainer v0.4.0</p>
                 <p class="traineroption">Made By TheStonedTurtle</p>
                 <p class="traineroption">Special Thanks To:</p>
-                <p class="traineroption">WolfKnight98</p>
+                <p class="traineroption">WolfKnight</p>
                 <p class="traineroption">All My Beta Testers</p>
                 <p class="traineroption">Scammer's Scorpion Trainer</p>
                 <p class="traineroption">Oui's Lambda Menu</p>

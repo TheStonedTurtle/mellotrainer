@@ -1,3 +1,23 @@
+<h1>v0.4.0 (15-08-2017)</h1>
+New vehicle and skin saving system, a few bug fixes.
+
+<h3>Changes</h3>
+<ul>
+    <li>Fixed never-ending death messages when using RPDeath</li>
+    <li>Fixed being able to open the trainer in the pause menu</li>
+    <li>Fixed some vehicle modification names</li>
+    <li>Potential fix for god mode not working</li>
+    <li>Adjusted order of some NUI tables</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+	<li>New data-saving.lua file for local storage, REQUIRES STEAM</li>
+	<li>New Local Vehicle and Skin saving system</li>
+	<li>New Menu refreshing system</li>
+</ul>
+
+
 <h1>V 0.3.0 (08-09-2017)</h1>
 
 Many updates and code optimizations. New member <a href="https://github.com/WolfKnight98" target="_blank">WolfKnight98</a> added to the team.

@@ -7,6 +7,9 @@
 local selfDeathMessage = "~o~You ~s~died."
 local deathSuicideMessage = "~o~You ~s~commited suicide."
 
+-- Hold dead players to prevent multiple messages.
+local deadPlayers = {}
+
 RegisterNUICallback("notifications", function(data, cb)
 	local action = data.action
 	local state = data.newstate
@@ -124,7 +127,13 @@ function checkForDeaths()
         	local currentPed = GetPlayerPed( i )
 
         	if ( DoesEntityExist( currentPed ) and IsEntityDead( currentPed ) ) then 
-       			handlePlayerDeathMessage( i, currentPed )
+
+        		if(deadPlayers[i] == nil)then
+	       			handlePlayerDeathMessage( i, currentPed )
+	       			deadPlayers[i] = true
+	       		end
+	       	else
+				deadPlayers[i] = nil	       		
 			end
 		end
 	end

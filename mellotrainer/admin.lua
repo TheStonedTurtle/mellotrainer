@@ -184,7 +184,8 @@ Citizen.CreateThread(function()
 
 		if NetworkIsSessionStarted() then
 			TriggerServerEvent( "mellotrainer:firstJoinProper", PlayerId() )
+			TriggerServerEvent( 'wk:AddPlayerToDataSave' )
 			return
 		end
 	end
-end)
+end )

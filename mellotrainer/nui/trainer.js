@@ -222,6 +222,25 @@ $(function() {
             }
         }
 
+
+        // Reshow Current Menu
+        if(item.reshowmenu){
+
+            // If Current menu is a Dynamic Menu then request updated information.
+            var text = $(content.menu).attr("data-dynamicmenu");
+            if(text){
+                //sendData("debug","Reshowing Menu: "+text)
+                menuLoaded.splice(menuLoaded.indexOf(text), 1);
+
+                // Trigger NUI Callback for this menu
+                sendData(text);
+                return;
+            }
+
+            showMenu(menus[$(content.menu).attr("id")],false)
+        }
+
+
     });
 });
 
@@ -719,6 +738,7 @@ function showMenu(menu, memoryPrevention) {
 
     showPage(0);
     resetSelected();
+    requestStateToggles($(content.menu).attr( "id" )); 
 }
 
 
@@ -1003,6 +1023,11 @@ function createStaticMenus(){
 
 // Create a Dynamic Menu
 function createDynamicMenu(menuArray,name){
+    // Remove old menu div to prevent losing pages
+    if (content != null) {
+        content.menu.detach();
+    }
+
     // Get necesarry information and recreate original menu
     // sendData("debug", "creating dynamic menu")
     var idName = dynamicIDs[name];
@@ -1045,10 +1070,6 @@ function createDynamicMenu(menuArray,name){
     container.append(choiceMenu);
 
 
-    // Remove old menu div to prevent losing pages
-    if (content != null) {
-        content.menu.detach();
-    }
 
     // Add all new menus to the menus object.
     refreshMenus();
