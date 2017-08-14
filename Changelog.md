@@ -12,8 +12,9 @@ New vehicle and skin saving system, a few bug fixes.
 
 <h3>Additions</h3>
 <ul>
-	<li>New data-saving.lua file for serversided file storage and manipulation</li>
-	<li>New vehicle and skin saving system, this is in beta right now. In order for the saving system to work players must be logged in to Steam.</li>
+	<li>New data-saving.lua file for local storage, REQUIRES STEAM</li>
+	<li>New Local Vehicle and Skin saving system</li>
+	<li>New Menu refreshing system</li>
 </ul>
 
 
