@@ -312,7 +312,7 @@ RegisterNUICallback("playerskinmodify", function(data, cb)
 		local validComponents = checkValidComponents(components[i].t)
 
 		if #validComponents > 0 then
-			table.insert(validOptions, {
+			table.insert(validOptions, 1, {
 				["menuName"] = components[i].name.." ("..#validComponents..")",
 				["data"] = {
 					["sub"] = components[i].t
@@ -349,7 +349,7 @@ RegisterNUICallback("playerpropmodify", function(data, cb)
 		local validComponents = checkValidPropComponents(propComponents[i].t)
 
 		if #validComponents > 0 then
-			table.insert(validOptions, {
+			table.insert(validOptions, 1, {
 				["menuName"] = propComponents[i].name.." ("..#validComponents..")",
 				["data"] = {
 					["sub"] = propComponents[i].t
