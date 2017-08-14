@@ -1,5 +1,5 @@
 # MelloTrainer
-A FiveM(GTA5 Modded Multiplayer) Trainer Made by <a href="https://github.com/TheStonedTurtle">TheStonedTurtle</a>. This is a server-side trainer written in Lua with a NUI written with HTML,CSS, and JS.<br/>
+A FiveM (GTA5 Modded Multiplayer) Trainer Made by <a href="https://github.com/TheStonedTurtle">TheStonedTurtle</a>. This is a server-side trainer written in Lua with a NUI written with HTML, CSS, and JS.<br/>
 <br/>
 
 
@@ -7,9 +7,12 @@ A FiveM(GTA5 Modded Multiplayer) Trainer Made by <a href="https://github.com/The
 <h1>Installation</h1>
 <ol>
 <li>Drag and drop the <i>mellotrainer</i> folder into the resources folder of your server.</li>
-<li>Add <i>- mellotrainer</i> to your citmp-server.yml file under <i>AutoStartResources</i>.</li>
-<li>Restart your Server</li>
+<li>Add <i>start mellotrainer</i> to your server.cfg file.</li>
+<li>Restart your server.</li>
 </ol>
+
+<h2>Note</h2>
+As of v0.4.0, players are required to be logged into the Steam client in order for the new vehicle/skin save system to work.
 
 <h1>Controls</h1>
 <table>
