@@ -159,7 +159,7 @@ RegisterNUICallback( "loadsavedvehs", function( data, cb )
     for k, v in pairs( vehicles ) do
     	local vehicleOptions = CreateVehicleOptions( k )
 
-        table.insert( validOptions, {
+        table.insert( validOptions, 1, {
             [ "menuName" ] = v[ "saveName" ],
             [ "data" ] = {
                 [ "sub" ] = k -- [ "action" ] = "spawnsavedveh " .. k
