@@ -63,6 +63,7 @@ featureCloseInstantly = false;
 featureSpeedometer = false;
 featureVehicleDespawnable = nil;
 featureSpawnInsideCar = true;
+featureSpawnCarInFront = true 
 featureDeleteLastVehicle = true;
 featureNoFallOff = nil;
 featureNoFallOffUpdated = nil;

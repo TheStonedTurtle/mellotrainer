@@ -57,7 +57,6 @@ RegisterNetEvent( 'wk:RecieveSavedSkins' )
 AddEventHandler( 'wk:RecieveSavedSkins', function( dataTable )
     skins = dataTable
     skinsCount = getTableLength( dataTable )
-    Citizen.Trace( "Got table data from server, num of skins: " .. skinsCount )
 end )
 
 function CreateSkinOptions( index )

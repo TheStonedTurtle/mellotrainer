@@ -86,13 +86,6 @@ function GetToggleState(variableName)
   end
 end
 
--- Removes invalid characters and spaces from a string, for use
--- when storing information using DATASAVE. 
-function EscapeStringData( str )
-    local split = stringsplit( str, " " )
-    return table.concat( split, "_" )
-end 
-
 function requestInput(exampleText, maxLength)
     DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", exampleText, "", "", "", maxLength + 1)
     blockinput = true

@@ -18,11 +18,7 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 	end
 
 	if IsModelValid(model) then
-		RequestModel( model )
-		while ( not HasModelLoaded( model ) ) do 
-			RequestModel( model )
-			Citizen.Wait( 0 )
-		end 
+		_LoadModel( model )
 
 		local veh = CreateVehicle( model, x, y, z + 1, heading, true, true )
 
@@ -64,11 +60,13 @@ RegisterNUICallback("vehspawnoptions", function(data,cb)
 	if data.action == "despawn" then
 		featureDeleteLastVehicle = data.newstate
 		drawNotification("Delete Previous Vehicle: "..tostring(text))
-
 	elseif data.action == "insidecar" then
 		featureSpawnInsideCar = data.newstate
 		drawNotification("Spawn Into Vehicle: "..tostring(text))
-	end
+	elseif data.action == "infront" then 
+		featureSpawnCarInFront = data.newstate
+		drawNotification( "Spawn vehicle in front: " .. tostring( text ) )
+	end 
 
 	if(cb)then cb("ok") end
 end)
@@ -81,8 +79,10 @@ RegisterNUICallback("vehspawn", function(data, cb)
 
 	if ( featureSpawnInsideCar ) then 
 		x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
-	else 
+	elseif ( featureSpawnCarInFront ) then 
 		x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( playerPed, 0.0, 7.5, 0.0 ) )
+	else
+		x, y, z = table.unpack( GetEntityCoords( playerPed, true ) )
 	end 
 
 	local heading = GetEntityHeading(playerPed)
@@ -116,7 +116,6 @@ RegisterNetEvent( 'wk:RecieveSavedVehicles' )
 AddEventHandler( 'wk:RecieveSavedVehicles', function( dataTable )
     vehicles = dataTable
     vehicleCount = getTableLength( dataTable )
-    -- Citizen.Trace( "Got table data from server, num of vehs: " .. vehicleCount )
 end )
 
 function CreateVehicleOptions( index )
