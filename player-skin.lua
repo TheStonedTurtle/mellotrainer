@@ -198,7 +198,7 @@ RegisterNUICallback( "skinsave", function( data, cb )
                 	TriggerServerEvent( 'wk:DataSave', "skins", skinTableData, skinsCount )
 
                 	SendNUIMessage({
-						trainerback = true 
+						reshowmenu = true 
 					})
                 else 
                 	skins[index] = skinTableData
@@ -209,7 +209,7 @@ RegisterNUICallback( "skinsave", function( data, cb )
 					})
 
 					SendNUIMessage({
-						trainerback = true 
+						reshowmenu = true 
 					})
                 end 
 

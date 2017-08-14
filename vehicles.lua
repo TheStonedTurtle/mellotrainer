@@ -318,7 +318,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
                     	TriggerServerEvent( 'wk:DataSave', "vehicles", vehicleTableData, vehicleCount )
 
                     	SendNUIMessage({
-							trainerback = true 
+							reshowmenu = true 
 						})
                     else 
                     	vehicles[index] = vehicleTableData
@@ -329,7 +329,7 @@ RegisterNUICallback( "vehiclesave", function( data, cb )
 						})
 
 						SendNUIMessage({
-							trainerback = true 
+							reshowmenu = true 
 						})
                     end 
 
