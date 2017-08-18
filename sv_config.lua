@@ -1,6 +1,11 @@
-local localSaving = true -- Turn on Local File saving for Vehciles & Skins
+--[[------------------------------------------------------------------------
+	
+	MelloTrainer Config
 
-local adminOnlyTrainer = false -- Limit entire trainer to the below admins list
+------------------------------------------------------------------------]]--
+local localSaving = true          -- Turn on Local File saving for Vehciles & Skins
+local steamOnly = true            -- Turn on Steam only connections
+local adminOnlyTrainer = false    -- Limit entire trainer to the below admins list
 local admins = {
 	"steam:110000106e1eac6",   -- Add all steam hexs heres.
 	"steam:110000103920a31",   -- MUST FOLLOW EXAMPLE FORMAT
@@ -27,7 +32,8 @@ Config.settings = {
 
 	adminOnlyTrainer = adminOnlyTrainer,
 	admins = admins,
-	localSaving = localSaving
+	localSaving = localSaving, 
+	steamOnly = steamOnly 
 }
 
 

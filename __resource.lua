@@ -30,12 +30,7 @@ client_scripts {
 	"admin.lua" 		  		  -- Handles Admin Menu Access & Options
 }
 
-
-server_script 'version-check.lua'
-server_script 'config.lua'
-server_script 'data-saving.lua'
-
-
-server_scripts{
-	"admin-server.lua"    		  -- Handles Cross-Player Admin Commands
-}
+server_script 'sv_config.lua'
+server_script 'sv_main.lua'
+server_script 'sv_data_saving.lua'
+server_script 'sv_admin.lua'   -- Handles Cross-Player Admin Commands
