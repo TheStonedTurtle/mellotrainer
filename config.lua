@@ -1,4 +1,6 @@
-local adminOnlyTrainer = false
+local localSaving = true -- Turn on Local File saving for Vehciles & Skins
+
+local adminOnlyTrainer = false -- Limit entire trainer to the below admins list
 local admins = {
 	"steam:110000106e1eac6",   -- Add all steam hexs heres.
 	"steam:110000103920a31",   -- MUST FOLLOW EXAMPLE FORMAT
@@ -24,7 +26,8 @@ Config.settings = {
 	--maxPlayers = maxPlayers,
 
 	adminOnlyTrainer = adminOnlyTrainer,
-	admins = admins
+	admins = admins,
+	localSaving = localSaving
 }
 
 
@@ -65,6 +68,12 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 
 	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
 	TriggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
+
+
+	-- If local saving is turned on then ensure files are created for this person.
+	if(Config.settings.localSaving)then
+		DATASAVE:AddPlayerToDataSave(source)
+	end
 end)
 
 

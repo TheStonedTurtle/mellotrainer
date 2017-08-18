@@ -134,12 +134,16 @@ function DATASAVE:print( text )
 end 
 
 Citizen.CreateThread( function()
-    DATASAVE:RunLaunchChecks()
+    if(Config.settings.localSaving)then
+        DATASAVE:RunLaunchChecks()
+    else
+        DATASAVE:print("Local Saving is currently turned off.")
+    end
 end )
 
-RegisterServerEvent( 'wk:AddPlayerToDataSave' )
-AddEventHandler( 'wk:AddPlayerToDataSave', function()
-    local id = DATASAVE:GetSteamId( source )
+
+function DATASAVE:AddPlayerToDataSave(sourceID)
+    local id = DATASAVE:GetSteamId( sourceID )
     
     if ( id ~= nil ) then 
         local vehFileName = id .. "_vehicles.txt"
@@ -148,18 +152,19 @@ AddEventHandler( 'wk:AddPlayerToDataSave', function()
         local exists = DATASAVE:DoesFileExist( vehFileName ) and DATASAVE:DoesFileExist( skinFileName )
 
         if ( exists ) then 
-            DATASAVE:print( GetPlayerName( source ) .. " has a save file." )
-            DATASAVE:SendSaveData( source )
+            DATASAVE:print( GetPlayerName( sourceID ) .. " has a save file." )
+            DATASAVE:SendSaveData( sourceID )
         else 
-            DATASAVE:print( GetPlayerName( source ) .. " does not have a save file, creating one." )
+            DATASAVE:print( GetPlayerName( sourceID ) .. " does not have a save file, creating one." )
 
             DATASAVE:CreateFile( vehFileName )
             DATASAVE:CreateFile( skinFileName )
         end 
     else 
-        DATASAVE:print( GetPlayerName( source ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load." )
+        DATASAVE:print( GetPlayerName( sourceID ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load." )
     end 
-end )
+end
+
 
 RegisterServerEvent( 'wk:DataSave' )
 AddEventHandler( 'wk:DataSave', function( type, data, index )
