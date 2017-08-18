@@ -7,11 +7,7 @@ PerformHttpRequest( "https://thestonedturtle.github.io/version.txt", function( e
 	RconPrint( "\nLatest MelloTrainer Version: " .. text)
 	
 	if ( text ~= _VERSION ) then
-		RconPrint(  "\n\n|||||||||||||||||||||||||||||||||\n"..
-					    "||  MelloTrainer is Outdated   ||\n"..
-					    "|| Download the latest version ||\n"..
-						"||    From the FiveM Forums    ||\n"..
-						"|||||||||||||||||||||||||||||||||\n")
+		RconPrint( "\n\n\t|||||||||||||||||||||||||||||||||\n\t||  MelloTrainer is Outdated   ||\n\t|| Download the latest version ||\n\t||    From the FiveM Forums    ||\n\t|||||||||||||||||||||||||||||||||\n\n" )
 	else
 		RconPrint( "\nMelloTrainer is up to date!\n" )
 	end
