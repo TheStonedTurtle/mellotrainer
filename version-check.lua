@@ -3,11 +3,15 @@ _VERSION = '0.4.0'
 
 PerformHttpRequest( "https://thestonedturtle.github.io/version.txt", function( err, text, headers )
 	Citizen.Wait( 1000 ) -- just to reduce clutter in the console on startup 
-	RconPrint( "\nCurrent MelloTrainer Version: " .. _VERSION .. "" )
-	RconPrint( "\nLatest MelloTrainer Version: " .. text .. "\n" )
+	RconPrint( "\nCurrent MelloTrainer Version: " .. _VERSION)
+	RconPrint( "\nLatest MelloTrainer Version: " .. text)
 	
 	if ( text ~= _VERSION ) then
-		RconPrint( "\nMelloTrainer is outdated, please download the latest version from the FiveM forum.\n" )
+		RconPrint(  "\n\n|||||||||||||||||||||||||||||||||\n"..
+					    "||  MelloTrainer is Outdated   ||\n"..
+					    "|| Download the latest version ||\n"..
+						"||    From the FiveM Forums    ||\n"..
+						"|||||||||||||||||||||||||||||||||\n")
 	else
 		RconPrint( "\nMelloTrainer is up to date!\n" )
 	end
