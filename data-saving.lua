@@ -134,7 +134,7 @@ function DATASAVE:print( text )
 end 
 
 Citizen.CreateThread( function()
-    if(Config.settings.localSaving)then
+    if ( Config.settings.localSaving ) then
         DATASAVE:RunLaunchChecks()
     else
         DATASAVE:print("Local Saving is currently turned off.")
@@ -142,26 +142,26 @@ Citizen.CreateThread( function()
 end )
 
 
-function DATASAVE:AddPlayerToDataSave(sourceID)
-    local id = DATASAVE:GetSteamId( sourceID )
+function DATASAVE:AddPlayerToDataSave( source )
+    local id = self:GetSteamId( source )
     
     if ( id ~= nil ) then 
         local vehFileName = id .. "_vehicles.txt"
         local skinFileName = id .. "_skins.txt"
 
-        local exists = DATASAVE:DoesFileExist( vehFileName ) and DATASAVE:DoesFileExist( skinFileName )
+        local exists = self:DoesFileExist( vehFileName ) and self:DoesFileExist( skinFileName )
 
         if ( exists ) then 
-            DATASAVE:print( GetPlayerName( sourceID ) .. " has a save file." )
-            DATASAVE:SendSaveData( sourceID )
+            self:print( GetPlayerName( source ) .. " has a save file." )
+            self:SendSaveData( source )
         else 
-            DATASAVE:print( GetPlayerName( sourceID ) .. " does not have a save file, creating one." )
+            self:print( GetPlayerName( source ) .. " does not have a save file, creating one." )
 
-            DATASAVE:CreateFile( vehFileName )
-            DATASAVE:CreateFile( skinFileName )
+            self:CreateFile( vehFileName )
+            self:CreateFile( skinFileName )
         end 
     else 
-        DATASAVE:print( GetPlayerName( sourceID ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load." )
+        self:print( GetPlayerName( source ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load." )
     end 
 end
 
