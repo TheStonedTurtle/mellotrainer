@@ -3,9 +3,30 @@
 	MelloTrainer Config
 
 ------------------------------------------------------------------------]]--
-local localSaving = true          -- Turn on Local File saving for Vehciles & Skins
-local steamOnly = true            -- Turn on Steam only connections
-local adminOnlyTrainer = false    -- Limit entire trainer to the below admins list
+
+--[[-------------------------------------------------------
+	Name: localSaving 
+	Toggles the vehicle and skin saving system. 
+	Options: true, false 
+-------------------------------------------------------]]--
+local localSaving = true
+
+--[[-------------------------------------------------------
+	Name: steamOnly 
+	Toggles steam only mode, if a player joins without a 
+	steam id, it will kick them from the server.
+	Options: true, false 
+-------------------------------------------------------]]--
+local steamOnly = true
+
+--[[-------------------------------------------------------
+	Name: adminOnlyTrainer 
+	Toggles admin only trainer, meaning only people 
+	specified in the below admins table can use it. 
+	Options: true, false 
+-------------------------------------------------------]]--
+local adminOnlyTrainer = false
+
 local admins = {
 	"steam:110000106e1eac6",   -- Add all steam hexs heres.
 	"steam:110000103920a31",   -- MUST FOLLOW EXAMPLE FORMAT
