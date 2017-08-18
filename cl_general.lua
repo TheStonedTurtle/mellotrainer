@@ -141,6 +141,11 @@ Citizen.CreateThread( function()
 			teleportToWaypoint()
 		end
 
+		if IsControlJustReleased(1, 289) then
+			toggleNoClipMode()
+			drawNotification("Noclip mode toggled")
+		end
+
 		if showtrainer and not blockinput then
 			if ( IsControlJustPressed( 1, 199 ) or IsControlJustPressed( 1, 200 ) ) then 
 				showtrainer = false

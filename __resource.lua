@@ -26,7 +26,8 @@ client_scripts {
 	'cl_player_online.lua',            -- Other Player Options (Teleport/Spectate)
 	'cl_vehicles.lua',                 -- Vehicle Spawning/Modifications
 	'cl_weapons.lua',                  -- Weapon Spawning/Attachments
-	'cl_admin.lua'                    -- Handles Admin Menu Access & Options
+	'cl_admin.lua',                    -- Handles Admin Menu Access & Options
+	'cl_noclip.lua'                   -- Handles all No Clip features
 }
 
 server_script 'sv_config.lua'       -- MelloTrainer config file

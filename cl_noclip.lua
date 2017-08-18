@@ -1,59 +1,33 @@
-local exitFlag = false;
-
+-- Animation Variables
+local loadedAnims = false
 local noclip_ANIM_A = "amb@world_human_stand_impatient@male@no_sign@base";
 local noclip_ANIM_B = "base";
 
-local travelSpeed = 0;
-
+-- Noclip Variables
 local in_noclip_mode = false;
-
-local help_showing = true;
-
+local travelSpeed = 0;
 local curLocation;
 local curRotation;
 local curHeading;
 
+local target
 
-function degToRad(degs)
-	return degs*3.141592653589793 / 180;
+
+
+function toggleNoClipMode()
+	if(in_noclip_mode)then
+		turnNoClipOff()
+	else
+		turnNoClipOn()
+	end
 end
 
 
-function exit_noclip_menu_if_showing()
-	exitFlag = true;
-end
-
-function process_noclip_menu()
-	exitFlag = false;
-
-	local loadedAnims = false;
-
+function turnNoClipOff()
 	local playerPed = PlayerPedId()
-	local inVehicle = IsPedInAnyVehicle(playerPed, 0)
+	local inVehicle = IsPedInAnyVehicle(playerPed, 0)	
 
-	if (not inVehicle) then
-		_LoadAnimDict(noclip_ANIM_A)
-		loadedAnims = true;
-	end
-
-	curLocation = GetEntityCoords(playerPed, 0)
-	curRotation = GetEntityRotation(playerPed, 0)
-	curHeading = GetEntityHeading(playerPed)
-
-	while (true and not exitFlag) do
-		Citizen.Wait(0)
-		in_noclip_mode = true;
-
-		-- Disable noclip on death
-		if ( IsEntityDead(playerPed) ) then
-			exitFlag = true;
-		end
-
-		-- Handle all noclipping inside the noclip function.
-		noclip(inVehicle);
-	end
-
-	if (inVehicle) then
+	if( inVehicle ) then
 		local veh = GetVehiclePedIsUsing(playerPed)
 		SetEntityInvincible(veh, false)
 	else
@@ -62,131 +36,164 @@ function process_noclip_menu()
 
 	SetUserRadioControlEnabled(true)
 	SetPlayerInvincible(PlayerId(), false)
+	SetEntityInvincible(target, false)
 
-
-	exitFlag = false;
-	in_noclip_mode = false;
+	in_noclip_mode = false
 end
 
--- Push player through a door
+
+function turnNoClipOn()
+	local playerPed = PlayerPedId()
+	local inVehicle = IsPedInAnyVehicle(playerPed, 0)	
+
+	if( not inVehicle ) then
+		_LoadAnimDict(noclip_ANIM_A)
+		loadedAnims = true;
+	end
+
+	-- Update starting position for noclip
+	local x,y,z = table.unpack(GetEntityCoords(playerPed, 0))
+	curLocation = {
+		x = x,
+		y = y,
+		z = z
+	}
+	curRotation = GetEntityRotation(playerPed, 0)
+	curHeading = GetEntityHeading(playerPed)
+
+	in_noclip_mode = true
+end
+
+
+-- Credits to @Oui (Lambda Menu)
+function degToRad(degs)
+	return degs*3.141592653589793 / 180;
+end
+
+
+-- Credits to @Oui (Lambda Menu). Converted by @TheStonedTurtle
 function moveThroughDoor()
 	local playerPed = PlayerPedId()
 
 	if ( IsPedInAnyVehicle(playerPed, 0) ) then
-		return;
+		return
 	end
 
+	-- Update starting position
 	curLocation = GetEntityCoords(playerPed, 0)
 	curHeading = GetEntityHeading(playerPed)
 
-	local forwardPush = 0.6;
+	local forwardPush = 0.6
 
 	local xVect = forwardPush * math.sin(degToRad(curHeading)) * -1.0
+	Citizen.Trace("xVect Value is: "..xVect)
 	local yVect = forwardPush * math.cos(degToRad(curHeading))
 
 	SetEntityCoordsNoOffset(playerPed, curLocation.x + xVect, curLocation.y + yVect, curLocation.z, 1, 1, 1)
 end
 
 
--- No Clip the player arouind the map
-function noclip()
-	local playerPed = PlayerPedId()
-
+-- Handles all No Clipping.
+Citizen.CreateThread(function()
 	local rotationSpeed = 2.5
-	local forwardPush
+	local forwardPush = 0.8
 
-	local inVehicle = false
-
-	if(travelSpeed == 0)then
-		forwardPush = 0.8 --medium
-	elseif(travelSpeed == 1)then
-		forwardPush = 1.8 --fast
-	elseif(travelSpeed == 2)then
-		forwardPush = 3.6 --very fast
-	elseif(travelSpeed == 3)then
-		forwardPush = 5.4 --extremely fast
-	elseif(travelSpeed == 4)then
-		forwardPush = 0.05 --very slow
-	elseif(travelSpeed == 5)then
-		forwardPush = 0.2; --slow
-	end
-
-	local xVect = forwardPush * math.sin(degToRad(curHeading)) * -1.0
-	local yVect = forwardPush * math.cos(degToRad(curHeading))
-
-	-- Vehicle?
-	local target = playerPed;
-	if ( IsPedInAnyVehicle(playerPed, true) ) then
-		target = GetVehiclePedIsUsing(playerPed)
-		inVehicle = true
-	end
-
-	local xBoolParam = 1;
-	local yBoolParam = 1;
-	local zBoolParam = 1;
-
-	SetEntityVelocity(playerPed, 0.0, 0.0, 0.0)
-	SetEntityRotation(playerPed, 0, 0, 0, 0, false)
-
-	-- Play animation if on foot.
-	if(not inVehicle)then
-		TaskPlayAnim(PlayerPedId(), noclip_ANIM_A, noclip_ANIM_B, 8.0, 0.0, -1, 9, 0, 0, 0, 0);
-	end
-
-	SetUserRadioControlEnabled(false)
-	SetPlayerInvincible(PlayerId(), true)
-	SetEntityInvincible(target, true)
+	local xBoolParam = 1
+	local yBoolParam = 1
+	local zBoolParam = 1
 
 
-
-	local moveUpKey = ""
-	local moveDownKey = ""
-	local moveForwardKey = ""
-	local moveBackKey = ""
-	local rotateLeftKey = ""
-	local rotateRightKey = ""
-
-
-
-
-	if ( "" ) then -- Adjust speed at which we will move
-		travelSpeed = traveSpeed + 1
-		if (travelSpeed > 5) then
-			travelSpeed = 0;
+	-- Sync Forward Push with Travel Speed
+	function updateForwardPush()
+		if(travelSpeed == 0)then
+			forwardPush = 0.8  --medium
+		elseif(travelSpeed == 1)then
+			forwardPush = 1.8  --fast
+		elseif(travelSpeed == 2)then
+			forwardPush = 3.6  --very fast
+		elseif(travelSpeed == 3)then
+			forwardPush = 5.4  --extremely fast
+		elseif(travelSpeed == 4)then
+			forwardPush = 0.05 --very slow
+		elseif(travelSpeed == 5)then
+			forwardPush = 0.2  --slow
 		end
 	end
 
-	if ( "" ) then -- Toggle Help Display
-		help_showing = not help_showing
+	-- Updates the players position
+	function handleMovement(xVect,yVect)
+		local moveUpKey = false
+		local moveDownKey = false
+		local moveForwardKey = false
+		local moveBackKey = false
+		local rotateLeftKey = false
+		local rotateRightKey = false
+
+		if ( moveUpKey ) then
+			curLocation.z = curLocation.z + forwardPush / 2;
+		elseif (moveDownKey) then
+			curLocation.z = curLocation.z - forwardPush / 2;
+		end
+
+		if (moveForwardKey) then
+			curLocation.x = curLocation.x + xVect
+			curLocation.y = curLocation.y + yVect
+		elseif (moveBackKey) then
+			curLocation.x = curLocation.x + xVect
+			curLocation.y = curLocation.y + yVect
+		end
+
+		if (rotateLeftKey) then
+			curHeading = curHeading + rotationSpeed
+		elseif (rotateRightKey) then
+			curHeading = curHeading - rotationSpeed
+		end	
 	end
 
-	if ( moveUpKey ) then
-		curLocation.z = curLocation.z + forwardPush / 2;
+	 while (true) do
+	 	Citizen.Wait(0)
 
-	elseif (moveDownKey) then
-		curLocation.z = curLocation.z - forwardPush / 2;
-	end
+	 	if(in_noclip_mode)then
+	 		local playerPed = PlayerPedId()
 
-	if (moveForwardKey) then
-		curLocation.x = curLocation.x + xVect
-		curLocation.y = curLocation.y + yVect
-	elseif (moveBackKey) then
-		curLocation.x = curLocation.x + xVect
-		curLocation.y = curLocation.y + yVect
-	end
+	 		if ( IsEntityDead(playerPed) ) then
+				turnNoClipOff()
 
-	if (rotateLeftKey) then
-		curHeading = curHeading + rotationSpeed
-	elseif (rotateRightKey) then
-		curHeading = curHeading - rotationSpeed
-	end
+				-- Ensure we get out of noclip mode
+				Citizen.Wait( 100 )
+			else
+				target = playerPed
+				-- Handle Noclip Movement.
+				local inVehicle = IsPedInAnyVehicle(playerPed, true)
+				if ( inVehicle ) then
+					target = GetVehiclePedIsUsing(playerPed)
+				end
 
-	-- Update player postion.
-	SetEntityCoordsNoOffset(target, curLocation.x, curLocation.y, curLocation.z, xBoolParam, yBoolParam, zBoolParam)
-	SetEntityHeading(target, curHeading - rotationSpeed)
-end
+				SetEntityVelocity(playerPed, 0.0, 0.0, 0.0)
+				SetEntityRotation(playerPed, 0, 0, 0, 0, false)
 
+				-- Prevent Conflicts/Damage
+				SetUserRadioControlEnabled(false)
+				SetPlayerInvincible(PlayerId(), true)		
+				SetEntityInvincible(target, true)
 
-function is_in_noclip_mode()
-	return in_noclip_mode
-end
+				-- Play animation on foot.
+				if(not inVehicle)then
+					TaskPlayAnim(PlayerPedId(), noclip_ANIM_A, noclip_ANIM_B, 8.0, 0.0, -1, 9, 0, 0, 0, 0);
+				end
+
+				updateForwardPush()
+
+				local xVect = forwardPush * math.sin(degToRad(curHeading)) * -1.0
+				local yVect = forwardPush * math.cos(degToRad(curHeading))
+
+				handleMovement(xVect,yVect)
+
+				-- Update player postion.
+				SetEntityCoordsNoOffset(target, curLocation.x, curLocation.y, curLocation.z, xBoolParam, yBoolParam, zBoolParam)
+				SetEntityHeading(target, curHeading - rotationSpeed)
+
+			end
+	 	end
+	 end
+end)
