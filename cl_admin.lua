@@ -28,13 +28,21 @@
 
 -- Forward one hour
 function getForwardTime()
-	return {h=GetClockHours() + 1,m= GetClockMinutes(),s=GetClockSeconds()}
+	local hour = GetClockHours() + 1
+	if(hour == 24)then
+		hour = 0
+	end
+	return {h=hour,m=GetClockMinutes(),s=GetClockSeconds()}
 end
 
 
 -- Back one hour
 function getReverseTime()
-	return {h=GetClockHours() - 1,m= GetClockMinutes(),s=GetClockSeconds()}
+	local hour = GetClockHours() - 1
+	if(hour < 0)then
+		hour = 23
+	end
+	return {h=hour,m=GetClockMinutes(),s=GetClockSeconds()}
 end
 
 
