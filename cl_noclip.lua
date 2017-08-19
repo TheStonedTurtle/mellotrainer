@@ -1,3 +1,23 @@
+--[[--------------------------------------------------------------------------
+	*
+	* Mello Trainer
+	* (C) Michael Goodwin 2017
+	* http://github.com/thestonedturtle/mellotrainer/releases
+	*
+	* This menu used the Scorpion Trainer as a framework to build off of.
+	* https://github.com/pongo1231/ScorpionTrainer
+	* (C) Emre Cürgül 2017
+	* 
+	* A lot of useful functionality has been converted from the lambda menu.
+	* https://lambda.menu
+	* (C) Oui 2017
+	*
+	* Additional Contributors:
+	* WolfKnight (https://forum.fivem.net/u/WolfKnight)
+	*
+---------------------------------------------------------------------------]]
+
+
 -- Animation Variables
 local loadedAnims = false
 local noclip_ANIM_A = "amb@world_human_stand_impatient@male@no_sign@base";
@@ -86,7 +106,6 @@ function moveThroughDoor()
 	local forwardPush = 0.6
 
 	local xVect = forwardPush * math.sin(degToRad(curHeading)) * -1.0
-	Citizen.Trace("xVect Value is: "..xVect)
 	local yVect = forwardPush * math.cos(degToRad(curHeading))
 
 	SetEntityCoordsNoOffset(playerPed, curLocation.x + xVect, curLocation.y + yVect, curLocation.z, 1, 1, 1)
