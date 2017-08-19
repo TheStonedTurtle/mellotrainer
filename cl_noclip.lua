@@ -141,30 +141,30 @@ Citizen.CreateThread(function()
 
 	-- Updates the players position
 	function handleMovement(xVect,yVect)
-		local moveUpKey = false
-		local moveDownKey = false
-		local moveForwardKey = false
-		local moveBackKey = false
-		local rotateLeftKey = false
-		local rotateRightKey = false
+		local moveUpKey = 44      -- Q
+		local moveDownKey = 38    -- E
+		local moveForwardKey = 32 -- W
+		local moveBackKey = 33    -- S
+		local rotateLeftKey = 34  -- A
+		local rotateRightKey = 35 -- D
 
-		if ( moveUpKey ) then
+		if ( IsControlPressed( 1, moveUpKey) or IsDisabledControlPressed( 1, moveUpKey) ) then
 			curLocation.z = curLocation.z + forwardPush / 2;
-		elseif (moveDownKey) then
+		elseif ( IsControlPressed( 1, moveDownKey) or IsDisabledControlPressed( 1, moveDownKey) ) then
 			curLocation.z = curLocation.z - forwardPush / 2;
 		end
 
-		if (moveForwardKey) then
+		if ( IsControlPressed( 1, moveForwardKey) or IsDisabledControlPressed( 1, moveForwardKey) ) then
 			curLocation.x = curLocation.x + xVect
 			curLocation.y = curLocation.y + yVect
-		elseif (moveBackKey) then
-			curLocation.x = curLocation.x + xVect
-			curLocation.y = curLocation.y + yVect
+		elseif ( IsControlPressed( 1, moveBackKey) or IsDisabledControlPressed( 1, moveBackKey) ) then
+			curLocation.x = curLocation.x - xVect
+			curLocation.y = curLocation.y - yVect
 		end
 
-		if (rotateLeftKey) then
+		if ( IsControlPressed( 1, rotateLeftKey) or IsDisabledControlPressed( 1, rotateLeftKey) ) then
 			curHeading = curHeading + rotationSpeed
-		elseif (rotateRightKey) then
+		elseif ( IsControlPressed( 1, rotateRightKey) or IsDisabledControlPressed( 1, rotateRightKey) ) then
 			curHeading = curHeading - rotationSpeed
 		end	
 	end
