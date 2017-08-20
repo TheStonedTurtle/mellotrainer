@@ -34,8 +34,6 @@ function DATASAVE:DoesPathExist( path )
 end 
 
 function DATASAVE:RunLaunchChecks()
-    Citizen.Wait( 1000 ) -- just to reduce clutter in the console on startup 
-
     local exists = self:DoesPathExist( "mtsaves" )
 
     if ( not exists ) then 
@@ -153,10 +151,12 @@ function DATASAVE:print( text )
 end 
 
 Citizen.CreateThread( function()
+    Citizen.Wait( 1000 ) -- just to reduce clutter in the console on startup 
+
     if ( Config.settings.localSaving ) then
         DATASAVE:RunLaunchChecks()
     else
-        DATASAVE:print("Local Saving is currently turned off.")
+        DATASAVE:print( "Local Saving is currently turned off." )
     end
 end )
 

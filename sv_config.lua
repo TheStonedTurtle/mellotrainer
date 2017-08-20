@@ -114,6 +114,7 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 
 	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
 	TriggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
+	TriggerClientEvent( "mellotrainer:receiveConfigSetting", source, "localSaving", Config.settings.localSaving )
 
 
 	-- If local saving is turned on then ensure files are created for this person.
