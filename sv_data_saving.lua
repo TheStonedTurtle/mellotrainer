@@ -187,13 +187,15 @@ end
 
 RegisterServerEvent( 'wk:DataSave' )
 AddEventHandler( 'wk:DataSave', function( type, data, index )
-    local id = DATASAVE:GetSteamId( source )
+    if ( Config.settings.localSaving ) then 
+        local id = DATASAVE:GetSteamId( source )
 
-    if ( id ~= nil ) then 
-        local file = id .. "_" .. type .. ".txt"
-        DATASAVE:WriteToFile( file, data, index )
-    else 
-        DATASAVE:print( GetPlayerName( source ) .. " attempted to save, but does not have a steam id." ) 
+        if ( id ~= nil ) then 
+            local file = id .. "_" .. type .. ".txt"
+            DATASAVE:WriteToFile( file, data, index )
+        else 
+            DATASAVE:print( GetPlayerName( source ) .. " attempted to save, but does not have a steam id." ) 
+        end 
     end 
 end )
 

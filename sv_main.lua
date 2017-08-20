@@ -17,10 +17,11 @@
 	*
 ---------------------------------------------------------------------------]]
 
-_VERSION = '0.4.0'
+_VERSION = '0.4.1'
 
 --[[------------------------------------------------------------------------
 	Version Check 
+	Credits to EssentialMode 
 ------------------------------------------------------------------------]]--
 PerformHttpRequest( "https://thestonedturtle.github.io/version.txt", function( err, text, headers )
 	Citizen.Wait( 1000 ) -- just to reduce clutter in the console on startup 
