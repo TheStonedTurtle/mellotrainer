@@ -89,7 +89,7 @@ Citizen.CreateThread( function()
     local speeds = { 0.8, 1.8, 3.6, 5.4, 0.05, 0.2 }
 
     local moveUpKey = 44      -- Q
-    local moveDownKey = 38    -- E
+    local moveDownKey = 20    -- Z
     local moveForwardKey = 32 -- W
     local moveBackKey = 33    -- S
     local rotateLeftKey = 34  -- A
@@ -144,6 +144,8 @@ Citizen.CreateThread( function()
                 -- Ensure we get out of noclip mode
                 Citizen.Wait( 100 )
             else 
+                target = playerPed 
+                
                 -- Handle Noclip Movement.
                 local inVehicle = IsPedInAnyVehicle( playerPed, true )
 
@@ -157,7 +159,7 @@ Citizen.CreateThread( function()
                 -- Prevent Conflicts/Damage
                 SetUserRadioControlEnabled( false )
                 SetPlayerInvincible( PlayerId(), true )
-                SetEntityInvincible( playerPed, true )
+                SetEntityInvincible( target, true )
 
                 -- Play animation on foot.
                 if ( not inVehicle ) then
@@ -172,8 +174,8 @@ Citizen.CreateThread( function()
                 handleMovement( xVect, yVect )
 
                 -- Update player postion.
-                SetEntityCoordsNoOffset( playerPed, curLocation.x, curLocation.y, curLocation.z, true, true, true )
-                SetEntityHeading( playerPed, curHeading - rotationSpeed )
+                SetEntityCoordsNoOffset( target, curLocation.x, curLocation.y, curLocation.z, true, true, true )
+                SetEntityHeading( target, curHeading - rotationSpeed )
             end
         end
      end
