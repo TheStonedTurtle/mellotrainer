@@ -33,6 +33,24 @@ function GetNetworkPlayers()
     if ( next( players ) == nil ) then return nil else return players end 
 end 
 
+--[[ function GeneratePlayerBans( id )
+	local bans = { 0.016667, 0.085, 0.17, 0.25, 0.5, 1, 2, 3, 4, 5, 8, 10, 15, 20, 30, 40, 60, 120, 240, 480 }
+	local options = {}
+
+	for k, v in pairs( bans ) do 
+		local option = {
+			[ "menuName" ] = tostring( v ) .. " hours",
+			[ "data" ] = {
+				[ "action" ] = "adminban " .. id .. " " .. v
+			}
+		}
+
+		table.insert( options, option )
+	end 
+
+	return options 
+end ]]--
+
 function GeneratePlayerAdminMenus( id )
 	local serverid = GetPlayerServerId( i )
 
@@ -44,11 +62,20 @@ function GeneratePlayerAdminMenus( id )
 	}
 
 	local kick_reason = {
-		[ "menuName" ] = "Kick (reason)", 
+		[ "menuName" ] = "Kick (specify reason)", 
 		[ "data" ] = {
 			[ "action" ] = "adminkick input " .. serverid
 		}
 	}
+
+	--[[ local banOptions = GeneratePlayerBans( serverid )
+	local ban = {
+		[ "menuName" ] = "Ban", 
+		[ "data" ] = {
+			[ "sub" ] = 3
+		}, 
+		[ "submenu" ] = banOptions
+	} ]]--
 
 	local options = { kick, kick_reason }
 
