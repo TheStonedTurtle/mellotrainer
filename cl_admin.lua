@@ -17,6 +17,88 @@
 	*
 ---------------------------------------------------------------------------]]
 
+
+--[[------------------------------------------------------------------------
+	Player Management 
+------------------------------------------------------------------------]]--
+function GetNetworkPlayers()
+    local players = {}
+
+    for i = 0, 31 do 
+        if ( NetworkIsPlayerActive( i ) ) then 
+            table.insert( players, i )
+        end 
+    end 
+
+    if ( next( players ) == nil ) then return nil else return players end 
+end 
+
+function GeneratePlayerAdminMenus( id )
+	local serverid = GetPlayerServerId( i )
+
+	local kick = {
+		[ "menuName" ] = "Kick",
+		[ "data" ] = {
+			[ "action" ] = "adminkick " .. serverid
+		}
+	}
+
+	local kick_reason = {
+		[ "menuName" ] = "Kick (reason)", 
+		[ "data" ] = {
+			[ "action" ] = "adminkick input " .. serverid
+		}
+	}
+
+	local options = { kick, kick_reason }
+
+	return options 
+end 
+
+RegisterNUICallback( "playermanagement", function( data, cb ) 
+    local players = GetNetworkPlayers()
+    local validOptions = {}
+ 
+    for k, v in pairs( players ) do
+    	local playerOptions = GeneratePlayerAdminMenus( v )
+
+        table.insert( validOptions, 1, {
+            [ "menuName" ] = GetPlayerName( v ),
+            [ "data" ] = {
+                [ "sub" ] = k
+            },
+            [ "submenu" ] = playerOptions
+        } )
+    end
+ 
+    local customJSON = "{}"
+
+    if ( getTableLength( validOptions ) > 0 ) then
+        customJSON = json.encode( validOptions, { indent = true } )
+    end
+ 
+    SendNUIMessage( {
+        createmenu = true,
+        menuName = "playermanagement",
+        menudata = customJSON
+    } )
+   
+    if ( cb ) then cb( "ok" ) end
+end )
+
+RegisterNUICallback( "adminkick", function( data, cb ) 
+	if ( data.action == "input" ) then 
+		local reason = requestInput( "", 60 )
+
+		if ( reason ) then 
+			TriggerServerEvent( 'mellotrainer:adminKick', tonumber( data.data[3] ), "Kicked: " ..reason )
+		end 
+	else 
+		TriggerServerEvent( 'mellotrainer:adminKick', tonumber( data.action ), "Kicked: You have been kicked from the server." )
+	end 
+end )
+
+
 --    _______ _                    ____        _   _                 
 --   |__   __(_)                  / __ \      | | (_)                
 --      | |   _ _ __ ___   ___   | |  | |_ __ | |_ _  ___  _ __  ___ 

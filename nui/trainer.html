@@ -41,6 +41,7 @@
                 <!-- <p class="traineroption" data-sub="actionsmenu">Actions</p>  -->
                 <p class="traineroption" data-sub="weaponsmenu">Weapons</p>
                 <p class="traineroption" data-sub="vehiclesmenu">Vehicles</p>
+                <p class="traineroption" data-sub="worldmenu">World</p>
                 <p class="traineroption" data-sub="settingsmenu">Settings</p>
                 <p class="traineroption" data-sub="adminmenu" data-require="admin">Admin Menu</p>
                 <p class="traineroption" data-sub="aboutmenu">About</p>
@@ -857,6 +858,21 @@
 
 
             <!--
+
+                World Menu 
+
+            -->
+
+            <div id="worldmenu" data-parent="mainmenu">
+                <p class="traineroption" data-sub="locationsmenu">Locations</p>
+            </div>
+
+                <div id="locationsmenu" data-parent="worldmenu">
+                    
+                </div>
+
+
+            <!--
                _____          _     _     _                           __  __                        
               / ____|        | |   | |   (_)                         |  \/  |                       
              | (___     ___  | |_  | |_   _   _ __     __ _   ___    | \  / |   ___   _ __    _   _ 
@@ -935,10 +951,15 @@
             
             <!-- Admin menu -->
             <div id="adminmenu" data-parent="mainmenu">
+                <p class="traineroption" data-sub="playermanagemenu">Player Management</p>
                 <p class="traineroption" data-sub="settingsweathermenu">Change Weather</p>
                 <p class="traineroption" data-sub="settingstimemenu">Change Time</p>
             </div>
-                
+
+
+            <div id="playermanagemenu" data-parent="adminmenu" data-dynamicmenu="playermanagement">
+            </div>
+
 
             <!-- Weather Menu -->
             <div id="settingsweathermenu" data-parent="adminmenu">
@@ -988,7 +1009,7 @@
 
             <!-- About menu -->
             <div id="aboutmenu" data-parent="mainmenu">
-                <p class="traineroption">Mello Trainer v0.4.0</p>
+                <p class="traineroption">Mello Trainer v0.5.0</p>
                 <p class="traineroption">Made By TheStonedTurtle</p>
                 <p class="traineroption">Special Thanks To:</p>
                 <p class="traineroption">WolfKnight</p>
