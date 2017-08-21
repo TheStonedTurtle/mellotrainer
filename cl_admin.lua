@@ -52,7 +52,7 @@ end
 end ]]--
 
 function GeneratePlayerAdminMenus( id )
-	local serverid = GetPlayerServerId( i )
+	local serverid = GetPlayerServerId( id )
 
 	local kick = {
 		[ "menuName" ] = "Kick",
@@ -96,10 +96,10 @@ RegisterNUICallback( "playermanagement", function( data, cb )
     for k, v in pairs( players ) do
     	local playerOptions = GeneratePlayerAdminMenus( v )
 
-        table.insert( validOptions, 1, {
+        table.insert( validOptions, {
             [ "menuName" ] = GetPlayerName( v ),
             [ "data" ] = {
-                [ "sub" ] = k
+                [ "sub" ] = GetPlayerServerId( v )
             },
             [ "submenu" ] = playerOptions
         } )
