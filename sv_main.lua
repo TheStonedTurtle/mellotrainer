@@ -41,7 +41,7 @@ end, "GET", "", { what = 'this' } )
 ------------------------------------------------------------------------]]--
 AddEventHandler( 'playerConnecting', function( name, cb )
 	if ( Config.settings.steamOnly ) then 
-		local id = DATASAVE:GetSteamId( source )
+		local id = DATASAVE:GetIdentifier( source, "steam" )
 
 		if ( id == nil ) then 
 			cb( "This server requires you to be logged into the Steam client." )

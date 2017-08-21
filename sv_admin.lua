@@ -19,11 +19,39 @@
 
 
 --[[------------------------------------------------------------------------
-	Player Management 
+	Kick Player 
 ------------------------------------------------------------------------]]--
 RegisterServerEvent( 'mellotrainer:adminKick' )
 AddEventHandler( 'mellotrainer:adminKick', function( id, reason ) 
 	DropPlayer( id, reason )
+end )
+
+--[[------------------------------------------------------------------------
+	Temp Ban Player 
+------------------------------------------------------------------------]]--
+local tempBannedUsers = {}
+
+RegisterServerEvent( 'mellotrainer:adminTempBan' )
+AddEventHandler( 'mellotrainer:adminTempBan', function( id ) 
+	local license = DATASAVE:GetIdentifier( id, "license" )
+
+	if ( license ~= nil ) then 
+		tempBannedUsers[license] = true 
+		DATASAVE:print( GetPlayerName( id ) .. " has been temporarily banned by " .. GetPlayerName( source ) .. "." )
+		DropPlayer( id, "Banned: You have been temporarily banned." )
+	end 
+end )
+
+AddEventHandler( 'playerConnecting', function( name, setReason ) 
+	local license = DATASAVE:GetIdentifier( source, "license" )
+
+	if ( license ~= nil ) then 
+		if ( tempBannedUsers[license] ) then 
+			DATASAVE:print( GetPlayerName( source ) .. " is temporarily banned, refusing connection." )
+			setReason( "Banned: You have been temporarily banned." )
+			CancelEvent()
+		end 
+	end 
 end )
 
 --    _______ _                    ____        _   _                 

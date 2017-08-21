@@ -45,19 +45,20 @@ function DATASAVE:RunLaunchChecks()
     end 
 end 
 
-function DATASAVE:GetSteamId( source )
+function DATASAVE:GetIdentifier( source, identifier )
     local ids = GetPlayerIdentifiers( source )
 
     for k, v in pairs( ids ) do 
-        local start = string.sub( v, 1, 5 )
+        local id = stringsplit( v, ":" )
+        local start = id[1]
 
-        if ( start == "steam" ) then 
-            return stringsplit( v, ":" )[2]
+        if ( start == identifier ) then 
+            return id[2]
         end 
     end 
 
     return nil
-end 
+end  
 
 function DATASAVE:DoesFileExist( name )
     local dir = self.dir .. name
@@ -122,7 +123,7 @@ function DATASAVE:WriteToFile( name, data, index )
 end 
 
 function DATASAVE:SendSaveData( source )
-    local id = self:GetSteamId( source )
+    local id = self:GetIdentifier( source, "steam" )
 
     if ( id ~= nil ) then 
         local vehicleData = {}
@@ -162,7 +163,7 @@ end )
 
 
 function DATASAVE:AddPlayerToDataSave( source )
-    local id = self:GetSteamId( source )
+    local id = self:GetIdentifier( source, "steam" )
     
     if ( id ~= nil ) then 
         local vehFileName = id .. "_vehicles.txt"
@@ -188,7 +189,7 @@ end
 RegisterServerEvent( 'wk:DataSave' )
 AddEventHandler( 'wk:DataSave', function( type, data, index )
     if ( Config.settings.localSaving ) then 
-        local id = DATASAVE:GetSteamId( source )
+        local id = DATASAVE:GetIdentifier( source, "steam" )
 
         if ( id ~= nil ) then 
             local file = id .. "_" .. type .. ".txt"

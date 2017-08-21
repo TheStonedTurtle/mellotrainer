@@ -68,6 +68,13 @@ function GeneratePlayerAdminMenus( id )
 		}
 	}
 
+	local temp_ban = {
+		[ "menuName" ] = "Temp Ban", 
+		[ "data" ] = {
+			[ "action" ] = "admintempban " .. serverid
+		}
+	}
+
 	--[[ local banOptions = GeneratePlayerBans( serverid )
 	local ban = {
 		[ "menuName" ] = "Ban", 
@@ -77,7 +84,7 @@ function GeneratePlayerAdminMenus( id )
 		[ "submenu" ] = banOptions
 	} ]]--
 
-	local options = { kick, kick_reason }
+	local options = { kick, kick_reason, temp_ban }
 
 	return options 
 end 
@@ -115,14 +122,22 @@ end )
 
 RegisterNUICallback( "adminkick", function( data, cb ) 
 	if ( data.action == "input" ) then 
+		local id = tonumber( data.data[3] )
 		local reason = requestInput( "", 60 )
 
 		if ( reason ) then 
-			TriggerServerEvent( 'mellotrainer:adminKick', tonumber( data.data[3] ), "Kicked: " ..reason )
+			TriggerServerEvent( 'mellotrainer:adminKick', id, "Kicked: " .. reason )
 		end 
 	else 
-		TriggerServerEvent( 'mellotrainer:adminKick', tonumber( data.action ), "Kicked: You have been kicked from the server." )
+		local id = tonumber( data.action )
+
+		TriggerServerEvent( 'mellotrainer:adminKick', id, "Kicked: You have been kicked from the server." )
 	end 
+end )
+
+RegisterNUICallback( "admintempban", function( data, cb ) 
+	local id = tonumber( data.action )
+	TriggerServerEvent( 'mellotrainer:adminTempBan', id )
 end )
 
 
