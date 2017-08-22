@@ -136,7 +136,7 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
+		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
 			if not showtrainer then
 				showtrainer = true
 				SendNUIMessage({
@@ -150,11 +150,11 @@ Citizen.CreateThread( function()
 			end
 		end
 
-		if ( IsControlJustReleased( 0, 170 ) or IsDisabledControlJustReleased( 0, 170 ) ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
+		if ( IsControlJustReleased( 0, 170 ) or IsDisabledControlJustReleased( 0, 170 ) ) and GetLastInputMethod( 0 ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
 			teleportToWaypoint()
 		end
 
-		if ( IsControlJustReleased( 0, 289 ) or IsDisabledControlJustReleased( 0, 289 ) ) then
+		if ( IsControlJustReleased( 0, 289 ) or IsDisabledControlJustReleased( 0, 289 ) ) and GetLastInputMethod( 0 ) then
 			toggleNoClipMode()
 			drawNotification("Noclip mode toggled")
 		end
