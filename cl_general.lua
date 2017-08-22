@@ -150,11 +150,11 @@ Citizen.CreateThread( function()
 			end
 		end
 
-		if ( IsControlJustReleased( 1, 168 ) or IsDisabledControlJustPressed( 1, 168 ) ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
+		if ( IsControlJustReleased( 1, 168 ) or IsDisabledControlJustReleased( 1, 168 ) ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
 			teleportToWaypoint()
 		end
 
-		if ( IsControlJustReleased( 1, 169 ) or IsDisabledControlJustPressed( 1, 169 ) ) then
+		if ( IsControlJustReleased( 1, 169 ) or IsDisabledControlJustReleased( 1, 169 ) ) then
 			toggleNoClipMode()
 			drawNotification("Noclip mode toggled")
 		end
