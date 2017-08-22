@@ -1,14 +1,22 @@
-<h1>v0.4.1 (08-##-2017)</h1>
-Bug Fixes
+<h1>v0.4.5 (08-22-2017)</h1>
+Noclip mode, kick, temporary ban and bug fixes. 
 
 <h3>Changes</h3>
 <ul>
     <li>Fixed SNS Pistol Menu issues</li>
+    <li>Added a directory check to the data saving system, this should prevent any issues.</li>
+    <li>Data saving can now be toggled in the sv_config.lua file</li>
+    <li>Restructued all of the files for easier use</li>
+    <li>Added a steam only connection option, this will kick players who are trying to connect and are not logged into Steam, this can be toggled in the sv_config.lua file</li>
+    <li>Fixed changing time causing crashes</li>
+    <li>Changed some menu colours</li>
 </ul>
 
 <h3>Additions</h3>
 <ul>
-	<li></li>
+	<li>Version check, the trainer will now let you know if you are running an outdated version. (Credits to EssentialMode)</li>
+	<li>Added noclip mode, can be toggled with F2</li>
+	<li>Added kick and temporary ban to the admin menu</li>
 </ul>
 
 
