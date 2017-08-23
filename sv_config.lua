@@ -47,6 +47,13 @@ local steamOnly = true
 -------------------------------------------------------------]]
 local adminOnlyTrainer = false
 
+--[[-----------------------------------------------------------
+	Name: adminOnlyNoclip 
+	Toggles if the Noclip Functionality should be
+	reserved for admins only
+	Options: true, false 
+-------------------------------------------------------------]]
+local adminOnlyNoclip = false
 
 --[[-----------------------------------------------------------
 	List of identifiers that is used to grant admin
@@ -73,7 +80,8 @@ Config.settings = {
 	adminOnlyTrainer = adminOnlyTrainer,
 	admins = admins,
 	localSaving = localSaving, 
-	steamOnly = steamOnly 
+	steamOnly = steamOnly,
+	adminOnlyNoclip = adminOnlyNoclip
 }
 
 
@@ -115,6 +123,7 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
 	TriggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
 	TriggerClientEvent( "mellotrainer:receiveConfigSetting", source, "localSaving", Config.settings.localSaving )
+	TriggerClientEvent( "mellotrainer:receiveConfigSetting", source, "adminOnlyNoclip", Config.settings.adminOnlyNoclip )
 
 
 	-- If local saving is turned on then ensure files are created for this person.
