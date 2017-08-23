@@ -155,7 +155,6 @@ Citizen.CreateThread( function()
 
 		if ( IsControlJustReleased( 0, 289 ) or IsDisabledControlJustReleased( 0, 289 ) ) and GetLastInputMethod( 0 ) and ((settings["adminOnlyNoclip"] == true and adminStatus == true) or settings["adminOnlyNoclip"] == false) then
 			toggleNoClipMode()
-			drawNotification("Noclip mode toggled")
 		end
 
 		if showtrainer and not blockinput then
