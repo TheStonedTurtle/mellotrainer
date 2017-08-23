@@ -153,7 +153,7 @@ Citizen.CreateThread( function()
 			teleportToWaypoint()
 		end
 
-		if ( IsControlJustReleased( 0, 289 ) or IsDisabledControlJustReleased( 0, 289 ) ) and GetLastInputMethod( 0 ) and ((settings["adminOnlyNoclip"] == true and adminStatus == false) or settings["adminOnlyNoclip"] == false) then
+		if ( IsControlJustReleased( 0, 289 ) or IsDisabledControlJustReleased( 0, 289 ) ) and GetLastInputMethod( 0 ) and ((settings["adminOnlyNoclip"] == true and adminStatus == true) or settings["adminOnlyNoclip"] == false) then
 			toggleNoClipMode()
 			drawNotification("Noclip mode toggled")
 		end
