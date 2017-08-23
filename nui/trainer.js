@@ -103,7 +103,14 @@ $(function() {
             resetTrainer();            
             container.show();
             playSound("YES");
-        } 
+        }
+
+        // Hide Trainer
+        if (item.resettrainer) {
+            resetTrainer()
+            container.hide();
+            playSound("NO");
+        }
 
         // Hide Trainer
         if (item.hidetrainer) {
@@ -240,6 +247,11 @@ $(function() {
             showMenu(menus[$(content.menu).attr("id")],false)
         }
 
+
+        // Remove Selected Class from element.
+        if(item.removeSelectedClass){
+            $(".traineroption").eq(counter).removeClass("selected");
+        }
 
     });
 });

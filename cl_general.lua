@@ -128,7 +128,7 @@ Citizen.CreateThread(function()
 end)
 
 -- should the trainer be shown?
-local showtrainer = false
+showtrainer = false
 
 
 -- Constantly check for trainer movement.
@@ -137,13 +137,12 @@ Citizen.CreateThread( function()
 		Citizen.Wait( 0 )
 
 		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
-			if not showtrainer then
-				showtrainer = true
+			showtrainer = not showtrainer
+			if showtrainer then
 				SendNUIMessage({
 					showtrainer = true
 				})
 			else
-				showtrainer = false
 				SendNUIMessage({
 					hidetrainer = true
 				})

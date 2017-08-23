@@ -26,11 +26,41 @@ local noclip_ANIM_B = "base"
 
 -- Noclip Variables
 local in_noclip_mode = false
-local travelSpeed = 0
+local travelSpeed = 4
 local curLocation
 local curRotation
 local curHeading
 local target
+
+function createNoClipMenuOptions()
+    local options = {"Noclip Toggle: F2","W = Move Forward","S = Move Backwards","A = Rotate Left","D = Rotate Right","Q = Move Upwards","Z = Move Downwards","Shift = Change Speed"}
+    local speeds = { "Slowest", "Slower", "Slow", "Normal", "Fast", "Faster", "Fastest" }
+    local menuOpts = {}
+    for index,value in pairs(options)do
+        local item = {["menuName"] = value}
+        table.insert(menuOpts, 1, item)
+    end
+
+    local curSpeed = {["menuName"] = "Current Speed = "..(speeds[travelSpeed] or "NA")}
+    table.insert(menuOpts, 1, curSpeed)
+
+    return menuOpts
+end
+
+function refreshNoClipMenu()
+    local menuOpts = createNoClipMenuOptions()
+    local customJSON = json.encode( menuOpts, { indent = true } )
+
+    SendNUIMessage({
+        showtrainer = true, -- Refreshes the trainer/ensures its visible.
+        createmenu = true,
+        menuName = "noclipmenu",
+        menudata = customJSON,
+        removeSelectedClass = true
+    })
+    showtrainer = true -- Sync state with cl_general.lua
+end
+
 
 function toggleNoClipMode()
     if(in_noclip_mode)then
@@ -56,9 +86,17 @@ function turnNoClipOff()
     SetEntityInvincible( target, false )
 
     in_noclip_mode = false
+
+    SendNUIMessage({
+        resettrainer = true
+    })
+
+    showtrainer = false -- Sync state with cl_general.lua    
+    blockinput = false -- Allow Trainer Access Again
 end
 
 function turnNoClipOn()
+    blockinput = true -- Prevent Trainer access while in noclip mode.
     local playerPed = PlayerPedId()
     local inVehicle = IsPedInAnyVehicle( playerPed, false )   
 
@@ -74,6 +112,7 @@ function turnNoClipOn()
     curHeading = GetEntityHeading( playerPed )
 
     in_noclip_mode = true
+    refreshNoClipMenu()
 end
 
 -- Credits to @Oui (Lambda Menu)
@@ -84,9 +123,9 @@ end
 -- Handles all No Clipping.
 Citizen.CreateThread( function()
     local rotationSpeed = 2.5
-    local forwardPush = 0.8
+    local forwardPush = 1.8
 
-    local speeds = { 0.8, 1.8, 3.6, 5.4, 0.05, 0.2 }
+    local speeds = { 0.05, 0.2, 0.8, 1.8, 3.6, 5.4, 15.0 }
 
     local moveUpKey = 44      -- Q
     local moveDownKey = 20    -- Z
@@ -96,9 +135,11 @@ Citizen.CreateThread( function()
     local rotateRightKey = 35 -- D
     local changeSpeedKey = 21 -- LSHIFT
 
-    -- Sync Forward Push with Travel Speed
+    -- Sync Forward Push with Travel Speed. Only called when travelSpeed is updated.
     function updateForwardPush()
-        forwardPush = speeds[ travelSpeed + 1 ]
+        forwardPush = speeds[ travelSpeed ]
+
+        refreshNoClipMenu()
     end
 
     -- Updates the players position
@@ -106,9 +147,11 @@ Citizen.CreateThread( function()
         if ( IsControlJustPressed( 1, changeSpeedKey ) or IsDisabledControlJustPressed( 1, changeSpeedKey ) ) then
             travelSpeed = travelSpeed + 1 
 
-            if ( travelSpeed > 5 ) then 
-                travelSpeed = 0
+            if ( travelSpeed > getTableLength(speeds) ) then 
+                travelSpeed = 1
             end
+
+            updateForwardPush();
         end 
 
         if ( IsControlPressed( 1, moveUpKey ) or IsDisabledControlPressed( 1, moveUpKey ) ) then
@@ -165,8 +208,6 @@ Citizen.CreateThread( function()
                 if ( not inVehicle ) then
                     TaskPlayAnim( playerPed, noclip_ANIM_A, noclip_ANIM_B, 8.0, 0.0, -1, 9, 0, 0, 0, 0 ) 
                 end
-
-                updateForwardPush()
 
                 local xVect = forwardPush * math.sin( degToRad( curHeading ) ) * -1.0
                 local yVect = forwardPush * math.cos( degToRad( curHeading ) )
