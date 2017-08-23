@@ -62,7 +62,7 @@ As of v0.4.0, players are required to be logged into the Steam client in order f
     <li>Weapon Spawning</li>
     <li>Weapon Attachments/Infinite ammo</li>
     <li>Voice Overlay & Options (Proximity/Channel/Toggle)</li>
-    <li>Noclip Toggle</li>
+    <li>Noclip Abilities with Admin Only Toggle</li>
 </ul>
 
 

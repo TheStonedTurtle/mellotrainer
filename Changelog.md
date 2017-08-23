@@ -15,10 +15,10 @@ New Noclip Mode, Admin kick & temp ban, and some bug fixes.
 <ul>
     <li>Added a directory check to the data saving system</li>
 	<li>Version check, the trainer will now let you know if you are running an outdated version. (Credits to EssentialMode)</li>
-	<li>Added noclip mode, can be toggled with F2</li>
+	<li>Added Noclip Mode, can be toggled with F2</li>
+	<li>Added Admin Only Noclip toggle in sv_config.lua</li>
 	<li>Added a Steam Only connection option which kicks any player not using steam. Toggleable in the sv_config.lua file</li>
 	<li>Added Kick and Temp Ban to the admin menu</li>
-	<li>Added all Post-Bikers Vehciles and Weapons to the menu (Thanks <a href="https://forum.fivem.net/u/Fenwick" target="_blank">Fenwick</a>)</li>
 </ul>
 
 
