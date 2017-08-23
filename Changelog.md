@@ -1,22 +1,24 @@
 <h1>v0.4.5 (08-22-2017)</h1>
-Noclip mode, kick, temporary ban and bug fixes. 
+New Noclip Mode, Admin kick & temp ban, and some bug fixes. 
 
 <h3>Changes</h3>
 <ul>
+    <li>Changed Control Keys to prevent controller conflictions</li>
     <li>Fixed SNS Pistol Menu issues</li>
-    <li>Added a directory check to the data saving system, this should prevent any issues.</li>
     <li>Data saving can now be toggled in the sv_config.lua file</li>
-    <li>Restructued all of the files for easier use</li>
-    <li>Added a steam only connection option, this will kick players who are trying to connect and are not logged into Steam, this can be toggled in the sv_config.lua file</li>
-    <li>Fixed changing time causing crashes</li>
+    <li>Restructued all of the files for easier managment</li>
+    <li>Fixed Time Forward/Backwards causing crashes</li>
     <li>Changed some menu colours</li>
 </ul>
 
 <h3>Additions</h3>
 <ul>
+    <li>Added a directory check to the data saving system</li>
 	<li>Version check, the trainer will now let you know if you are running an outdated version. (Credits to EssentialMode)</li>
 	<li>Added noclip mode, can be toggled with F2</li>
-	<li>Added kick and temporary ban to the admin menu</li>
+	<li>Added a Steam Only connection option which kicks any player not using steam. Toggleable in the sv_config.lua file</li>
+	<li>Added Kick and Temp Ban to the admin menu</li>
+	<li>Added all Post-Bikers Vehciles and Weapons to the menu (Thanks <a href="https://forum.fivem.net/u/Fenwick" target="_blank">Fenwick</a>)</li>
 </ul>
 
 

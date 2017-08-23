@@ -18,26 +18,51 @@ As of v0.4.0, players are required to be logged into the Steam client in order f
 <table>
 <tbody>
 <tr><th>Key</th><th>Action</th></tr>
-<tr><td>F6</td><td>Open/Close the trainer</td></tr>
+<tr><td>F1</td><td>Open/Close the trainer</td></tr>
 <tr><td>Arrow Keys</td><td>Move up,down,left, and right respectively.</td></tr>
 <tr><td>Enter</td><td>Select the current trainer option</td></tr>
 <tr><td>Backspace</td><td>Go back to the previous menu</td></tr>
+<tr><td>F2</td><td>Toggle No-Clip Mode</td></tr>
+<tr><td>F3</td><td>Teleport to Current Way Point</td></tr>
+</tbody>
+</table>
+
+
+
+<h2>No Clip Controls</h2>
+<table>
+<tbody>
+<tr><th>Key</th><th>Action</th></tr>
+<tr><td>F2</td><td>Toggle No-Clip Mode</td></tr>
+<tr><td>Shift</td><td>Switch No-Clip Movement Speed</td></tr>
+<tr><td>Q</td><td>Move Upwards</td></tr>
+<tr><td>Z</td><td>Move Downwards</td></tr>
+<tr><td>W</td><td>Move Forwards</td></tr>
+<tr><td>S</td><td>Move Backwards</td></tr>
+<tr><td>A</td><td>Rotate Left</td></tr>
+<tr><td>D</td><td>Rotate Right</td></tr>
 </tbody>
 </table>
 
 
 <h1>Features</h1>
 <ul>
-	<li>Online Players Menu with Spectate and Teleport Option</li>
-	<li>Player Skin Changing and customization</li>
-	<li>Player Toggle Options (God Mode, ETC)</li>
-	<li>Vehicle Spawning & Spawning Options</li>
-	<li>Vehicle Customization and Modifications</li>
-	<li>Weapon Spawning</li>
-	<li>Weapon Attachments/Infinite ammo</li>
-	<li>General Settings (Hide/Enlarge Map, Player Blips)</li>
-	<li>Toggle-able Map Blips</li>
-	<li>Admin Menu w/ Working Permissions</li>
+    <li>Admin Menu w/ Working Permissions</li>
+    <li>Admin Only Trainer Options (Time/Weather, syncs with online players)</li>
+    <li>General Settings (Map Blips, Player Blips, Overhead Names, etc)</li>
+    <li>Online Players Menu w/ Spectate & Teleport Option</li>
+    <li>Player Death Messages</li>
+    <li>Player Join/Leave Notifications</li>
+    <li>Player Skin Changing and Customization</li>
+    <li>Player Skin Save & Load System</li>
+    <li>Player Toggle Options (God Mode, ETC)</li>
+    <li>Vehicle Spawning & Spawning Options</li>
+    <li>Vehicle Customization and Modifications</li>
+    <li>Vehicle Save & Load System</li>
+    <li>Weapon Spawning</li>
+    <li>Weapon Attachments/Infinite ammo</li>
+    <li>Voice Overlay & Options (Proximity/Channel/Toggle)</li>
+    <li>Noclip Toggle</li>
 </ul>
 
 
