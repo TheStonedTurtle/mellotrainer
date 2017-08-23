@@ -1,8 +1,21 @@
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+--[[--------------------------------------------------------------------------
+	*
+	* Mello Trainer
+	* (C) Michael Goodwin 2017
+	* http://github.com/thestonedturtle/mellotrainer/releases
+	*
+	* This menu used the Scorpion Trainer as a framework to build off of.
+	* https://github.com/pongo1231/ScorpionTrainer
+	* (C) Emre Cürgül 2017
+	* 
+	* A lot of useful functionality has been converted from the lambda menu.
+	* https://lambda.menu
+	* (C) Oui 2017
+	*
+	* Additional Contributors:
+	* WolfKnight (https://forum.fivem.net/u/WolfKnight)
+	*
+---------------------------------------------------------------------------]]
 
 
 local settings = {}
@@ -115,7 +128,7 @@ Citizen.CreateThread(function()
 end)
 
 -- should the trainer be shown?
-local showtrainer = false
+showtrainer = false
 
 
 -- Constantly check for trainer movement.
@@ -123,22 +136,25 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 1, 167 ) or IsDisabledControlJustReleased( 1, 167 ) ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
-			if not showtrainer then
-				showtrainer = true
+		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
+			showtrainer = not showtrainer
+			if showtrainer then
 				SendNUIMessage({
 					showtrainer = true
 				})
 			else
-				showtrainer = false
 				SendNUIMessage({
 					hidetrainer = true
 				})
 			end
 		end
 
-		if IsControlJustReleased(1, 170) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
+		if ( IsControlJustReleased( 0, 170 ) or IsDisabledControlJustReleased( 0, 170 ) ) and GetLastInputMethod( 0 ) and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f3
 			teleportToWaypoint()
+		end
+
+		if ( IsControlJustReleased( 0, 289 ) or IsDisabledControlJustReleased( 0, 289 ) ) and GetLastInputMethod( 0 ) and ((settings["adminOnlyNoclip"] == true and adminStatus == true) or settings["adminOnlyNoclip"] == false) then
+			toggleNoClipMode()
 		end
 
 		if showtrainer and not blockinput then

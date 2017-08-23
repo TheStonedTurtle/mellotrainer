@@ -1,8 +1,144 @@
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
+--[[--------------------------------------------------------------------------
+	*
+	* Mello Trainer
+	* (C) Michael Goodwin 2017
+	* http://github.com/thestonedturtle/mellotrainer/releases
+	*
+	* This menu used the Scorpion Trainer as a framework to build off of.
+	* https://github.com/pongo1231/ScorpionTrainer
+	* (C) Emre Cürgül 2017
+	* 
+	* A lot of useful functionality has been converted from the lambda menu.
+	* https://lambda.menu
+	* (C) Oui 2017
+	*
+	* Additional Contributors:
+	* WolfKnight (https://forum.fivem.net/u/WolfKnight)
+	*
+---------------------------------------------------------------------------]]
+
+
+--[[------------------------------------------------------------------------
+	Player Management 
+------------------------------------------------------------------------]]--
+function GetNetworkPlayers()
+    local players = {}
+
+    for i = 0, 31 do 
+        if ( NetworkIsPlayerActive( i ) ) then 
+            table.insert( players, i )
+        end 
+    end 
+
+    if ( next( players ) == nil ) then return nil else return players end 
+end 
+
+--[[ function GeneratePlayerBans( id )
+	local bans = { 0.016667, 0.085, 0.17, 0.25, 0.5, 1, 2, 3, 4, 5, 8, 10, 15, 20, 30, 40, 60, 120, 240, 480 }
+	local options = {}
+
+	for k, v in pairs( bans ) do 
+		local option = {
+			[ "menuName" ] = tostring( v ) .. " hours",
+			[ "data" ] = {
+				[ "action" ] = "adminban " .. id .. " " .. v
+			}
+		}
+
+		table.insert( options, option )
+	end 
+
+	return options 
+end ]]--
+
+function GeneratePlayerAdminMenus( id )
+	local serverid = GetPlayerServerId( id )
+
+	local kick = {
+		[ "menuName" ] = "Kick",
+		[ "data" ] = {
+			[ "action" ] = "adminkick " .. serverid
+		}
+	}
+
+	local kick_reason = {
+		[ "menuName" ] = "Kick (specify reason)", 
+		[ "data" ] = {
+			[ "action" ] = "adminkick input " .. serverid
+		}
+	}
+
+	local temp_ban = {
+		[ "menuName" ] = "Temp Ban", 
+		[ "data" ] = {
+			[ "action" ] = "admintempban " .. serverid
+		}
+	}
+
+	--[[ local banOptions = GeneratePlayerBans( serverid )
+	local ban = {
+		[ "menuName" ] = "Ban", 
+		[ "data" ] = {
+			[ "sub" ] = 3
+		}, 
+		[ "submenu" ] = banOptions
+	} ]]--
+
+	local options = { kick, kick_reason, temp_ban }
+
+	return options 
+end 
+
+RegisterNUICallback( "playermanagement", function( data, cb ) 
+    local players = GetNetworkPlayers()
+    local validOptions = {}
+ 
+    for k, v in pairs( players ) do
+    	local playerOptions = GeneratePlayerAdminMenus( v )
+
+        table.insert( validOptions, {
+            [ "menuName" ] = GetPlayerName( v ),
+            [ "data" ] = {
+                [ "sub" ] = GetPlayerServerId( v )
+            },
+            [ "submenu" ] = playerOptions
+        } )
+    end
+ 
+    local customJSON = "{}"
+
+    if ( getTableLength( validOptions ) > 0 ) then
+        customJSON = json.encode( validOptions, { indent = true } )
+    end
+ 
+    SendNUIMessage( {
+        createmenu = true,
+        menuName = "playermanagement",
+        menudata = customJSON
+    } )
+   
+    if ( cb ) then cb( "ok" ) end
+end )
+
+RegisterNUICallback( "adminkick", function( data, cb ) 
+	if ( data.action == "input" ) then 
+		local id = tonumber( data.data[3] )
+		local reason = requestInput( "", 60 )
+
+		if ( reason ) then 
+			TriggerServerEvent( 'mellotrainer:adminKick', id, "Kicked: " .. reason )
+		end 
+	else 
+		local id = tonumber( data.action )
+
+		TriggerServerEvent( 'mellotrainer:adminKick', id, "Kicked: You have been kicked from the server." )
+	end 
+end )
+
+RegisterNUICallback( "admintempban", function( data, cb ) 
+	local id = tonumber( data.action )
+	TriggerServerEvent( 'mellotrainer:adminTempBan', id )
+end )
 
 
 --    _______ _                    ____        _   _                 
@@ -16,13 +152,21 @@
 
 -- Forward one hour
 function getForwardTime()
-	return {h=GetClockHours() + 1,m= GetClockMinutes(),s=GetClockSeconds()}
+	local hour = GetClockHours() + 1
+	if(hour == 24)then
+		hour = 0
+	end
+	return {h=hour,m=GetClockMinutes(),s=GetClockSeconds()}
 end
 
 
 -- Back one hour
 function getReverseTime()
-	return {h=GetClockHours() - 1,m= GetClockMinutes(),s=GetClockSeconds()}
+	local hour = GetClockHours() - 1
+	if(hour < 0)then
+		hour = 23
+	end
+	return {h=hour,m=GetClockMinutes(),s=GetClockSeconds()}
 end
 
 
@@ -184,7 +328,6 @@ Citizen.CreateThread(function()
 
 		if NetworkIsSessionStarted() then
 			TriggerServerEvent( "mellotrainer:firstJoinProper", PlayerId() )
-			TriggerServerEvent( 'wk:AddPlayerToDataSave' )
 			return
 		end
 	end

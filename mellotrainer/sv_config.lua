@@ -1,4 +1,67 @@
+--[[--------------------------------------------------------------------------
+	*
+	* Mello Trainer
+	* (C) Michael Goodwin 2017
+	* http://github.com/thestonedturtle/mellotrainer/releases
+	*
+	* This menu used the Scorpion Trainer as a framework to build off of.
+	* https://github.com/pongo1231/ScorpionTrainer
+	* (C) Emre Cürgül 2017
+	* 
+	* A lot of useful functionality has been converted from the lambda menu.
+	* https://lambda.menu
+	* (C) Oui 2017
+	*
+	* Additional Contributors:
+	* WolfKnight (https://forum.fivem.net/u/WolfKnight)
+	*
+---------------------------------------------------------------------------]]
+
+
+--[[------------------------------------------------------------
+
+	MelloTrainer Config
+
+--------------------------------------------------------------]]
+
+--[[-----------------------------------------------------------
+	Name: localSaving 
+	Toggles the vehicle and skin saving system. 
+	Options: true, false 
+-------------------------------------------------------------]]
+local localSaving = true
+
+--[[-----------------------------------------------------------
+	Name: steamOnly 
+	Toggles steam only mode, if a player joins without a 
+	steam id, it will kick them from the server.
+	Options: true, false 
+-------------------------------------------------------------]]
+local steamOnly = true
+
+--[[-----------------------------------------------------------
+	Name: adminOnlyTrainer 
+	Toggles admin only trainer, meaning only people 
+	specified in the below admins table can use it. 
+	Options: true, false 
+-------------------------------------------------------------]]
 local adminOnlyTrainer = false
+
+--[[-----------------------------------------------------------
+	Name: adminOnlyNoclip 
+	Toggles if the Noclip Functionality should be
+	reserved for admins only
+	Options: true, false 
+-------------------------------------------------------------]]
+local adminOnlyNoclip = false
+
+--[[-----------------------------------------------------------
+	List of identifiers that is used to grant admin
+	privledges within the trainer. MUST FOLLOW EXAMPLE FORMATS.
+
+	How to get your Steam Hex  value:
+https://forum.fivem.net/t/how-to-steam-hex-value-pictures/41071
+-------------------------------------------------------------]]
 local admins = {
 	"steam:110000106e1eac6",   -- Add all steam hexs heres.
 	"steam:110000103920a31",   -- MUST FOLLOW EXAMPLE FORMAT
@@ -9,22 +72,16 @@ local admins = {
 --local pvpEnabled = true
 --local maxPlayers = 32
 
-
-
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
--- DO NOT TOUCHY, CONTACT Michael G/TheStonedTurtle if anything is broken.
-
-
 Config = {}
 Config.settings = {
 	--pvpEnabled = pvpEnabled,
 	--maxPlayers = maxPlayers,
 
 	adminOnlyTrainer = adminOnlyTrainer,
-	admins = admins
+	admins = admins,
+	localSaving = localSaving, 
+	steamOnly = steamOnly,
+	adminOnlyNoclip = adminOnlyNoclip
 }
 
 
@@ -65,6 +122,14 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 
 	TriggerClientEvent('mellotrainer:playerJoined', -1, id)
 	TriggerClientEvent("mellotrainer:receiveConfigSetting", source, "adminOnlyTrainer", Config.settings.adminOnlyTrainer)
+	TriggerClientEvent( "mellotrainer:receiveConfigSetting", source, "localSaving", Config.settings.localSaving )
+	TriggerClientEvent( "mellotrainer:receiveConfigSetting", source, "adminOnlyNoclip", Config.settings.adminOnlyNoclip )
+
+
+	-- If local saving is turned on then ensure files are created for this person.
+	if(Config.settings.localSaving)then
+		DATASAVE:AddPlayerToDataSave(source)
+	end
 end)
 
 
