@@ -1,4 +1,4 @@
-<h1>v0.4.5 (08-22-2017)</h1>
+<h1>v0.4.5 (08-23-2017)</h1>
 New Noclip Mode, Admin kick & temp ban, and some bug fixes. 
 
 <h3>Changes</h3>
