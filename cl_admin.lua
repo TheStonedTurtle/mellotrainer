@@ -84,7 +84,14 @@ function GeneratePlayerAdminMenus( id )
 		[ "submenu" ] = banOptions
 	} ]]--
 
-	local options = { kick, kick_reason, temp_ban }
+	local kill = {
+		[ "menuName" ] = "Kill player", 
+		[ "data" ] = {
+			[ "action" ] = "adminkill " .. serverid
+		}
+	}
+
+	local options = { kick, kick_reason, temp_ban, kill }
 
 	return options 
 end 
@@ -138,6 +145,17 @@ end )
 RegisterNUICallback( "admintempban", function( data, cb ) 
 	local id = tonumber( data.action )
 	TriggerServerEvent( 'mellotrainer:adminTempBan', id )
+end )
+
+RegisterNUICallback( "adminkill", function( data, cb ) 
+	local id = tonumber( data.action )
+	local pid = GetPlayerFromServerId( id )
+
+	local ped = GetPlayerPed( pid )
+
+	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
+		SetEntityHealth( ped, 0 )
+	end 
 end )
 
 
