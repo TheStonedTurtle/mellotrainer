@@ -149,9 +149,12 @@ end )
 
 RegisterNUICallback( "adminkill", function( data, cb ) 
 	local id = tonumber( data.action )
-	local pid = GetPlayerFromServerId( id )
+	TriggerServerEvent( 'mellotrainer:s_adminKill', id )
+end )
 
-	local ped = GetPlayerPed( pid )
+RegisterNetEvent( 'mellotrainer:adminKill' )
+AddEventHandler( 'mellotrainer:adminKill', function( data, cb ) 
+	local ped = GetPlayerPed( -1 )
 
 	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
 		SetEntityHealth( ped, 0 )

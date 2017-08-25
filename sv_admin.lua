@@ -54,6 +54,15 @@ AddEventHandler( 'playerConnecting', function( name, setReason )
 	end 
 end )
 
+--[[------------------------------------------------------------------------
+	Kill Player 
+------------------------------------------------------------------------]]--
+RegisterNetEvent( 'mellotrainer:s_adminKill' )
+AddEventHandler( 'mellotrainer:s_adminKill', function( id ) 
+	TriggerClientEvent( 'mellotrainer:adminKill', id )
+end )
+
+
 --    _______ _                    ____        _   _                 
 --   |__   __(_)                  / __ \      | | (_)                
 --      | |   _ _ __ ___   ___   | |  | |_ __ | |_ _  ___  _ __  ___ 
