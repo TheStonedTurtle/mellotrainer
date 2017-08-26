@@ -25,7 +25,7 @@ function GetNetworkPlayers()
     local players = {}
 
     for i = 0, 31 do 
-        if ( NetworkIsPlayerActive( i ) ) then 
+        if ( NetworkIsPlayerConnected( i ) ) then 
             table.insert( players, i )
         end 
     end 
@@ -91,7 +91,14 @@ function GeneratePlayerAdminMenus( id )
 		}
 	}
 
-	local options = { kick, kick_reason, temp_ban, kill }
+	local teleport = {
+		[ "menuName" ] = "Teleport to me",
+		[ "data" ] = {
+			[ "action" ] = "admintp " .. serverid
+		}
+	}
+
+	local options = { kick, kick_reason, temp_ban, teleport, kill }
 
 	return options 
 end 
@@ -119,7 +126,7 @@ RegisterNUICallback( "playermanagement", function( data, cb )
     end
  
     SendNUIMessage( {
-        createmenu = true,
+        createonlineplayersmenu = true,
         menuName = "playermanagement",
         menudata = customJSON
     } )
@@ -159,6 +166,26 @@ AddEventHandler( 'mellotrainer:adminKill', function( data, cb )
 	if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
 		SetEntityHealth( ped, 0 )
 	end 
+end )
+
+RegisterNUICallback( "admintp", function( data, cb ) 
+	local id = tonumber( data.action )
+	TriggerServerEvent( 'mellotrainer:s_adminTp', id )
+end )
+
+RegisterNetEvent( 'mellotrainer:adminTp' )
+AddEventHandler( 'mellotrainer:adminTp', function( adminSource ) 
+	local me = GetPlayerPed( -1 )
+	local target = GetPlayerFromServerId( adminSource )
+	local targetPed = GetPlayerPed( target )
+
+	local coords = GetEntityCoords( targetPed, true )
+	local x, y, z = coords.x, coords.y, coords.z 
+	z = z + 3.5
+
+	RequestCollisionAtCoord( x, y, z )
+
+	SetEntityCoordsNoOffset( me, x, y, z, false, false, true )
 end )
 
 
