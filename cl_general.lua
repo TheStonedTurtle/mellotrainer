@@ -138,6 +138,10 @@ Citizen.CreateThread( function()
 
 		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
 			showtrainer = not showtrainer
+
+			SetNuiFocus( true )
+			SetNuiFocus( false )
+
 			if showtrainer then
 				SendNUIMessage({
 					showtrainer = true
