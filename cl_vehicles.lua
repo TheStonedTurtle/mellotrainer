@@ -90,6 +90,7 @@ end)
 RegisterNUICallback("vehspawn", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local x, y, z
+	local vehicle
 
 	if ( featureSpawnCarInFront ) then 
 		x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( playerPed, 0.0, 7.5, 0.0 ) )
@@ -103,7 +104,8 @@ RegisterNUICallback("vehspawn", function(data, cb)
 		local result = requestInput("", 60)
 
 		if result then
-			SpawnVehicle(GetHashKey(string.upper(result)), x, y, z, heading, playerPed)
+			vehicle = SpawnVehicle(GetHashKey(string.upper(result)), x, y, z, heading, playerPed)
+			UpdateVehicleFeatureVariables( vehicle )
 		end
 		return
 	end
@@ -111,7 +113,7 @@ RegisterNUICallback("vehspawn", function(data, cb)
 	local playerVeh = GetVehiclePedIsIn(playerPed, true)
 	local vehhash = GetHashKey(data.action)
 
-	local vehicle = SpawnVehicle(vehhash, x, y, z, heading, playerPed)
+	vehicle = SpawnVehicle(vehhash, x, y, z, heading, playerPed)
 
 	UpdateVehicleFeatureVariables( vehicle )
 
