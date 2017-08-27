@@ -56,6 +56,8 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 		resetVehOptions()
 		toggleRadio(ped)
 
+		SetModelAsNoLongerNeeded( veh )
+
 		return veh 
 	else
 		drawNotification("~r~Invalid Model!")
