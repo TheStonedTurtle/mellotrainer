@@ -5,6 +5,7 @@ description "Server Side Trainer to replace the Lambda Menu. Created by TheStone
 ui_page "nui/trainer.html"
 
 files {
+	"nui/mellotrainer.json",
 	"nui/trainer.html",
 	"nui/trainer.js",
 	"nui/trainer.css",
