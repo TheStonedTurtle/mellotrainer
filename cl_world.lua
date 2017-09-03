@@ -288,7 +288,7 @@ locations.old = nil     -- Holds the old location
 
 function teleportToLocation(category,index)
 	locations.old = locations.current
-	local destination = locations[category][index]
+	local destination = locations.categories[category][index]
 
 	-- Get Entity to Teleport
 	local targetPed = GetPlayerPed(-1)
@@ -327,15 +327,17 @@ function teleportToLocation(category,index)
 			destination.isLoaded = true
 		end
 	end
-	local coords = {}
-	coords.x = destination[2]
-	coords.y = destination[3]
-	coords.z = destination[4]
+
+	SetEntityCoordsNoOffset( targetPed, destination[2], destination[3], destination[4], false, false, true )
+
+
+
+	--local coords = {}
+	--coords.x = destination[2]
+	--coords.y = destination[3]
+	--coords.z = destination[4]
 
 	-- TeleportToCoords(targetPed, coords)
-
-	--local unloadedAnything = false;
-	--local time = GetTickCount() + 1000;
 
 	if(locations.old ~= nil)then
 		if(locations.old[6] ~= nil)then
@@ -372,7 +374,7 @@ function createLocationJSON()
 			local curOpt = {
 				["menuName"] = currentObj[1],
 				["data"] = {
-					["action"] = tostring(index).." "..key -- Key may contain spaces so add to end
+					["action"] = "locationteleport "..tostring(index).." "..key -- Key may contain spaces so add to end
 				}
 			}
 			table.insert(options,curOpt)
@@ -385,6 +387,7 @@ function createLocationJSON()
 			},
 			["submenu"] = options
 		})
+		count = count + 1
 	end
 
 	local customJSON = "{}"
@@ -402,4 +405,16 @@ end
 
 RegisterNUICallback("createlocationsmenu", function()
 	createLocationJSON()
+end)
+
+
+
+RegisterNUICallback("locationteleport", function( data, cb )
+	Citizen.Trace(data.data[1])
+	local index = tonumber(data.data[2])
+	local category = table.concat(data.data, " ", 3)
+
+	teleportToLocation(category, index)
+
+	if(cb)then cb("ok")end
 end)
