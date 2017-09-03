@@ -30,6 +30,7 @@ end)
 
 -- Used to turn on global server settings
 function initServerConfig()
+	SetCanAttackFriendly(GetPlayerPed(-1), true, false)
 	NetworkSetFriendlyFireOption(true)
 end
 
