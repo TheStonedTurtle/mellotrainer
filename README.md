@@ -71,6 +71,7 @@ As of v0.4.0, players are required to be logged into the Steam client in order f
 <li><a href="https://github.com/pongo1231/ScorpionTrainer">Scorpion Trainer</a> for a lot of the basic NUI functionality & structure.</li>
 <li><a href="https://github.com/citizenfx/project-lambdamenu">Lambda Menu</a> which I used to convert useful functionality from C++ to Lua.</li>
 <li><a href="https://forum.fivem.net/t/release-simple-speedometer/7846">Simple Speedometer</a> for the speedometer used by the trainer. (Black Outline)</li>
+<li><a href="https://forum.fivem.net/t/release-scammers-script-collection-09-03-17/3313">Player Blips</a> for the basic blip system.</li>
 </ul>
 
 
