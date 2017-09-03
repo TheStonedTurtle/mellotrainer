@@ -50,7 +50,7 @@ featureDeathNotifications = true;
 featureHideMap = false;
 featureHideHud = false;
 featureBigHud = false;
-featureMapBlips = false;
+featureMapBlips = true;
 featureAreaStreetNames = false;
 
 
