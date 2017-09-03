@@ -48,9 +48,8 @@ end
 -- Teleport to map blip
 function teleportToWaypoint()
 	local targetPed = GetPlayerPed(-1)
-	local targetVeh = GetVehiclePedIsUsing(targetPed)
 	if(IsPedInAnyVehicle(targetPed))then
-		targetPed = targetVeh
+		targetPed = GetVehiclePedIsUsing(targetPed)
 	end
 
 	if(not IsWaypointActive())then

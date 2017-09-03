@@ -69,6 +69,21 @@ local admins = {
 }
 
 
+
+
+
+
+
+
+
+
+--[[------------------------------------------------------------
+	Ignore below here if you don't know what you are doing
+-----------------------------------------------------0--------]]
+
+
+
+
 --local pvpEnabled = true
 --local maxPlayers = 32
 

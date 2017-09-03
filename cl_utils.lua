@@ -130,3 +130,10 @@ function UnblockMenuInput()
         blockinput = false 
     end )
 end
+
+
+function tableSet(mytable)
+  local set = {}
+  for _,l in ipairs(mytable) do set[l] = true end
+  return set
+end
