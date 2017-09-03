@@ -202,16 +202,11 @@ $(function() {
             var newObject = JSON.parse(item.menudata);
             menuLoaded.push(item.menuName);
             createDynamicMenu(newObject,item.menuName);
-        }
-
-        // Create the Online Players Menu
-        if(item.createonlineplayersmenu){
-            var newObject = JSON.parse(item.menudata);
-            menuLoaded.push(item.menuName);
-            createDynamicMenu(newObject, item.menuName);
-
-            // Remove from loaded menu array to always recreate menu
-            menuLoaded.splice(menuLoaded.indexOf(item.menuName), 1);
+            
+            // Remove from loaded menu array to always recreate the menu
+            if(item.autorefreshmenu){
+                menuLoaded.splice(menuLoaded.indexOf(item.menuName), 1);
+            }
         }
 
         // Used to update the wheel categories for vehicles.

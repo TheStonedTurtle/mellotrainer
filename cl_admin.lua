@@ -126,7 +126,8 @@ RegisterNUICallback( "playermanagement", function( data, cb )
     end
  
     SendNUIMessage( {
-        createonlineplayersmenu = true,
+        createmenu = true,
+        refreshmenu = true,
         menuName = "playermanagement",
         menudata = customJSON
     } )

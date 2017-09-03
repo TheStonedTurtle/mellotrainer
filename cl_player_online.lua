@@ -321,7 +321,8 @@ RegisterNUICallback("getonlineplayers", function(data,cb)
 	--Citizen.Trace(playerJSON)
 
 	SendNUIMessage({
-		createonlineplayersmenu = true,
+		createmenu = true,
+		autorefreshmenu = true,
 		menuName = "getonlineplayers",
 		menudata = playerJSON
 	})	
