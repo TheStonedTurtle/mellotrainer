@@ -26,21 +26,21 @@
 --   |_____/ \___|_| \__,_|\__,_|_|\__|     \/ \__,_|_|  |_|\__,_|_.__/|_|\___||___/
 --                                                                                  
 --  
-Users = {}
 maxPlayers = 32;
+Users = {}
 playerWasDisconnected = true;
-isVoiceChatRunning = true;
+--isVoiceChatRunning = true;
 
-blipCheck1 = nil;
-blipCheck2 = nil;
+--blipCheck1 = nil;
+--blipCheck2 = nil;
 
-pmodel = nil;
+--pmodel = nil;
 
-drawable = {};
-dtexture = {};
-prop = {};
-ptexture = {};
-pallet = {};
+--drawable = {};
+--dtexture = {};
+--prop = {};
+--ptexture = {};
+--pallet = {};
 
 
 --[[
@@ -109,6 +109,7 @@ featureHostile = false;
 
 --Player Toggles
 featureNightVision = false;
+featureNightVisionUpdated = true;
 featureThermalVision = false;
 featurePlayerInvincible = false;
 featurePlayerInvincibleUpdated = false;
@@ -141,11 +142,11 @@ featurePlayerNoReload = false;
 
 --Radio
 featurePlayerRadio = false;
-featurePlayerRadioUpdated = false;
+--featurePlayerRadioUpdated = false;
 featureRadioAlwaysOff = false;
-featureRadioAlwaysOffUpdated = false;
-featureLockRadio = false;
-featureMiscLockRadio = false;
+--featureRadioAlwaysOffUpdated = false;
+--featureLockRadio = false;
+--featureMiscLockRadio = false;
 
 
 --Weather
@@ -156,26 +157,26 @@ featureWeatherFreeze = false;
 
 --Voice
 featureShowVoiceChatSpeaker = true;
-featureVC1 = false;
-featureVC2 = false;
-featureVC3 = false;
-featureVC4 = false;
-featureVC5 = false;
-featureVC6 = false;
-featureVC7 = false;
-featureVC8 = false;
-featureVC9 = false;
-featureVC10 = false;
-featureHC1 = false;
-featureHC2 = false;
-featureHC3 = false;
-featureHC4 = false;
-featureHC5 = false;
-featureHC6 = false;
-featureHC7 = false;
-featureHC8 = false;
-featureHC9 = false;
-featureHC10 = false;
+--featureVC1 = false;
+--featureVC2 = false;
+--featureVC3 = false;
+--featureVC4 = false;
+--featureVC5 = false;
+--featureVC6 = false;
+--featureVC7 = false;
+--featureVC8 = false;
+--featureVC9 = false;
+--featureVC10 = false;
+--featureHC1 = false;
+--featureHC2 = false;
+--featureHC3 = false;
+--featureHC4 = false;
+--featureHC5 = false;
+--featureHC6 = false;
+--featureHC7 = false;
+--featureHC8 = false;
+--featureHC9 = false;
+--featureHC10 = false;
 featureVPTooClose = false;
 featureVPVeryClose = false;
 featureVPClose = false;
@@ -184,13 +185,23 @@ featureVPDistant = false;
 featureVPFar = false;
 featureVPVeryFar = false;
 featureVPAllPlayers = false;
-featureChannelDefault = false;
-featureChannel1 = false;
-featureChannel2 = false;
-featureChannel3 = false;
-featureChannel4 = false;
-featureChannel5 = false;
+--featureChannelDefault = false;
+--featureChannel1 = false;
+--featureChannel2 = false;
+--featureChannel3 = false;
+--featureChannel4 = false;
+--featureChannel5 = false;
 featureVoiceChat = true;
+
+
+
+
+--[[---------------------------------------------
+	* The below should always NOT be touched as
+	* This will ensure that settings are synced
+	* on player connection. Anything above here
+	* is okay to toggle between true & false
+-----------------------------------------------]]
 
 
 --    __  __               ____  _ _           
