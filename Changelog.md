@@ -1,3 +1,21 @@
+<h1>v0.5.0 (09-##-2017)</h1>
+New Noclip Mode, Admin kick & temp ban, and some bug fixes. 
+
+<h3>Changes</h3>
+<ul>
+    <li>Potential fix for vehicles despawning</li>
+    <li>Trainer should now be shown above other NUI features</li>
+    <li>Majority of JSON moved to external files</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+    <li>Admin Kill and Teleport Player To Me Commands</li>
+    <li>JSON Editor Website: <a href="https://thestonedturtle.github.io/mellotrainer/mellotrainer.html" target="_blank">TheStonedTurtle.github.io</a></li>
+</ul>
+
+
+
 <h1>v0.4.5 (08-23-2017)</h1>
 New Noclip Mode, Admin kick & temp ban, and some bug fixes. 
 
