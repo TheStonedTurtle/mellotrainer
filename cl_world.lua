@@ -270,12 +270,12 @@ locations.broken = {
 
 
 locations.categories = {
-	"Safehouses", 
-	"Landmarks", 
-	"Roof/High Up", 
-	"Underwater", 
-	"Interiors", 
-	"Extra Exterior Scenery"
+	["Safehouses"] = locations.safeHouses,
+	["Landmarks"] = locations.landmarks,
+	["Roof/High Up"] = locations.high,
+	["Underwater"] = locations.underwater, 
+	["Interiors"] = locations.interiors, 
+	["Extra Exterior Scenery"] = locations.reqscen
 }
 
 
@@ -360,3 +360,46 @@ function teleportToLocation(category,index)
 
 	locations.current = destination
 end
+
+
+function createLocationJSON()
+	local jsonList = {}
+	local count = 0
+	for key,value in pairs(locations.categories) do
+		local options = {}
+		-- Create the submenu for all locations under each category.
+		for index,currentObj in pairs(value)do
+			local curOpt = {
+				["menuName"] = currentObj[1],
+				["data"] = {
+					["action"] = tostring(index).." "..key -- Key may contain spaces so add to end
+				}
+			}
+			table.insert(options,curOpt)
+		end
+
+		table.insert(jsonList, {
+			["menuName"] = key,
+			["data"] = {
+				["sub"] = count
+			},
+			["submenu"] = options
+		})
+	end
+
+	local customJSON = "{}"
+
+    if ( getTableLength( jsonList ) > 0 ) then
+        customJSON = json.encode( jsonList, { indent = true } )
+    end
+ 
+    SendNUIMessage( {
+        createmenu = true,
+        menuName = "createlocationsmenu",
+        menudata = customJSON
+    })
+end
+
+RegisterNUICallback("createlocationsmenu", function()
+	createLocationJSON()
+end)
