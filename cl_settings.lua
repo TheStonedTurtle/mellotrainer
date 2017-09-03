@@ -92,6 +92,7 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 	elseif(action == "mapblips")then
 		featureMapBlips = newstate
 		toggleMapBlips(featureMapBlips) -- In maps.lua
+		drawNotification("Map Blips: "..tostring(text))
 
 	-- Radio Always Off
 	elseif(action=="radiooff")then
@@ -396,12 +397,12 @@ end)
 
 
 
--- Toggles to reset whenever someone enters a new vehicle (any vehicle)
+-- Update vehicle whenever you entere a new vehicle
 RegisterNetEvent('mellotrainer:playerEnteredVehicle')
-AddEventHandler('mellotrainer:playerEnteredVehicle', function(h,m,s)
+AddEventHandler('mellotrainer:playerEnteredVehicle', function(veh)
 	local playerPed = GetPlayerPed(-1)
 	toggleRadio(playerPed)
-	resetVehOptions()
+	UpdateVehicleFeatureVariables(veh)
 end)
 
 

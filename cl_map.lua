@@ -972,10 +972,7 @@ end
 function toggleMapBlips(toggle)
 	if(toggle)then
 		createAllMapBlips()
-		drawNotification("Map Blips have been added.")
 	else
 		destroyAllMapBlips()
-		drawNotification("Map Blips have been removed.")
 	end
-
 end

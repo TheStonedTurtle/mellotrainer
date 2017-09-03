@@ -30,7 +30,7 @@ end)
 
 -- Used to turn on global server settings
 function initServerConfig()
-	NetworkSetFriendlyFireOption(false)
+	NetworkSetFriendlyFireOption(true)
 end
 
 
@@ -90,6 +90,59 @@ function teleportToWaypoint()
 end
 
 
+--[[-----------------------------------------------------------------
+	* Nearly 100% of the trainer is automatically syncing which is
+	* intended and could cause issues with other resources. 
+	* The following settings need to be synced manually.
+		Voice Proximity
+		Voice Toggle
+		Player Radio
+		Map Blips
+		No Reload
+		Infinite Ammo
+		Hide Map (Hide Radar)
+		Hide Hud
+		Large Hud (Large Radar)
+-------------------------------------------------------------------]]
+
+-- Manually Sync Trainer Settings
+function syncSettings()
+	local distance = 0
+	if(featureVPAllPlayers)then
+		distance = 0;
+	elseif(featureVPTooClose)then
+		distance = 5
+	elseif(featureVPVeryClose)then
+		distance = 25
+	elseif(featureVPClose)then
+		distance = 75
+	elseif(featureVPNearby)then
+		distance = 200
+	elseif(featureVPDistant)then
+		distance = 500
+	elseif(featureVPFar)then
+		distance = 2500
+	elseif(featureVPVeryFar)then
+		distance = 8000
+	end
+
+	NetworkSetTalkerProximity(distance)     					  -- Voice Proximity
+	NetworkSetVoiceActive(featureVoiceChat) 					  -- Voice Toggle
+
+	if(featurePlayerRadio)then
+		SetMobileRadioEnabledDuringGameplay(featurePlayerRadio)   -- Player Radio
+		SetUserRadioControlEnabled(true)    
+	end
+
+
+	toggleMapBlips(featureMapBlips)         					  -- Map Blips
+	SetPedInfiniteAmmoClip(GetPlayerPed(), featurePlayerNoReload) -- No Reload
+	toggleInfiniteAmmo(featurePlayerInfiniteAmmo)				  -- Infinite Ammo
+	DisplayRadar(not featureHideMap)							  -- Hide Radar
+	DisplayHud(not featureHideHud)								  -- No Hud
+	SetRadarBigmapEnabled(featureBigHud, false)					  -- Large Radar
+end
+
 
 --[[
   _______                  _                            _____                   _                    _       
@@ -115,6 +168,15 @@ AddEventHandler('onClientMapStart', function()
 	TriggerServerEvent("mellotrainer:getAdminStatus")
 end)
 
+RegisterNetEvent("mellotrainer:init")
+AddEventHandler("mellotrainer:init", function()
+	-- Let the server know that we just joined.
+	-- Requests the server configs
+	TriggerServerEvent( "mellotrainer:firstJoinProper", PlayerId() )
+
+	-- Initialize Client Settings
+	syncSettings()
+end)
 
 
 -- Requests admin status 10 seconds after script restart. 
@@ -135,7 +197,7 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
+		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f1
 			showtrainer = not showtrainer
 
 			SetNuiFocus( true )
@@ -279,7 +341,7 @@ Citizen.CreateThread(function()
 				if(not(inVeh))then
 					-- Toggle any vehicle settings
 					Citizen.Trace("Applying Vehicle Options")
-					TriggerEvent('mellotrainer:playerEnteredVehicle')
+					TriggerEvent('mellotrainer:playerEnteredVehicle', playerVeh)
 				end
 
 				inVeh = true

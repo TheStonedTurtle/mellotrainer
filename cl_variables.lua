@@ -27,20 +27,7 @@
 --                                                                                  
 --  
 maxPlayers = 32;
-Users = {}
-playerWasDisconnected = true;
---isVoiceChatRunning = true;
 
---blipCheck1 = nil;
---blipCheck2 = nil;
-
---pmodel = nil;
-
---drawable = {};
---dtexture = {};
---prop = {};
---ptexture = {};
---pallet = {};
 
 
 --[[
@@ -57,99 +44,61 @@ playerWasDisconnected = true;
 featurePlayerBlips = false;
 featurePlayerBlipNames = false;
 featurePlayerHeadDisplay = false;
-featurePlayerVehHeadDisplay = false;
---featurePlayerBlipCone = false;
+-- The above will sync by once the blip system rewrite happens
 featurePlayerNotifications = true;
 featureDeathNotifications = true;
 featureHideMap = false;
 featureHideHud = false;
 featureBigHud = false;
-featurePoliceBlips = false;
 featureMapBlips = false;
 featureAreaStreetNames = false;
---featureShowDeathCutscene = false;
-featureRestoreWeapons = false;--true
---featureRestoreAppearance = false;
 
 
 --Vehicle Options
 featureCloseInstantly = false;
 featureSpeedometer = false;
-featureVehicleDespawnable = nil;
 featureSpawnInsideCar = true;
 featureSpawnCarInFront = true 
 featureDeleteLastVehicle = true;
-featureNoFallOff = nil;
-featureNoFallOffUpdated = nil;
-featureNoDragOut = nil;
-featureNoDragOutUpdated = nil;
-featureNoHelmet = nil;
-featureVehCosDamage = nil;
-featureVehMechDamage = nil;
-featureVehInvincible = nil;
-featureTurboMode = nil;
-featureCustomTires = nil;
-featureBulletproofWheels = nil;
-featureXeonLights = nil;
-
-featureNeonLeft = nil;
-featureNeonRight = nil;
-featureNeonFront = nil;
-featureNeonRear = nil;
-
-
-
---Online Player
-featureSpectate = false;
-featurePlayerAttach = false;
-featureDrawRoute = false;
-featureFriendly = false;
-featureHostile = false;
+featureNoFallOff = false;
+featureNoDragOut = false;
+featureNoHelmet = false; 
+featureVehCosDamage = false;
+featureVehMechDamage = false;
+featureVehInvincible = false;
 
 
 --Player Toggles
 featureNightVision = false;
-featureNightVisionUpdated = true;
 featureThermalVision = false;
 featurePlayerInvincible = false;
-featurePlayerInvincibleUpdated = false;
 featureKeepClean = false;
 featureKeepWet = false;
 featurePlayerNeverWanted = false;
-featurePlayerNeverWantedUpdated = false;
 featurePlayerIgnoredByPolice = false;
-featurePlayerIgnoredByPoliceUpdated = false;
 featurePlayerIgnoredByAll = false;
-featurePlayerIgnoredByAllUpdated = false;
---featurePlayerUnlimitedAbility = false;
 featurePlayerNoNoise = false;
-featurePlayerNoNoiseUpdated = false;
 featurePlayerFastSwim = false;
-featurePlayerFastSwimUpdated = false;
 featurePlayerFastRun = false;
-featurePlayerFastRunUpdated = false;
 featurePlayerSuperJump = false;
 featureNoRagDoll = false;
 featurePlayerInvisible = false;
-featurePlayerInvisibleUpdated = false;
 featurePlayerDrunk = false;
-featurePlayerDrunkUpdated = false;
 featurePlayerInfiniteStamina = true;
 featurePlayerInfiniteParachutes = false;
 featurePlayerInfiniteAmmo = false;
 featurePlayerNoReload = false;
 
 
+
+
 --Radio
 featurePlayerRadio = false;
---featurePlayerRadioUpdated = false;
 featureRadioAlwaysOff = false;
---featureRadioAlwaysOffUpdated = false;
---featureLockRadio = false;
---featureMiscLockRadio = false;
 
 
 --Weather
+-- TODO: The following variables are better to sync server-sided.
 featureBlackout = false;
 featureWeatherWind = false;
 featureWeatherFreeze = false;
@@ -157,26 +106,6 @@ featureWeatherFreeze = false;
 
 --Voice
 featureShowVoiceChatSpeaker = true;
---featureVC1 = false;
---featureVC2 = false;
---featureVC3 = false;
---featureVC4 = false;
---featureVC5 = false;
---featureVC6 = false;
---featureVC7 = false;
---featureVC8 = false;
---featureVC9 = false;
---featureVC10 = false;
---featureHC1 = false;
---featureHC2 = false;
---featureHC3 = false;
---featureHC4 = false;
---featureHC5 = false;
---featureHC6 = false;
---featureHC7 = false;
---featureHC8 = false;
---featureHC9 = false;
---featureHC10 = false;
 featureVPTooClose = false;
 featureVPVeryClose = false;
 featureVPClose = false;
@@ -185,12 +114,6 @@ featureVPDistant = false;
 featureVPFar = false;
 featureVPVeryFar = false;
 featureVPAllPlayers = false;
---featureChannelDefault = false;
---featureChannel1 = false;
---featureChannel2 = false;
---featureChannel3 = false;
---featureChannel4 = false;
---featureChannel5 = false;
 featureVoiceChat = true;
 
 
@@ -202,6 +125,41 @@ featureVoiceChat = true;
 	* on player connection. Anything above here
 	* is okay to toggle between true & false
 -----------------------------------------------]]
+
+Users = {}
+playerWasDisconnected = true;
+
+
+-- Vehicle
+featureNoFallOffUpdated = true;
+featureNoDragOutUpdated = true;
+featureNeonLeft = nil;
+featureNeonRight = nil;
+featureNeonFront = nil;
+featureNeonRear = nil;
+-- Design choice to make these not sync
+featureTurboMode = false;
+featureCustomTires = false;
+featureBulletproofWheels = false;
+featureXeonLights = false;
+
+-- Player Toggles
+featureNightVisionUpdated = true;
+featureThermalVisionUpdated = true;
+featurePlayerInvincibleUpdated = true;
+featurePlayerNeverWantedUpdated = true;
+featurePlayerIgnoredByPoliceUpdated = true;
+featurePlayerIgnoredByAllUpdated = true;
+featurePlayerNoNoiseUpdated = true;
+featurePlayerFastSwimUpdated = true;
+featurePlayerFastRunUpdated = true;
+featurePlayerInvisibleUpdated = true;
+featurePlayerDrunkUpdated = true;
+
+
+-- Online Player
+featureSpectate = false;
+featureDrawRoute = false;
 
 
 --    __  __               ____  _ _           
@@ -352,3 +310,72 @@ tennis = nil;
 darts = nil;
 playboy = nil;
 fib = nil;
+
+
+
+
+--[[---------------------------------------------
+	* Unsued Variables
+-----------------------------------------------]]
+
+
+--isVoiceChatRunning = true;
+
+--blipCheck1 = nil;
+--blipCheck2 = nil;
+
+--pmodel = nil;
+
+--drawable = {};
+--dtexture = {};
+--prop = {};
+--ptexture = {};
+--pallet = {};
+
+
+--featureChannelDefault = false;
+--featureChannel1 = false;
+--featureChannel2 = false;
+--featureChannel3 = false;
+--featureChannel4 = false;
+--featureChannel5 = false;
+
+
+--featureVC1 = false;
+--featureVC2 = false;
+--featureVC3 = false;
+--featureVC4 = false;
+--featureVC5 = false;
+--featureVC6 = false;
+--featureVC7 = false;
+--featureVC8 = false;
+--featureVC9 = false;
+--featureVC10 = false;
+--featureHC1 = false;
+--featureHC2 = false;
+--featureHC3 = false;
+--featureHC4 = false;
+--featureHC5 = false;
+--featureHC6 = false;
+--featureHC7 = false;
+--featureHC8 = false;
+--featureHC9 = false;
+--featureHC10 = false;
+
+
+--featurePlayerBlipCone = false;
+--featureShowDeathCutscene = false;
+--featureRestoreAppearance = false;
+--featureRestoreWeapons = false;
+--featurePlayerUnlimitedAbility = false;
+--featurePlayerAttach = false;
+--featureFriendly = false;
+--featureHostile = false;
+
+--featurePlayerRadioUpdated = false;
+--featureRadioAlwaysOffUpdated = false;
+--featureLockRadio = false;
+--featureMiscLockRadio = false;
+--featureVehicleDespawnable = nil;
+--featurePlayerVehHeadDisplay = false;
+--featurePoliceBlips = false;

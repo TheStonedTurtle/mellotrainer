@@ -53,7 +53,7 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 
 		drawNotification("~g~Vehicle spawned!")
 		lastVehicle = veh
-		resetVehOptions()
+		UpdateVehicleFeatureVariables( veh )
 		toggleRadio(ped)
 
 		SetModelAsNoLongerNeeded( veh )
@@ -488,6 +488,26 @@ function ApplySavedSettingsToVehicle( veh, data )
 	UpdateVehicleFeatureVariables( veh )
 end 
 
+
+function updateVehicleMechDamage(veh)
+	SetVehicleEngineCanDegrade(veh, not featureVehMechDamage)
+	SetVehicleCanBreak(veh, not featureVehMechDamage)
+	SetVehicleWheelsCanBreak(veh, not featureVehMechDamage)
+	SetDisableVehiclePetrolTankDamage(veh, featureVehMechDamage)
+end
+
+function updateVehicleCosmDamage(veh)
+	SetVehicleCanBeVisiblyDamaged(veh, not featureVehCosDamage)
+	SetVehicleStrong(veh, featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 0, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 1, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 2, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 3, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 4, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 5, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 6, not featureVehCosDamage)	
+end
+
 function UpdateVehicleFeatureVariables( veh )
 	featureBulletproofWheels = not GetVehicleTyresCanBurst( veh )
 	featureXeonLights = IsToggleModOn( veh, 22 )
@@ -499,8 +519,19 @@ function UpdateVehicleFeatureVariables( veh )
 	featureNeonFront = IsVehicleNeonLightEnabled( veh, 2 )
 	featureNeonRear = IsVehicleNeonLightEnabled( veh, 3 )
 
+	-- Cosmetic Damage
+	updateVehicleCosmDamage(veh)
+
+	-- Mechanical Damage
+	updateVehicleMechDamage(veh)
+
+	-- Invincible
+	SetEntityInvincible(playerVeh, featureVehInvincible)
+
+	windows = {false, false, false, false}
+
 	resetTrainerMenus( "vehmods" )
-end 
+end
 
 RegisterNUICallback("vehcolor", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
@@ -550,24 +581,7 @@ end)
 
 
 
-
-function resetVehOptions()
-	featureBulletproofWheels = false
-	featureXenonLights = false
-	featureCustomTires = false
-	featureTurboMode = false
-
-	windows = {false, false, false, false}
-	neons = {false, false, false, false}
-
-	resetTrainerMenus("vehmods")
-end
-
-
 local windows = {false, false, false,false}
-local neons = {false, false, false, false}
-
-
 RegisterNUICallback("veh", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local playerVeh = GetVehiclePedIsIn(playerPed, false)
@@ -717,8 +731,8 @@ RegisterNUICallback("vehmod", function(data, cb)
 
 	-- Toggle Options
 	if action == "bulletwheels" then
-		featureBulletproofWheels = not data.newstate	
-		SetVehicleTyresCanBurst(playerVeh, featureBulletproofWheels)
+		featureBulletproofWheels = data.newstate	
+		SetVehicleTyresCanBurst(playerVeh, not featureBulletproofWheels)
 
 		drawNotification("Bulletproof Tires: "..text)
 
@@ -1192,24 +1206,12 @@ RegisterNUICallback("vehopts", function(data, cb)
 	--
 	elseif(action == "cosdamage")then
 		featureVehCosDamage = state
-		SetVehicleCanBeVisiblyDamaged(playerVeh, not featureVehCosDamage)
-		SetVehicleStrong(playerVeh, featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 0, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 1, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 2, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 3, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 4, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 5, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 6, not featureVehCosDamage)
-
+		updateVehicleCosmDamage(playerVeh)
 		drawNotification("No Cosmetic Damage: "..text)
 	--
 	elseif(action == "mechdamage")then
 		featureVehMechDamage = state
-		SetVehicleEngineCanDegrade(playerVeh, not featureVehMechDamage)
-		SetVehicleCanBreak(playerVeh, not featureVehMechDamage)
-		SetVehicleWheelsCanBreak(playerVeh, not featureVehMechDamage)
-		SetDisableVehiclePetrolTankDamage(playerVeh, featureVehMechDamage)
+		updateVehicleMechDamage(playerVeh)
 		drawNotification("No Mechanical Damage: "..text)
 	--
 	elseif(action == "invincible")then
