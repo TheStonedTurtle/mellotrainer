@@ -309,8 +309,8 @@ function teleportToLocation(category,index)
 			-- Remove requested IPLs
 			if(getTableLength(removeThese) > 0)then
 				for index,value in ipairs(removeThese)do
-					if(IsIPLActive(value))then
-						RemoveIPL(value)
+					if(IsIplActive(value))then
+						RemoveIpl(value)
 					end
 				end
 			end
@@ -318,12 +318,12 @@ function teleportToLocation(category,index)
 			-- Add Required IPLs
 			if(getTableLength(required) > 0)then
 				for index,value in ipairs(required)do
-					if(IsIPLActive(value) == false)then
-						RequestIPL(value)
+					if(IsIplActive(value) == false)then
+						RequestIpl(value)
 					end
 				end
 			end
-
+			drawNotification("Scenery Loaded!")
 			destination.isLoaded = true
 		end
 	end
@@ -350,8 +350,8 @@ function teleportToLocation(category,index)
 			end
 			if(getTableLength(removeList) > 0)then
 				for index,value in ipairs(removeList)do
-					if(keepList[value] == nil and IsIPLActive(value))then
-						RemoveIPL(value)
+					if(keepList[value] == nil and IsIplActive(value))then
+						RemoveIpl(value)
 					end
 				end
 			end
@@ -410,7 +410,6 @@ end)
 
 
 RegisterNUICallback("locationteleport", function( data, cb )
-	Citizen.Trace(data.data[1])
 	local index = tonumber(data.data[2])
 	local category = table.concat(data.data, " ", 3)
 
