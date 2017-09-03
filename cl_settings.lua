@@ -78,6 +78,15 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 		featurePlayerBlips = newstate
 		drawNotification("Player Blips: "..tostring(text))
 
+	-- Player Blip Name Toggle
+	elseif(action == "blipnamess")then
+		if(not featurePlayerBlips)then
+			SendNUIMessage({toggleerror = true})
+			drawNotification("~r~Player Blips must be enabled.")
+			return
+		end
+		featurePlayerBlipNames = newstate
+		drawNotification("Player Blip Names: "..tostring(text))
 	-- Player Overhead Name Toggle
 	elseif(action == "text")then
 		featurePlayerHeadDisplay = newstate
@@ -235,6 +244,7 @@ Citizen.CreateThread(function()
 						SetMpGamerTagWantedLevel(headId, wantedLvl)
 						SetMpGamerTagVisibility(headId, 7, true)
 					else
+						SetMpGamerTagWantedLevel(headId, 0)
 						SetMpGamerTagVisibility(headId, 7, false)
 					end
 
@@ -242,7 +252,7 @@ Citizen.CreateThread(function()
 					if NetworkIsPlayerTalking(id)then
 						SetMpGamerTagVisibility(headId, 9, true)
 					else
-						SetMpGamerTagVisibility(headId, 9, true)
+						SetMpGamerTagVisibility(headId, 9, false)
 					end
 				else
 					local gamerID = NetworkGetGamertagFromHandle(id)
@@ -273,7 +283,7 @@ Citizen.CreateThread(function()
 								Citizen.InvokeNative( 0x5FBCA48327B914DF, blip, false)		
 							end
 
-						elseif veh then -- Inside a vehicle
+						elseif IsPedInAnyVehicle(ped, false) then -- Inside a vehicle
 							vehClass = GetVehicleClass(veh)
 							vehModel = GetEntityModel(veh)
 							local sprite = 1

@@ -117,7 +117,7 @@ function requestInput(exampleText, maxLength)
 
     UnblockMenuInput()
 
-    if result then
+    if result ~= "" and result ~= exampleText then
         return result
     else
         return false
