@@ -42,7 +42,7 @@ maxPlayers = 32;
 
 --General Settings
 featurePlayerBlips = false;
-featurePlayerBlipNames = false;
+featurePlayerBlipNames = true;
 featurePlayerHeadDisplay = false;
 -- The above will sync by once the blip system rewrite happens
 featurePlayerNotifications = true;

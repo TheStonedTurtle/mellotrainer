@@ -79,12 +79,7 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 		drawNotification("Player Blips: "..tostring(text))
 
 	-- Player Blip Name Toggle
-	elseif(action == "blipnamess")then
-		if(not featurePlayerBlips)then
-			SendNUIMessage({toggleerror = true})
-			drawNotification("~r~Player Blips must be enabled.")
-			return
-		end
+	elseif(action == "blipnames")then
 		featurePlayerBlipNames = newstate
 		drawNotification("Player Blip Names: "..tostring(text))
 	-- Player Overhead Name Toggle
