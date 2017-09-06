@@ -104,8 +104,10 @@ featureWeatherWind = false;
 featureWeatherFreeze = false;
 
 
---Voice
+-- Voice
 featureShowVoiceChatSpeaker = true;
+featureVoiceChat = true;
+-- One of the below must be true
 featureVPTooClose = false;
 featureVPVeryClose = false;
 featureVPClose = false;
@@ -113,8 +115,7 @@ featureVPNearby = false;
 featureVPDistant = false;
 featureVPFar = false;
 featureVPVeryFar = false;
-featureVPAllPlayers = false;
-featureVoiceChat = true;
+featureVPAllPlayers = true;
 
 
 

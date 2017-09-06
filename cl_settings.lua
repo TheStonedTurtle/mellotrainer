@@ -241,7 +241,7 @@ Citizen.CreateThread(function()
 					wantedLvl = GetPlayerWantedLevel(id)
 
 					-- Wanted Levels
-					if wantedLvl then
+					if wantedLvl > 0 then
 						SetMpGamerTagWantedLevel(headId, wantedLvl)
 						SetMpGamerTagVisibility(headId, 7, true)
 					else
@@ -258,9 +258,8 @@ Citizen.CreateThread(function()
 					playersDB[id].headId = headId
 					playersDB[id].wantedLvl = wantedLvl
 				else
-					local gamerID = NetworkGetGamertagFromHandle(id)
-					if(IsMpGamerTagActive(gamerID))then
-						RemoveMpGamerTag(gamerID)
+					if(playersDB[id].headId ~= nil and IsMpGamerTagActive(playersDB[id].headId))then
+						RemoveMpGamerTag(playersDB[id].headId)
 					end
 
 					playersDB[id].headId = nil
