@@ -28,13 +28,6 @@ end)
 
 
 
--- Used to turn on global server settings
-function initServerConfig()
-	SetCanAttackFriendly(GetPlayerPed(-1), true, false)
-	NetworkSetFriendlyFireOption(true)
-end
-
-
 --[[
    _____   _           _               _     ______                          _     _                       
   / ____| | |         | |             | |   |  ____|                        | |   (_)                      
@@ -143,6 +136,8 @@ function syncSettings()
 	DisplayRadar(not featureHideMap)							  -- Hide Radar
 	DisplayHud(not featureHideHud)								  -- No Hud
 	SetRadarBigmapEnabled(featureBigHud, false)					  -- Large Radar
+	SetCanAttackFriendly(GetPlayerPed(-1), true, false)
+	NetworkSetFriendlyFireOption(true)
 end
 
 
@@ -353,7 +348,3 @@ Citizen.CreateThread(function()
 
 	end
 end)
-
-
-
-initServerConfig()
