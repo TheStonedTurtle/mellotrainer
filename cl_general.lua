@@ -66,13 +66,13 @@ function teleportToWaypoint()
 	-- Ensure Entity teleports above the ground
 	local ground
 	local groundFound = false
-	local groundCheckHeights = {100.0, 150.0, 50.0, 0.0, 200.0, 250.0, 300.0, 350.0, 400.0,450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0}
+	local groundCheckHeights = {0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0,450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0}
 
 
 	for i,height in ipairs(groundCheckHeights) do
+		RequestCollisionAtCoord(x, y, height)
+		Wait(0)
 		SetEntityCoordsNoOffset(targetPed, x,y,height, 0, 0, 1)
-		Wait(10)
-
 		ground,z = GetGroundZFor_3dCoord(x,y,height)
 		if(ground) then
 			z = z + 3
@@ -87,6 +87,7 @@ function teleportToWaypoint()
 	end
 
 	SetEntityCoordsNoOffset(targetPed, x,y,z, 0, 0, 1)
+
 	drawNotification("Teleported to waypoint.")
 end
 
@@ -341,7 +342,6 @@ Citizen.CreateThread(function()
 				-- Only toggle on first find of new vehicle
 				if(not(inVeh))then
 					-- Toggle any vehicle settings
-					Citizen.Trace("Applying Vehicle Options")
 					TriggerEvent('mellotrainer:playerEnteredVehicle', playerVeh)
 				end
 

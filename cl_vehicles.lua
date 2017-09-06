@@ -530,6 +530,10 @@ function UpdateVehicleFeatureVariables( veh )
 
 	windows = {false, false, false, false}
 
+	featureTorqueMultiplier = 1
+	featurePowerMultiplier = 1
+	featureLowerForce = 0
+
 	resetTrainerMenus( "vehmods" )
 end
 
@@ -1107,9 +1111,6 @@ end
 
 
 
-local torqueMultiplier = 1
-local powerMultiplier = 1
-local lowerForce = 0
 local lowerForces = {
 	[0] = 0.00,
 	[1] = -0.018,
@@ -1182,15 +1183,15 @@ RegisterNUICallback("vehopts", function(data, cb)
 
 	-- Power Options
 	elseif(action == "powerboost")then
-		powerMultiplier = tonumber(data.data[3])
+		featurePowerMultiplier = tonumber(data.data[3])
 
-		drawNotification("Power Boost Multiplier: "..tostring(powerMultiplier))
+		drawNotification("Power Boost Multiplier: "..tostring(featurePowerMultiplier))
 
 	-- Torque Options
 	elseif(action == "torqueboost")then
-		torqueMultiplier = tonumber(data.data[3])
+		featureTorqueMultiplier = tonumber(data.data[3])
 
-		drawNotification("Torque Multiplier: "..tostring(torqueMultiplier))
+		drawNotification("Torque Multiplier: "..tostring(featureTorqueMultiplier))
 
 	-- Lowering Level
 	elseif(action == "lowering")then
@@ -1199,9 +1200,9 @@ RegisterNUICallback("vehopts", function(data, cb)
 			return
 		end
 
-		lowerForce = tonumber(data.data[3])
+		featureLowerForce = tonumber(data.data[3])
 
-		drawNotification( "Lowering: level " .. lowerForce )
+		drawNotification( "Lowering: level " .. featureLowerForce )
 
 	--
 	elseif(action == "cosdamage")then
@@ -1234,11 +1235,11 @@ Citizen.CreateThread( function()
 			local veh = GetVehiclePedIsIn( ped, false )
 
 			if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
-				SetVehicleEngineTorqueMultiplier( veh, torqueMultiplier + 0.001 )
-				SetVehicleEnginePowerMultiplier( veh, powerMultiplier + 0.001 )
+				SetVehicleEngineTorqueMultiplier( veh, featureTorqueMultiplier + 0.001 )
+				SetVehicleEnginePowerMultiplier( veh, featurePowerMultiplier + 0.001 )
 
-				if ( lowerForce ~= 0 ) then 
-					ApplyForceToEntity( veh, true, 0.0, 0.0, lowerForces[lowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true )
+				if ( featureLowerForce ~= 0 ) then 
+					ApplyForceToEntity( veh, true, 0.0, 0.0, lowerForces[featureLowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true )
 				end 
 			end 
 		end 

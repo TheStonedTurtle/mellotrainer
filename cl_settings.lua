@@ -211,6 +211,12 @@ end)
 
 
 
+local playersDB = {}
+for i=0, maxPlayers, 1 do
+	playersDB[i] = {}
+end
+
+
 
 -- Blip System
 Citizen.CreateThread(function()
@@ -249,11 +255,16 @@ Citizen.CreateThread(function()
 					else
 						SetMpGamerTagVisibility(headId, 9, false)
 					end
+					playersDB[id].headId = headId
+					playersDB[id].wantedLvl = wantedLvl
 				else
 					local gamerID = NetworkGetGamertagFromHandle(id)
 					if(IsMpGamerTagActive(gamerID))then
 						RemoveMpGamerTag(gamerID)
 					end
+
+					playersDB[id].headId = nil
+					playersDB[id].wantedLvl = nil
 				end
 
 				--[[----------------------------------------------------------------------
@@ -357,11 +368,27 @@ Citizen.CreateThread(function()
 
 							SetBlipAlpha(blip, distance)
 						end
+
+						playersDB[id].ped = ped
+						playersDB[id].blip = blip
 					end
 				elseif(DoesBlipExist(blip))then
 					RemoveBlip(blip)
 				end
+			elseif(playersDB[id].ped ~= nil)then
+				if(playersDB[id].blip ~= nil)then
+					-- Remove Blip from DC'd players
+					RemoveBlip(playersDB[id].blip)
+				end
+				
+				-- Remove Head Display from DC'd players
+				if(playersDB[id].headId ~= nil)then
+					local gamerID = NetworkGetGamertagFromHandle(id)
+					RemoveMpGamerTag(gamerID)
+				end
 
+				-- Reset the playersDB
+				playersDB[id] = {}
 			end
 		end
 	end
