@@ -23,7 +23,7 @@ _VERSION = '0.4.5'
 	Version Check 
 	Credits to EssentialMode 
 ------------------------------------------------------------------------]]--
-PerformHttpRequest( "https://thestonedturtle.github.io/version.txt", function( err, text, headers )
+PerformHttpRequest( "https://thestonedturtle.github.io/mellotrainer/version", function( err, text, headers )
 	Citizen.Wait( 1000 ) -- just to reduce clutter in the console on startup 
 	RconPrint( "\nCurrent MelloTrainer Version: " .. _VERSION)
 	RconPrint( "\nLatest MelloTrainer Version: " .. text)

@@ -24,6 +24,7 @@ As of v0.4.0, players are required to be logged into the Steam client in order f
 <tr><td>Backspace</td><td>Go back to the previous menu</td></tr>
 <tr><td>F2</td><td>Toggle No-Clip Mode</td></tr>
 <tr><td>F3</td><td>Teleport to Current Way Point</td></tr>
+<tr><td>Z</td><td>Toggle Between Big & Small Minimap</td></tr>
 </tbody>
 </table>
 
@@ -138,3 +139,9 @@ This section is only intended for people with LUA experience and a basic underst
 	<td>submenu</td>
 	<td>An Array of of objects that are formatted in the exact same way as the current object. Used for creating linked sub menus.</td>
 </tr>
+
+
+<h2>JSON Editing</h2>
+I created a website hosted on my github.io pages for editing the Mello Trainer JSON. It is not the best website and may have performance issues but it accomplishes the required task. Please read the above JSON information before trying/asking questions about this editor.
+
+<a href="https://thestonedturtle.github.io/mellotrainer/mellotrainer.html" target="_blank">TheStonedTurtle.github.io</a></li>
