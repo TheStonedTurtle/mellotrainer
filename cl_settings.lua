@@ -162,7 +162,7 @@ Citizen.CreateThread(function()
 
 
 		-- Toggle minimap on keypress
-		if IsControlJustPressed(0, 20) then
+		if IsControlJustPressed(0, 20) and not IsPauseMenuActive() and not blockinput then
 			featureBigHud = not featureBigHud
 			SetRadarBigmapEnabled( featureBigHud, false)
 		end
