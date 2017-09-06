@@ -78,6 +78,10 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 		featurePlayerBlips = newstate
 		drawNotification("Player Blips: "..tostring(text))
 
+	-- Player Blip Name Toggle
+	elseif(action == "blipnames")then
+		featurePlayerBlipNames = newstate
+		drawNotification("Player Blip Names: "..tostring(text))
 	-- Player Overhead Name Toggle
 	elseif(action == "text")then
 		featurePlayerHeadDisplay = newstate
@@ -92,6 +96,7 @@ RegisterNUICallback("settingtoggle", function(data, cb)
 	elseif(action == "mapblips")then
 		featureMapBlips = newstate
 		toggleMapBlips(featureMapBlips) -- In maps.lua
+		drawNotification("Map Blips: "..tostring(text))
 
 	-- Radio Always Off
 	elseif(action=="radiooff")then
@@ -124,204 +129,6 @@ end)
 
 
 
--- Update player information.
-function checkPlayerInformation(i)
-	if(NetworkIsPlayerConnected(i) == false)then
-		playerdb[i] = {}
-		return
-	end
-	
-	local name = GetPlayerName(i)
-	local playerPed = GetPlayerPed(i)
-
-	-- Player has changed since last load, lets save the user information.
-	if( (playerdb[i].ped ~= playerPed) or (playerdb[i].name ~= name) ) then
-		playerdb[i].ped = playerPed
-		playerdb[i].name = name
-	end
-end
-
-
-
--- Toggle Blips on/off
-function toggleBlips()
-	for i=0,maxPlayers, 1 do
-		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()) ) then
-			checkPlayerInformation(i)
-
-			if (featurePlayerBlips) then
-				if (playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip)) ) then
-					createBlip(i)
-				end
-			else
-				clearBlip(i)
-			end
-		end
-	end
-end
-
-
-
--- Create player blip
-function createBlip(i)
-	-- Create the player blip for the current indexed ped.
-	playerdb[i].blip = AddBlipForEntity(playerdb[i].ped)
-	SetBlipColour(playerdb[i].blip, 0)
-	SetBlipScale(playerdb[i].blip, 0.8)
-	SetBlipNameToPlayerName(playerdb[i].blip, i)
-	SetBlipCategory(playerdb[i].blip, 7)
-
-	N_0x5fbca48327b914df(playerdb[i].blip, 1) --ShowHeadingIndicator
-
-
-	-- Update it to a vehicle sprite if needed.
-	if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
-		N_0x5fbca48327b914df(playerdb[i].blip, 0) --ShowHeadingIndicator
-		local sprite = 1
-		local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
-		local vehClass = GetVehicleClass(veh)
-
-		if(vehClass == 8 or vehClass == 13)then
-			sprite = 226 -- Bikes
-		elseif(vehClass == 14)then
-			sprite = 410 -- Boats
-		elseif(vehClass == 15)then
-			sprite = 422 -- Helicopters
-		elseif(vehClass == 16)then
-			sprite = 423 -- Airplanes
-		elseif(vehClass == 19)then
-			sprite = 421 -- Military
-		else
-			sprite = 225 -- Car
-		end
-
-		if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
-			SetBlipSprite(playerdb[i].blip, sprite)
-			BeginTextCommandSetBlipName("STRING")
-			AddTextComponentString(playerdb[i].name)
-			EndTextCommandSetBlipName(playerdb[i].blip)
-			--SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name) -- Blip name sometimes gets overriden by sprite name
-		end
-	end
-end
-
-
-
--- Removes player blip
-function clearBlip(i) -- If there was a blip remove it.
-	if (DoesBlipExist(playerdb[i].blip)) then
-		RemoveBlip(playerdb[i].blip)
-	end
-	playerdb[i].blip = nil
-	checkPlayerInformation(i)
-end
-
-
-
--- Check for any changes in player information.
-function checkPlayerTypes()
-	for i=0,maxPlayers,1 do
-		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId()))then
-
-
-			-- Update player information.
-			checkPlayerInformation(i)
-
-
-			-- Player Blips
-			if(featurePlayerBlips)then
-				-- Create new blip or update blip sprite.
-				if(playerdb[i].blip == nil or (not DoesBlipExist(playerdb[i].blip)))then
-					createBlip(i)
-				else
-
-					-- Update it to a vehicle sprite if needed.
-					local sprite = 1
-					if (IsPedInAnyVehicle(playerdb[i].ped, 0)) then
-						local veh = GetVehiclePedIsIn(playerdb[i].ped, false)
-						local vehClass = GetVehicleClass(veh)
-
-						if(vehClass == 8 or vehClass == 13)then
-							sprite = 226 -- Bikes
-						elseif(vehClass == 14)then
-							sprite = 410 -- Boats
-						elseif(vehClass == 15)then
-							sprite = 422 -- Helicopters
-						elseif(vehClass == 16)then
-							sprite = 423 -- Airplanes
-						elseif(vehClass == 19)then
-							sprite = 421 -- Military
-						else
-							sprite = 225 -- Car
-						end
-					end
-
-					if(GetBlipSprite(playerdb[i].blip) ~= sprite) then
-						SetBlipSprite(playerdb[i].blip, sprite)
-						
-						-- Blip name sometimes gets overriden by sprite name
-						SetBlipNameToPlayerName(playerdb[i].blip, playerdb[i].name)
-					end
-				end
-			end
-
-
-			-- Player Heads
-			if(featurePlayerHeadDisplay)then
-				if(playerdb[i].head == nil)then
-					createHead(i)
-				end
-			end
-
-
-		else
-			clearBlip(i)
-			clearHead(i)
-		end
-	end
-end
-
-
-
--- Toggle head display on/off
-function toggleHeadDisplay()
-	for i=0,maxPlayers, 1 do
-		if(NetworkIsPlayerConnected(i) and (i ~= PlayerId())) then
-			checkPlayerInformation(i)
-
-			if (featurePlayerHeadDisplay) then
-				createHead(i)
-			else
-				clearHead(i)
-			end
-		end
-	end
-end
-
-
-
--- Create player head
-function createHead(i)
-	if(playerdb[i].head == nil) then
-		--Citizen.Trace("Head Display created for:"..playerdb[i].name)
-		playerdb[i].head = CreateMpGamerTag(playerdb[i].ped, playerdb[i].name, false, false, "", false) -- Create head display
-	end
-
-	SetMpGamerTagVisibility(playerdb[i].head, 0, true) -- _SetHeadDisplayFlag
-end
-
-
--- Remove player head display
-function clearHead( i )-- If there was a head display remove it.
-	if ( IsMpGamerTagActive( playerdb[i].head ) ) then
-		RemoveMpGamerTag( playerdb[i].head )
-		playerdb[i].head = nil
-	end
-end
-
-
-
-
 -- Toggle Radio Control
 function toggleRadio(playerPed)
 	if(IsPedInAnyVehicle(playerPed, false))then
@@ -344,10 +151,6 @@ end
 
 
 Citizen.CreateThread(function()
-	-- Only run once toggles.
-	local blipToggle = false
-
-
 	while true do
 		Wait(0)
 
@@ -358,37 +161,10 @@ Citizen.CreateThread(function()
 		end
 
 
-		-- Head Display (Player & Vehicles)
-		if (featurePlayerHeadDisplay) then
-			if (not nameToggle) then
-				toggleHeadDisplay()
-				nameToggle = true
-			end
-		else
-			if(nameToggle) then
-				toggleHeadDisplay()
-				nameToggle = false
-			end
-		end
-
-
-		-- Player Blips
-		if(featurePlayerBlips) then
-			if(not blipToggle)then
-				toggleBlips()
-				blipToggle = true
-			end
-		else
-			if (blipToggle) then
-				blipToggle = false
-				toggleBlips()
-			end
-		end
-
-
-		-- Constantly check online player blips & head displays.
-		if(featurePlayerBlips or featurePlayerHeadDisplay)then
-			checkPlayerTypes()
+		-- Toggle minimap on keypress
+		if IsControlJustPressed(0, 20) and not IsPauseMenuActive() and not blockinput then
+			featureBigHud = not featureBigHud
+			SetRadarBigmapEnabled( featureBigHud, false)
 		end
 
 	end
@@ -396,12 +172,12 @@ end)
 
 
 
--- Toggles to reset whenever someone enters a new vehicle (any vehicle)
+-- Update vehicle whenever you entere a new vehicle
 RegisterNetEvent('mellotrainer:playerEnteredVehicle')
-AddEventHandler('mellotrainer:playerEnteredVehicle', function(h,m,s)
+AddEventHandler('mellotrainer:playerEnteredVehicle', function(veh)
 	local playerPed = GetPlayerPed(-1)
 	toggleRadio(playerPed)
-	resetVehOptions()
+	UpdateVehicleFeatureVariables(veh)
 end)
 
 
@@ -428,6 +204,231 @@ Citizen.CreateThread(function()
 			if(radioToggle)then
 				toggleRadio(playerPed)
 				radioToggle = false
+			end
+		end
+	end
+end)
+
+
+-- Local Blip/Head Storage for removing on disconnect
+local playersDB = {}
+for i=0, maxPlayers, 1 do
+	playersDB[i] = {}
+end
+
+--[[----------------------------------------------------------------------
+	*
+	* Head Display Stuff
+	*
+------------------------------------------------------------------------]]
+
+
+-- Remove Head Display from entity
+function clearPlayerHead(id)
+	if(playersDB[id].headId ~= nil and IsMpGamerTagActive(playersDB[id].headId))then
+		RemoveMpGamerTag(playersDB[id].headId)
+	end
+end
+
+-- Create Head Display for entity
+function createPlayerHead(id,ped)
+	if(featurePlayerHeadDisplay)then
+		headId = CreateMpGamerTag(ped, GetPlayerName(id), false, false, "", false )
+		wantedLvl = GetPlayerWantedLevel(id)
+
+		-- Wanted Levels
+		if wantedLvl > 0 then
+			SetMpGamerTagWantedLevel(headId, wantedLvl)
+			SetMpGamerTagVisibility(headId, 7, true)
+		else
+			SetMpGamerTagWantedLevel(headId, 0)
+			SetMpGamerTagVisibility(headId, 7, false)
+		end
+
+		-- Speaking Icon
+		if NetworkIsPlayerTalking(id)then
+			SetMpGamerTagVisibility(headId, 9, true)
+		else
+			SetMpGamerTagVisibility(headId, 9, false)
+		end
+		playersDB[id].headId = headId
+		playersDB[id].wantedLvl = wantedLvl
+	else
+		if(playersDB[id].headId ~= nil and IsMpGamerTagActive(playersDB[id].headId))then
+			RemoveMpGamerTag(playersDB[id].headId)
+		end
+
+		playersDB[id].headId = nil
+		playersDB[id].wantedLvl = nil
+	end
+end
+
+
+
+--[[----------------------------------------------------------------------
+	*
+	* Blip Display Stuff
+	*
+------------------------------------------------------------------------]]
+
+-- Remove the player blip from the entity
+function clearPlayerBlip(id)
+	if(playersDB[id].blip ~= nil)then
+		RemoveBlip(playersDB[id].blip)
+	end
+end
+
+-- Which sprite should be displayed for current vehicle?
+function getVehicleSpriteId(veh)
+	vehClass = GetVehicleClass(veh)
+	vehModel = GetEntityModel(veh)
+	local sprite = 1
+	
+	if(vehClass == 8 or vehClass == 13)then
+		sprite = 226 -- Bikes
+	elseif(vehClass == 14)then
+		sprite = 427 -- Boat
+	elseif(vehClass == 15)then
+		sprite = 422 -- Jet
+	elseif(vehClass == 16)then
+		sprite = 423 -- Planes
+	elseif(vehClass == 19)then
+		sprite = 421 -- Military
+	else
+		sprite = 225 -- Car
+	end
+
+	-- Model Specific Icons override Class.					
+	if(vehModel == GetHashKey("besra") or vehModel == GetHashKey("hydra") or vehModel == GetHashKey("lazer"))then
+		sprite = 424
+	elseif(vehModel == GetHashKey("insurgent") or vehModel == GetHashKey("insurgent2") or vehModel == GetHashKey("limo2"))then
+		sprite = 426
+	elseif(vehModel == GetHashKey("rhino"))then
+		sprite = 421
+	end
+
+	return sprite
+end
+
+
+-- Create/remove the blip from the player
+function createPlayerBlip(id,ped,blip)
+	if(featurePlayerBlips)then
+		if(not DoesBlipExist(blip))then -- Create Generic Blip
+			blip = AddBlipForEntity(ped)
+			SetBlipSprite(blip, 1)
+			Citizen.InvokeNative( 0x5FBCA48327B914DF, blip, true)
+		end
+		-- Update Blip Information
+		veh = GetVehiclePedIsIn(ped, false)
+		blipSprite = GetBlipSprite(blip)
+
+		if not GetEntityHealth(ped) then -- Dead
+			if blipSprite ~= 274 then
+				SetBlipSprite(blip,274)
+				Citizen.InvokeNative( 0x5FBCA48327B914DF, blip, false)		
+			end
+
+		elseif IsPedInAnyVehicle(ped, false) then -- Inside a vehicle
+			local sprite = getVehicleSpriteId(veh)
+
+			if blipSprite ~= sprite then
+				SetBlipSprite(blip, sprite)
+				Citizen.InvokeNative(0x5FBCA48327B914DF, blip, false)
+			end
+
+			passengers = GetVehicleNumberOfPassengers(veh)
+			if passengers then
+				if not IsVehicleSeatFree(veh, -1)then
+					passengers = passengers + 1
+				end
+				ShowNumberOnBlip(blip,passengers)
+			else
+				HideNumberOnBlip(blip)
+			end
+		else -- On foot
+			HideNumberOnBlip(blip)
+			if blipSprite ~= 1 then
+				SetBlipSprite(blip, 1)
+				Citizen.InvokeNative(0x5FBCA48327B914DF, blip, true)
+			end
+		end
+
+		SetBlipRotation(blip, math.ceil(GetEntityHeading(veh)))
+
+		-- Show Blip Names on Pause Map?
+		if(featurePlayerBlipNames)then
+			SetBlipNameToPlayerName(blip, id)
+		else
+			BeginTextCommandSetBlipName("STRING")
+			AddTextComponentString("Player")
+			EndTextCommandSetBlipName(blip)
+		end
+		SetBlipScale(blip, 0.85)	
+
+
+		-- Blip Alphas
+		if IsPauseMenuActive() then
+			SetBlipAlpha(blip, 255)
+		else
+			x1, y1 = table.unpack(GetEntityCoords(GetPlayerPed(-1), true ))
+			x2, y2 = table.unpack(GetEntityCoords(GetPlayerPed(id), true ))
+			distance = ( math.floor( math.abs( math.sqrt( ( x1 - x2 ) * ( x1 - x2 ) + ( y1 - y2 ) * ( y1 - y2 ) ) ) / -1 ) ) + 900
+			-- Probably a way easier way to do this but whatever im an idiot -- Credits @Scammer ^
+
+			if distance < 0 then
+				distance = 0
+			elseif distance > 255 then
+				distance = 255
+			end
+
+			SetBlipAlpha(blip, distance)
+		end
+
+		playersDB[id].ped = ped
+		playersDB[id].blip = blip
+	else
+		clearPlayerBlip(id)
+	end
+end
+
+
+-- Faster Method to remove Blips/Names from players who disconnect.
+RegisterNetEvent( 'mellotrainer:playerLeft' )
+AddEventHandler( 'mellotrainer:playerLeft', function( person )
+	Citizen.Trace(person.source)
+	clearPlayerBlip(person.source)
+	clearPlayerHead(person.source)
+	playersDB[person.source] = "skip"
+
+	-- 30 second skip period to ensure the name/blip don't reappear for a disconnected player.
+	Wait(30000) 
+	-- After 30 seconds if the source is still active it will recreate blips assuming its a new person.
+	playersDB[person.source] = {} 
+end )
+
+
+-- Blip System
+Citizen.CreateThread(function()
+	while true do
+		Wait(1)
+		-- Show Blips/Head Names
+		for id = 0, maxPlayers do
+			if NetworkIsPlayerActive(id) and GetPlayerPed(id) ~= GetPlayerPed(-1) and playersDB[id] ~= "skip" then
+				ped = GetPlayerPed(id)
+				blip = GetBlipFromEntity(ped)
+
+				-- Create Blip/Head depending on feature Toggles
+				createPlayerHead(id,ped)
+				createPlayerBlip(id,ped,blip)
+
+			elseif(playersDB[id].ped ~= nil)then
+				-- Remove Blip/Head depending on feature Toggles
+				clearPlayerHead(id)
+				clearPlayerBlip(id)
+
+				-- Reset the playersDB
+				playersDB[id] = {}
 			end
 		end
 	end

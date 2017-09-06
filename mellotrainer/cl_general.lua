@@ -28,12 +28,6 @@ end)
 
 
 
--- Used to turn on global server settings
-function initServerConfig()
-	NetworkSetFriendlyFireOption(false)
-end
-
-
 --[[
    _____   _           _               _     ______                          _     _                       
   / ____| | |         | |             | |   |  ____|                        | |   (_)                      
@@ -48,9 +42,8 @@ end
 -- Teleport to map blip
 function teleportToWaypoint()
 	local targetPed = GetPlayerPed(-1)
-	local targetVeh = GetVehiclePedIsUsing(targetPed)
 	if(IsPedInAnyVehicle(targetPed))then
-		targetPed = targetVeh
+		targetPed = GetVehiclePedIsUsing(targetPed)
 	end
 
 	if(not IsWaypointActive())then
@@ -66,13 +59,13 @@ function teleportToWaypoint()
 	-- Ensure Entity teleports above the ground
 	local ground
 	local groundFound = false
-	local groundCheckHeights = {100.0, 150.0, 50.0, 0.0, 200.0, 250.0, 300.0, 350.0, 400.0,450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0}
+	local groundCheckHeights = {0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0,450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0}
 
 
 	for i,height in ipairs(groundCheckHeights) do
+		RequestCollisionAtCoord(x, y, height)
+		Wait(0)
 		SetEntityCoordsNoOffset(targetPed, x,y,height, 0, 0, 1)
-		Wait(10)
-
 		ground,z = GetGroundZFor_3dCoord(x,y,height)
 		if(ground) then
 			z = z + 3
@@ -87,9 +80,65 @@ function teleportToWaypoint()
 	end
 
 	SetEntityCoordsNoOffset(targetPed, x,y,z, 0, 0, 1)
+
 	drawNotification("Teleported to waypoint.")
 end
 
+
+--[[-----------------------------------------------------------------
+	* Nearly 100% of the trainer is automatically syncing which is
+	* intended and could cause issues with other resources. 
+	* The following settings need to be synced manually.
+		Voice Proximity
+		Voice Toggle
+		Player Radio
+		Map Blips
+		No Reload
+		Infinite Ammo
+		Hide Map (Hide Radar)
+		Hide Hud
+		Large Hud (Large Radar)
+-------------------------------------------------------------------]]
+
+-- Manually Sync Trainer Settings
+function syncSettings()
+	local distance = 0
+	if(featureVPAllPlayers)then
+		distance = 0;
+	elseif(featureVPTooClose)then
+		distance = 5
+	elseif(featureVPVeryClose)then
+		distance = 25
+	elseif(featureVPClose)then
+		distance = 75
+	elseif(featureVPNearby)then
+		distance = 200
+	elseif(featureVPDistant)then
+		distance = 500
+	elseif(featureVPFar)then
+		distance = 2500
+	elseif(featureVPVeryFar)then
+		distance = 8000
+	end
+
+	NetworkSetTalkerProximity(distance)     					  -- Voice Proximity
+	NetworkSetVoiceActive(featureVoiceChat) 					  -- Voice Toggle
+
+	if(featurePlayerRadio)then
+		SetMobileRadioEnabledDuringGameplay(featurePlayerRadio)   -- Player Radio
+		SetUserRadioControlEnabled(true)    
+	end
+
+
+	toggleMapBlips(featureMapBlips)         					  -- Map Blips
+	SetPedInfiniteAmmoClip(GetPlayerPed(), featurePlayerNoReload) -- No Reload
+	toggleInfiniteAmmo(featurePlayerInfiniteAmmo)				  -- Infinite Ammo
+	DisplayRadar(not featureHideMap)							  -- Hide Radar
+	DisplayHud(not featureHideHud)								  -- No Hud
+	SetRadarBigmapEnabled(featureBigHud, false)					  -- Large Radar
+	SetCanAttackFriendly(GetPlayerPed(-1), true, false)
+	NetworkSetFriendlyFireOption(true)
+end
 
 
 --[[
@@ -116,6 +165,15 @@ AddEventHandler('onClientMapStart', function()
 	TriggerServerEvent("mellotrainer:getAdminStatus")
 end)
 
+RegisterNetEvent("mellotrainer:init")
+AddEventHandler("mellotrainer:init", function()
+	-- Let the server know that we just joined.
+	-- Requests the server configs
+	TriggerServerEvent( "mellotrainer:firstJoinProper", PlayerId() )
+
+	-- Initialize Client Settings
+	syncSettings()
+end)
 
 
 -- Requests admin status 10 seconds after script restart. 
@@ -136,8 +194,12 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f6
+		if ( IsControlJustReleased( 0, 288 ) or IsDisabledControlJustReleased( 0, 288 ) ) and GetLastInputMethod( 0 ) and not IsPauseMenuActive() and not blockinput and ((settings["adminOnlyTrainer"] == true and adminStatus == true) or settings["adminOnlyTrainer"] == false) then -- f1
 			showtrainer = not showtrainer
+
+			SetNuiFocus( true )
+			SetNuiFocus( false )
+
 			if showtrainer then
 				SendNUIMessage({
 					showtrainer = true
@@ -275,8 +337,7 @@ Citizen.CreateThread(function()
 				-- Only toggle on first find of new vehicle
 				if(not(inVeh))then
 					-- Toggle any vehicle settings
-					Citizen.Trace("Applying Vehicle Options")
-					TriggerEvent('mellotrainer:playerEnteredVehicle')
+					TriggerEvent('mellotrainer:playerEnteredVehicle', playerVeh)
 				end
 
 				inVeh = true
@@ -287,7 +348,3 @@ Citizen.CreateThread(function()
 
 	end
 end)
-
-
-
-initServerConfig()

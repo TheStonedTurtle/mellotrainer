@@ -69,6 +69,21 @@ local admins = {
 }
 
 
+
+
+
+
+
+
+
+
+--[[------------------------------------------------------------
+	Ignore below here if you don't know what you are doing
+-----------------------------------------------------0--------]]
+
+
+
+
 --local pvpEnabled = true
 --local maxPlayers = 32
 
@@ -116,7 +131,10 @@ AddEventHandler('mellotrainer:firstJoinProper', function(id)
 	local identifiers = GetPlayerIdentifiers(source)
 	for i = 1, #identifiers do
 		if(Users[source] == nil)then
-			Users[source] = GetPlayerName(source) -- Update to user object?
+			Users[source] = {
+				name = GetPlayerName(source),
+				source = id
+			}
 		end
 	end
 

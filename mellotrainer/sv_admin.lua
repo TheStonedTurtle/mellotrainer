@@ -54,6 +54,23 @@ AddEventHandler( 'playerConnecting', function( name, setReason )
 	end 
 end )
 
+--[[------------------------------------------------------------------------
+	Kill Player 
+------------------------------------------------------------------------]]--
+RegisterNetEvent( 'mellotrainer:s_adminKill' )
+AddEventHandler( 'mellotrainer:s_adminKill', function( id ) 
+	TriggerClientEvent( 'mellotrainer:adminKill', id )
+end )
+
+--[[------------------------------------------------------------------------
+	Teleport Plsyer 
+------------------------------------------------------------------------]]--
+RegisterNetEvent( 'mellotrainer:s_adminTp' )
+AddEventHandler( 'mellotrainer:s_adminTp', function( id ) 
+	TriggerClientEvent( 'mellotrainer:adminTp', id, source )
+end )
+
+
 --    _______ _                    ____        _   _                 
 --   |__   __(_)                  / __ \      | | (_)                
 --      | |   _ _ __ ___   ___   | |  | |_ __ | |_ _  ___  _ __  ___ 

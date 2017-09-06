@@ -59,9 +59,9 @@ AddEventHandler( 'mellotrainer:playerJoined', function( ID )
 end )
 
 RegisterNetEvent( 'mellotrainer:playerLeft' )
-AddEventHandler( 'mellotrainer:playerLeft', function( name )
+AddEventHandler( 'mellotrainer:playerLeft', function( person )
 	if ( featurePlayerNotifications ) then
-		drawNotification( "~r~<C>" .. name .. "</C> ~s~left." )
+		drawNotification( "~r~<C>" .. person.name .. "</C> ~s~left." )
 	end
 end )
 

@@ -965,17 +965,19 @@ function destroyAllMapBlips()
 	playboy = nil;
 	RemoveBlip(fib)
 	fib = nil;
-
 end
 
-
+local currentstate = false -- Prevent creating multiple blips.
 function toggleMapBlips(toggle)
 	if(toggle)then
-		createAllMapBlips()
-		drawNotification("Map Blips have been added.")
+		if(not currentstate)then
+			createAllMapBlips()
+			currentstate = true
+		end
 	else
-		destroyAllMapBlips()
-		drawNotification("Map Blips have been removed.")
+		if(currentstate)then
+			destroyAllMapBlips()
+			currentstate = false
+		end
 	end
-
 end

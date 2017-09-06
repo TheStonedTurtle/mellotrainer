@@ -1,3 +1,33 @@
+<h1>v0.5.0 (09-06-2017)</h1>
+JSON Updates, JSON Editor, Setting Sync System, New Location Menu, Blip/Overhead System Rewrite, and many other code improvements.
+
+<h3>Changes</h3>
+<ul>
+    <li>Majority of JSON moved to external files</li>
+    <li>Blip & Overhead Name System Rewrite</li>
+    <li>Potential fix for vehicles despawning</li>
+    <li>Trainer should now show above other NUI elements</li>
+    <li>PvP is now enabled by this trainer, will add config setting in future version</li>
+    <li>Settings in cl_variables.lua now sync correctly to their default state</li>
+    <li>Changed Map Blips to be on by default</li>
+    <li>Updated requestInput() to return false if the default text is returned</li>
+    <li>Updated vehicle settings being applied/retrieved when getting into a vehicle</li>
+    <li>Modified the F3 Teleport to Marker functionality</li>
+    <li>Many small bug fixes</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+    <li>Added the entire Location Teleport menu, some places may not load correctly</li>
+    <li>Added a Player Blip Names toggle, true by default</li>
+    <li>Added Admin Kill and Teleport Player To Me Commands</li>
+    <li>Custom JSON Loading (Editor: <a href="https://thestonedturtle.github.io/mellotrainer/mellotrainer.html" target="_blank">TheStonedTurtle.github.io</a>)</li>
+    <li>Added all Post-Bikers Vehciles and Weapons to the menu (Thanks <a href="https://forum.fivem.net/u/Fenwick" target="_blank">Fenwick</a>)</li>
+    <li>Z key will now toggle the minimap big/small. Can be removed by removing the if statement in `cl_settings.lua` under the `-- Toggle minimap on keypress` comment.</li>
+</ul>
+
+
+
 <h1>v0.4.5 (08-23-2017)</h1>
 New Noclip Mode, Admin kick & temp ban, and some bug fixes. 
 

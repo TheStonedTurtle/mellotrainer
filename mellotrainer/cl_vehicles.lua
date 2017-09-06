@@ -53,8 +53,10 @@ local function SpawnVehicle(model, x, y, z, heading, ped)
 
 		drawNotification("~g~Vehicle spawned!")
 		lastVehicle = veh
-		resetVehOptions()
+		UpdateVehicleFeatureVariables( veh )
 		toggleRadio(ped)
+
+		SetModelAsNoLongerNeeded( veh )
 
 		return veh 
 	else
@@ -88,6 +90,7 @@ end)
 RegisterNUICallback("vehspawn", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local x, y, z
+	local vehicle
 
 	if ( featureSpawnCarInFront ) then 
 		x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( playerPed, 0.0, 7.5, 0.0 ) )
@@ -101,7 +104,8 @@ RegisterNUICallback("vehspawn", function(data, cb)
 		local result = requestInput("", 60)
 
 		if result then
-			SpawnVehicle(GetHashKey(string.upper(result)), x, y, z, heading, playerPed)
+			vehicle = SpawnVehicle(GetHashKey(string.upper(result)), x, y, z, heading, playerPed)
+			UpdateVehicleFeatureVariables( vehicle )
 		end
 		return
 	end
@@ -109,7 +113,7 @@ RegisterNUICallback("vehspawn", function(data, cb)
 	local playerVeh = GetVehiclePedIsIn(playerPed, true)
 	local vehhash = GetHashKey(data.action)
 
-	local vehicle = SpawnVehicle(vehhash, x, y, z, heading, playerPed)
+	vehicle = SpawnVehicle(vehhash, x, y, z, heading, playerPed)
 
 	UpdateVehicleFeatureVariables( vehicle )
 
@@ -484,6 +488,26 @@ function ApplySavedSettingsToVehicle( veh, data )
 	UpdateVehicleFeatureVariables( veh )
 end 
 
+
+function updateVehicleMechDamage(veh)
+	SetVehicleEngineCanDegrade(veh, not featureVehMechDamage)
+	SetVehicleCanBreak(veh, not featureVehMechDamage)
+	SetVehicleWheelsCanBreak(veh, not featureVehMechDamage)
+	SetDisableVehiclePetrolTankDamage(veh, featureVehMechDamage)
+end
+
+function updateVehicleCosmDamage(veh)
+	SetVehicleCanBeVisiblyDamaged(veh, not featureVehCosDamage)
+	SetVehicleStrong(veh, featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 0, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 1, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 2, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 3, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 4, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 5, not featureVehCosDamage)
+	SetVehicleDoorBreakable(veh, 6, not featureVehCosDamage)	
+end
+
 function UpdateVehicleFeatureVariables( veh )
 	featureBulletproofWheels = not GetVehicleTyresCanBurst( veh )
 	featureXeonLights = IsToggleModOn( veh, 22 )
@@ -495,8 +519,23 @@ function UpdateVehicleFeatureVariables( veh )
 	featureNeonFront = IsVehicleNeonLightEnabled( veh, 2 )
 	featureNeonRear = IsVehicleNeonLightEnabled( veh, 3 )
 
+	-- Cosmetic Damage
+	updateVehicleCosmDamage(veh)
+
+	-- Mechanical Damage
+	updateVehicleMechDamage(veh)
+
+	-- Invincible
+	SetEntityInvincible(playerVeh, featureVehInvincible)
+
+	windows = {false, false, false, false}
+
+	featureTorqueMultiplier = 1
+	featurePowerMultiplier = 1
+	featureLowerForce = 0
+
 	resetTrainerMenus( "vehmods" )
-end 
+end
 
 RegisterNUICallback("vehcolor", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
@@ -546,24 +585,7 @@ end)
 
 
 
-
-function resetVehOptions()
-	featureBulletproofWheels = false
-	featureXenonLights = false
-	featureCustomTires = false
-	featureTurboMode = false
-
-	windows = {false, false, false, false}
-	neons = {false, false, false, false}
-
-	resetTrainerMenus("vehmods")
-end
-
-
 local windows = {false, false, false,false}
-local neons = {false, false, false, false}
-
-
 RegisterNUICallback("veh", function(data, cb)
 	local playerPed = GetPlayerPed(-1)
 	local playerVeh = GetVehiclePedIsIn(playerPed, false)
@@ -713,8 +735,8 @@ RegisterNUICallback("vehmod", function(data, cb)
 
 	-- Toggle Options
 	if action == "bulletwheels" then
-		featureBulletproofWheels = not data.newstate	
-		SetVehicleTyresCanBurst(playerVeh, featureBulletproofWheels)
+		featureBulletproofWheels = data.newstate	
+		SetVehicleTyresCanBurst(playerVeh, not featureBulletproofWheels)
 
 		drawNotification("Bulletproof Tires: "..text)
 
@@ -1089,9 +1111,6 @@ end
 
 
 
-local torqueMultiplier = 1
-local powerMultiplier = 1
-local lowerForce = 0
 local lowerForces = {
 	[0] = 0.00,
 	[1] = -0.018,
@@ -1164,15 +1183,15 @@ RegisterNUICallback("vehopts", function(data, cb)
 
 	-- Power Options
 	elseif(action == "powerboost")then
-		powerMultiplier = tonumber(data.data[3])
+		featurePowerMultiplier = tonumber(data.data[3])
 
-		drawNotification("Power Boost Multiplier: "..tostring(powerMultiplier))
+		drawNotification("Power Boost Multiplier: "..tostring(featurePowerMultiplier))
 
 	-- Torque Options
 	elseif(action == "torqueboost")then
-		torqueMultiplier = tonumber(data.data[3])
+		featureTorqueMultiplier = tonumber(data.data[3])
 
-		drawNotification("Torque Multiplier: "..tostring(torqueMultiplier))
+		drawNotification("Torque Multiplier: "..tostring(featureTorqueMultiplier))
 
 	-- Lowering Level
 	elseif(action == "lowering")then
@@ -1181,31 +1200,19 @@ RegisterNUICallback("vehopts", function(data, cb)
 			return
 		end
 
-		lowerForce = tonumber(data.data[3])
+		featureLowerForce = tonumber(data.data[3])
 
-		drawNotification( "Lowering: level " .. lowerForce )
+		drawNotification( "Lowering: level " .. featureLowerForce )
 
 	--
 	elseif(action == "cosdamage")then
 		featureVehCosDamage = state
-		SetVehicleCanBeVisiblyDamaged(playerVeh, not featureVehCosDamage)
-		SetVehicleStrong(playerVeh, featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 0, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 1, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 2, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 3, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 4, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 5, not featureVehCosDamage)
-		SetVehicleDoorBreakable(playerVeh, 6, not featureVehCosDamage)
-
+		updateVehicleCosmDamage(playerVeh)
 		drawNotification("No Cosmetic Damage: "..text)
 	--
 	elseif(action == "mechdamage")then
 		featureVehMechDamage = state
-		SetVehicleEngineCanDegrade(playerVeh, not featureVehMechDamage)
-		SetVehicleCanBreak(playerVeh, not featureVehMechDamage)
-		SetVehicleWheelsCanBreak(playerVeh, not featureVehMechDamage)
-		SetDisableVehiclePetrolTankDamage(playerVeh, featureVehMechDamage)
+		updateVehicleMechDamage(playerVeh)
 		drawNotification("No Mechanical Damage: "..text)
 	--
 	elseif(action == "invincible")then
@@ -1228,11 +1235,11 @@ Citizen.CreateThread( function()
 			local veh = GetVehiclePedIsIn( ped, false )
 
 			if ( GetPedInVehicleSeat( veh, -1 ) == ped ) then 
-				SetVehicleEngineTorqueMultiplier( veh, torqueMultiplier + 0.001 )
-				SetVehicleEnginePowerMultiplier( veh, powerMultiplier + 0.001 )
+				SetVehicleEngineTorqueMultiplier( veh, featureTorqueMultiplier + 0.001 )
+				SetVehicleEnginePowerMultiplier( veh, featurePowerMultiplier + 0.001 )
 
-				if ( lowerForce ~= 0 ) then 
-					ApplyForceToEntity( veh, true, 0.0, 0.0, lowerForces[lowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true )
+				if ( featureLowerForce ~= 0 ) then 
+					ApplyForceToEntity( veh, true, 0.0, 0.0, lowerForces[featureLowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true )
 				end 
 			end 
 		end 

@@ -98,7 +98,7 @@ RegisterNUICallback("player", function(data, cb)
 	-- Police Ignore You
 	elseif action == "police" then
 		featurePlayerIgnoredByPolice = newstate
-		drawNotification("Police Ingore You: "..tostring(text))
+		drawNotification("Police Ignore You: "..tostring(text))
 
 		featurePlayerIgnoredByPoliceUpdated = true;
 
