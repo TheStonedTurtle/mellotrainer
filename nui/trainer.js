@@ -24,8 +24,8 @@ var maxVisibleItems = 10;           // Max amount of items in 1 menu (before aut
 
 
 // Trainer Memory for pages & options. Only works backwards.
-var pageMemory = [];    // Holds memory of which page you were previously on
-var optionMemory = [];  // Holds memory of which option you were previously on
+var memoryTree = {};    // Holds the memory for every menu in the trainer
+var currentMemory = {}; // Holds the memory for the current menu
 var counter;            // Current Trainer Option
 var maxamount;          // Max Amount of Options for Current Menu
 var currentpage;        // Current Page Number
@@ -385,8 +385,8 @@ function resetTrainer() {
     showMenu(menus["mainmenu"], true);
 
     // Reset trainer memory.
-    pageMemory = [];
-    optionMemory = [];
+    memoryTree = {};
+    currentMemory = {};
 }
 
 
@@ -726,13 +726,26 @@ function resetSelected() {
 }
 
 
+// Grabs Memory Tree for new Menu and updates old one.
+function MemoryTreeHandler(menu){
+    // Update old Menu
+    if (content != null) {
+        // Update memory Tree
+        var ID = $(content.menu).attr("id");
+        memoryTree[ID] = {"page":currentpage,"option":counter}
+    }
+
+    // Request New Memory
+    var ID = $(menu.menu).attr("id")
+    currentMemory = memoryTree[ID] || {}
+    return [currentMemory.page || 0, currentMemory.option || 0]
+}
+
+
 // used to show a menu (adds back to container);
 function showMenu(menu, memoryPrevention) {
-    // Add the current page/option to memory.
-    if(!memoryPrevention){
-        pageMemory.push(currentpage);
-        optionMemory.push(counter);
-    }
+    // Retrieve Page & Option to show for menu
+    var [newPage,newOption] = MemoryTreeHandler(menu)
 
     // Remove old menu div
     if (content != null) {
@@ -743,22 +756,18 @@ function showMenu(menu, memoryPrevention) {
     content = menu;
     container.append(content.menu);
 
-    showPage(0);
-    resetSelected();
-    requestStateToggles($(content.menu).attr( "id" )); 
+
+    showPage(newPage);
+    selectOption(newOption)
+    requestStateToggles($(content.menu).attr("id")); 
 }
 
 
 // Used to show previous menu page, with memory
 function showBackMenu(menu) {
-    var newPage = pageMemory[pageMemory.length - 1] || 0;
-    var newOption = optionMemory[optionMemory.length - 1] || 0;
-
-
-    // Remove the options from memory
-    pageMemory.pop();
-    optionMemory.pop();
-
+    // Retrieve Page & Option to show for menu
+    var [newPage,newOption] = MemoryTreeHandler(menu)
+    
     // remove old menu
     if (content != null) {
         content.menu.detach();
