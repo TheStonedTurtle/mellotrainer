@@ -5893,7 +5893,7 @@
         }
       },
       {
-        "menuName": "Sadtrombone Horn",
+        "menuName": "Sad Trombone",
         "data": {
           "action": "14 8"
         }
@@ -5905,85 +5905,85 @@
         }
       },
       {
-        "menuName": "Calssical Horn 2",
+        "menuName": "Classical Horn 2",
         "data": {
           "action": "14 10"
         }
       },
       {
-        "menuName": "Calssical Horn 3",
+        "menuName": "Classical Horn 3",
         "data": {
           "action": "14 11"
         }
       },
       {
-        "menuName": "Calssical Horn 4",
+        "menuName": "Classical Horn 4",
         "data": {
           "action": "14 12"
         }
       },
       {
-        "menuName": "Calssical Horn 5",
+        "menuName": "Classical Horn 5",
         "data": {
           "action": "14 13"
         }
       },
       {
-        "menuName": "Calssical Horn 6",
+        "menuName": "Classical Horn 6",
         "data": {
           "action": "14 14"
         }
       },
       {
-        "menuName": "Calssical Horn 7",
+        "menuName": "Classical Horn 7",
         "data": {
           "action": "14 15"
         }
       },
       {
-        "menuName": "Scaledo Horn",
+        "menuName": "Scale - Do",
         "data": {
           "action": "14 16"
         }
       },
       {
-        "menuName": "Scalere Horn",
+        "menuName": "Scale- Re",
         "data": {
           "action": "14 17"
         }
       },
       {
-        "menuName": "Scalemi Horn",
+        "menuName": "Scale - Mi",
         "data": {
           "action": "14 18"
         }
       },
       {
-        "menuName": "Scalefa Horn",
+        "menuName": "Scale - Fa",
         "data": {
           "action": "14 19"
         }
       },
       {
-        "menuName": "Scalesol Horn",
+        "menuName": "Scale - Sol",
         "data": {
           "action": "14 20"
         }
       },
       {
-        "menuName": "Scalela Horn",
+        "menuName": "Scale - La",
         "data": {
           "action": "14 21"
         }
       },
       {
-        "menuName": "Scaleti Horn",
+        "menuName": "Scale - Ti",
         "data": {
           "action": "14 22"
         }
       },
       {
-        "menuName": "Scaledo Horn High",
+        "menuName": "Scale - Do - High",
         "data": {
           "action": "14 23"
         }
@@ -6007,37 +6007,37 @@
         }
       },
       {
-        "menuName": "Jazzloop Horn",
+        "menuName": "Jazz Loop Horn",
         "data": {
           "action": "14 28"
         }
       },
       {
-        "menuName": "Starspangban Horn 1",
+        "menuName": "Star Spangled Banner 1",
         "data": {
           "action": "14 29"
         }
       },
       {
-        "menuName": "Starspangban Horn 2",
+        "menuName": "Star Spangled Banner 2",
         "data": {
           "action": "14 30"
         }
       },
       {
-        "menuName": "Starspangban Horn 3",
+        "menuName": "Star Spangled Banner 3",
         "data": {
           "action": "14 31"
         }
       },
       {
-        "menuName": "Starspangban Horn 4",
+        "menuName": "Star Spangled Banner 4",
         "data": {
           "action": "14 32"
         }
       },
       {
-        "menuName": "Classicalloop Horn 1",
+        "menuName": "Classical Loop Horn 1",
         "data": {
           "action": "14 33"
         }
@@ -6049,7 +6049,7 @@
         }
       },
       {
-        "menuName": "Classicalloop Horn 2",
+        "menuName": "Classical Loop Horn 2",
         "data": {
           "action": "14 35"
         }
