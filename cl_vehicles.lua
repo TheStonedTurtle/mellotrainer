@@ -1240,7 +1240,13 @@ Citizen.CreateThread( function()
 
 				if ( featureLowerForce ~= 0 ) then 
 					ApplyForceToEntity( veh, true, 0.0, 0.0, lowerForces[featureLowerForce], 0.0, 0.0, 0.0, true, true, true, true, false, true )
-				end 
+				end
+
+				if(featureVehCosDamage and IsVehicleDamaged(veh))then
+					SetVehicleFixed(veh)
+					SetVehicleDirtLevel(veh, 0)
+					updateVehicleCosmDamage(veh)
+				end
 			end 
 		end 
 
