@@ -11087,13 +11087,13 @@
         }
       },
       {
-        "menuName": "Johnnyklebitz",
+        "menuName": "Johnny Klebitz",
         "data": {
           "action": "ig_johnnyklebitz"
         }
       },
       {
-        "menuName": "Johnnyklebitz-BROKEN",
+        "menuName": "Johnny Klebitz - BROKEN",
         "data": {
           "action": "cs_johnnyklebitz"
         }
@@ -12155,13 +12155,13 @@
         }
       },
       {
-        "menuName": "Rocco Pelosi",
+        "menuName": "Rocco Pelosi - Cutscene",
         "data": {
           "action": "csb_roccopelosi"
         }
       },
       {
-        "menuName": "Roccopelosi",
+        "menuName": "Rocco Pelosi - In-Game",
         "data": {
           "action": "ig_roccopelosi"
         }
@@ -12179,13 +12179,13 @@
         }
       },
       {
-        "menuName": "Russiandrunk",
+        "menuName": "Russian Drunk",
         "data": {
           "action": "ig_russiandrunk"
         }
       },
       {
-        "menuName": "Russiandrunk-BROKEN",
+        "menuName": "Russian Drunk - BROKEN",
         "data": {
           "action": "cs_russiandrunk"
         }
@@ -12341,13 +12341,13 @@
         }
       },
       {
-        "menuName": "Siemonyetarian",
+        "menuName": "Simeon Yetarian",
         "data": {
           "action": "ig_siemonyetarian"
         }
       },
       {
-        "menuName": "Siemonyetarian-BROKEN",
+        "menuName": "Simeon Yetarian - BROKEN",
         "data": {
           "action": "cs_siemonyetarian"
         }
@@ -12389,7 +12389,7 @@
         }
       },
       {
-        "menuName": "Snowcop",
+        "menuName": "Yankton Cop",
         "data": {
           "action": "s_m_m_snowcop_01"
         }
@@ -12539,13 +12539,13 @@
         }
       },
       {
-        "menuName": "Spyactor",
+        "menuName": "Spy Actor",
         "data": {
           "action": "u_m_m_spyactor"
         }
       },
       {
-        "menuName": "Spyactress",
+        "menuName": "Spy Actress",
         "data": {
           "action": "u_f_y_spyactress"
         }
@@ -13171,7 +13171,7 @@
         }
       },
       {
-        "menuName": "Humpback",
+        "menuName": "Humpback Whale",
         "data": {
           "action": "a_c_humpback"
         }
@@ -13213,7 +13213,7 @@
         }
       },
       {
-        "menuName": "Rhesus",
+        "menuName": "Rhesus Monkey",
         "data": {
           "action": "a_c_rhesus"
         }
@@ -13225,19 +13225,19 @@
         }
       },
       {
-        "menuName": "Sharkhammer",
+        "menuName": "Hammerhead Shark",
         "data": {
           "action": "a_c_sharkhammer"
         }
       },
       {
-        "menuName": "Sharktiger",
+        "menuName": "Tiger Shark",
         "data": {
           "action": "a_c_sharktiger"
         }
       },
       {
-        "menuName": "Shepherd",
+        "menuName": "German Shepherd",
         "data": {
           "action": "a_c_shepherd"
         }
