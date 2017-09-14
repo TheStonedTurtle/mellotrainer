@@ -1149,7 +1149,7 @@
         ]
       },
       {
-        "menuName": "Flaregun",
+        "menuName": "Flare Gun",
         "weaponName": "WEAPON_FLAREGUN",
         "data": {
           "sub": 8
@@ -1320,7 +1320,7 @@
         ]
       },
       {
-        "menuName": "Stungun",
+        "menuName": "Stun Gun",
         "weaponName": "WEAPON_STUNGUN",
         "data": {
           "sub": 7
