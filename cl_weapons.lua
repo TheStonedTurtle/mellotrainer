@@ -17,8 +17,128 @@
 	*
 ---------------------------------------------------------------------------]]
 
-local playerPed = GetPlayerPed(-1)
+local playerPed = GetPlayerPed(-1) -- bad, each function should grab a new instance of the ped, or pass it as a param 
 
+--[[------------------------------------------------------------------------
+	Loadout Saving and Loading 
+------------------------------------------------------------------------]]--
+local loadouts = {}
+local loadoutsCount = 0 
+
+-- event for grabbing info from server 
+
+RegisterNUICallback( "loadsavedloadouts", function( data, cb )
+	local validOptions = {}
+ 
+    for k, v in pairs( loadouts ) do
+    	local loadoutOptions = CreateLoadoutOptions( k )
+
+        table.insert( validOptions, 1, {
+            [ "menuName" ] = v[ "saveName" ],
+            [ "data" ] = {
+                [ "sub" ] = k 
+            },
+            [ "submenu" ] = loadoutOptions
+        } )
+    end
+
+    table.insert( validOptions, {
+    	[ "menuName" ] = "Create New Loadout Save", 
+    	[ "data" ] = {
+    		[ "action" ] = "loadoutsave"
+    	}
+    } )
+ 
+    local customJSON = "{}"
+
+    if ( getTableLength( validOptions ) > 0 ) then
+        customJSON = json.encode( validOptions, { indent = true } )
+    end
+ 
+    SendNUIMessage( {
+        createmenu = true,
+        menuName = "loadsavedloadouts",
+        menudata = customJSON
+    } )
+   
+    if ( cb ) then cb( "ok" ) end
+end )
+
+RegisterNUICallback( "loadoutsave", function( data, cb ) 
+	Citizen.CreateThread( function()
+		local ped = GetPlayerPed( -1 )
+		local loadoutTableData = {}
+		local saveName = nil 
+		local overwriting 
+        local renaming 
+        local index 
+
+        if ( data.action == nil ) then 
+        	overwriting = false 
+        	renaming = false 
+        else 
+        	if ( data.data[3] ~= nil ) then 
+        		renaming = true 
+        	else 
+        		overwriting = true 
+        	end 
+
+        	index = tonumber( data.action )
+        end 
+
+		if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
+			while ( (saveName == nil and not overwriting) or (saveName == nil and renaming) ) do 
+                saveName = requestInput( "Enter save name", 24 )
+                Citizen.Wait( 1 )
+            end 
+
+            if ( saveName or overwriting or renaming ) then 
+            	local empty, model = GetCurrentPedWeapon( ped, true )
+
+            	if ( renaming or not overwriting ) then 
+            		loadoutTableData[ "saveName" ] = saveName 
+            	else 
+            		loadoutTableData[ "saveName" ] = loadouts[index][ "saveName" ]
+            	end 
+
+            	loadoutTableData[ "model" ] = tostring( model )
+
+            	local reserveAmmo = GetAmmoInPedWeapon( ped, model )
+            	local maxClipAmmo = GetMaxAmmoInClip( ped, model, true )
+
+            	loadoutTableData[ "reserveAmmo" ] = reserveAmmo
+            	loadoutTableData[ "maxClipAmmo" ] = maxClipAmmo
+
+            	local tintIndex = GetPedWeaponTintIndex( ped, model )
+
+            	loadoutTableData[ "tintIndex" ] = tintIndex
+
+                --[[if ( not renaming and not overwriting ) then 
+                 	loadoutsCount = loadoutsCount + 1
+                 	loadouts[loadoutsCount] = loadoutTableData
+                 	TriggerServerEvent( 'wk:DataSave', "loadouts", loadoutTableData, loadoutsCount )
+
+                 	SendNUIMessage({
+				 		reshowmenu = true 
+				 	})
+                else 
+                 	loadouts[index] = loadoutTableData
+                 	TriggerServerEvent( 'wk:DataSave', "loadouts", loadoutTableData, index )
+
+                 	SendNUIMessage({
+				 		trainerback = true 
+				 	})
+
+				 	SendNUIMessage({
+				 		reshowmenu = true 
+				 	})
+                end 
+
+                resetTrainerMenus( "loadsavedloadouts" ) ]]--
+            end 
+		end 
+	end )
+end )
 
 -- Max Clip
 function maxAmmoWeapon(weaponName)
