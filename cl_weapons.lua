@@ -113,6 +113,8 @@ RegisterNUICallback( "loadoutsave", function( data, cb )
 
                 loadoutTableData[ "tintIndex" ] = tintIndex
 
+                -- use https://github.com/citizenfx/project-lambdamenu/blob/master/LambdaMenu/weapons.cpp#L720 for help 
+
                 --[[if ( not renaming and not overwriting ) then 
                     loadoutsCount = loadoutsCount + 1
                     loadouts[loadoutsCount] = loadoutTableData
