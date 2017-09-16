@@ -154,7 +154,7 @@ $(function() {
         }
 
         // If they passed the security check access the menu and skip the check
-        if (item.vehicleaccess || item.adminaccess){
+        if (item.vehicleaccess || item.adminaccess || item.customprivilegecheck){
             handleSelectedOption(true);
         }
 
@@ -575,6 +575,14 @@ function handleSelectedOption(requireSkip) {
     if(dataArray.indexOf("action") > -1){
         var newstate = true;     // Default the state to True
 
+        // Does this sub menu require anything?
+        if(dataArray.indexOf("require") > -1 && requireSkip != true){
+            var requireString = "require"+item.data("require");
+            sendData(requireString, {});
+            playSound("SELECT");
+            return;
+        }
+
         if (dataArray.indexOf("state") > -1) {
             // .attr() because .data() gives original values
 
@@ -909,6 +917,7 @@ function addWeaponTintMenu(containerDiv,spawnName,idName){
 
 // Adds new attributes for the specified element. Recursive call to handle linking to sub-menu
 function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction){
+    var subSeparator = "_"
     // defaultAction is used for static menus
     //sendData("debug",curIndex+" "+idName+" "+defaultAction+" : curIndex idName defaultAction")
     if(!defaultAction){
@@ -927,7 +936,7 @@ function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction
 
                     // Ensure unique IDs by using parent ID as starting point.
                     if(dataKey == "sub" || dataKey == "shareid"){
-                        curDataValue = idName+curDataValue;
+                        curDataValue = idName+subSeparator+curDataValue;
                         //sendData("debug","data-"+dataKey+" "+curDataValue)
                     }
 
@@ -950,7 +959,7 @@ function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction
 
             // Add submenu (accompanies by data-sub)
             case "submenu":
-                var newID = idName+currentObject["data"]["sub"];
+                var newID = idName+subSeparator+currentObject["data"]["sub"];
 
                 //sendData("debug","creating submenu: "+newID)
 
