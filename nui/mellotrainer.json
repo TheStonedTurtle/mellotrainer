@@ -9191,19 +9191,19 @@
         }
       },
       {
-        "menuName": "Airhostess",
+        "menuName": "Air Hostess",
         "data": {
           "action": "s_f_y_airhostess_01"
         }
       },
       {
-        "menuName": "Airworker",
+        "menuName": "Air Worker",
         "data": {
           "action": "s_m_y_airworker"
         }
       },
       {
-        "menuName": "Aldinapoli",
+        "menuName": "Al Di Napoli",
         "data": {
           "action": "u_m_m_aldinapoli"
         }
@@ -9245,25 +9245,25 @@
         }
       },
       {
-        "menuName": "Amandatownley",
+        "menuName": "Amanda Townley",
         "data": {
           "action": "ig_amandatownley"
         }
       },
       {
-        "menuName": "Amandatownley-BROKEN",
+        "menuName": "Amanda Townley - BROKEN",
         "data": {
           "action": "cs_amandatownley"
         }
       },
       {
-        "menuName": "Ammucity",
+        "menuName": "Ammu-Nation Clerk - City",
         "data": {
           "action": "s_m_y_ammucity_01"
         }
       },
       {
-        "menuName": "Ammucountry",
+        "menuName": "Ammu-Nation Clerk - Country",
         "data": {
           "action": "s_m_m_ammucountry"
         }
@@ -9275,7 +9275,7 @@
         }
       },
       {
-        "menuName": "Andreas-BROKEN",
+        "menuName": "Andreas - BROKEN",
         "data": {
           "action": "cs_andreas"
         }
@@ -9293,67 +9293,67 @@
         }
       },
       {
-        "menuName": "Antonb",
+        "menuName": "Anton Beaudelaire - In-Game",
         "data": {
           "action": "u_m_y_antonb"
         }
       },
       {
-        "menuName": "Armboss",
+        "menuName": "Armenian Mob Boss",
         "data": {
           "action": "g_m_m_armboss_01"
         }
       },
       {
-        "menuName": "Armgoon",
+        "menuName": "Armenian Mob Goon 1",
         "data": {
           "action": "g_m_m_armgoon_01"
         }
       },
       {
-        "menuName": "Armgoon",
+        "menuName": "Armenian Mob Goon 2",
         "data": {
           "action": "g_m_y_armgoon_02"
         }
       },
       {
-        "menuName": "Armlieut",
+        "menuName": "Armenian Mob lieutenant 1",
         "data": {
           "action": "g_m_m_armlieut_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - MP",
         "data": {
           "action": "mp_s_m_armoured_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - SP 1",
         "data": {
           "action": "s_m_m_armoured_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - SP 2",
         "data": {
           "action": "s_m_m_armoured_02"
         }
       },
       {
-        "menuName": "Armymech",
+        "menuName": "Army Mechanic",
         "data": {
           "action": "s_m_y_armymech_01"
         }
       },
       {
-        "menuName": "Ashley",
+        "menuName": "Ashley Butler",
         "data": {
           "action": "ig_ashley"
         }
       },
       {
-        "menuName": "Ashley-BROKEN",
+        "menuName": "Ashley Butler - BROKEN",
         "data": {
           "action": "cs_ashley"
         }
@@ -9389,13 +9389,13 @@
         }
       },
       {
-        "menuName": "Ballaeast",
+        "menuName": "Balla East",
         "data": {
           "action": "g_m_y_ballaeast_01"
         }
       },
       {
-        "menuName": "Ballaorig",
+        "menuName": "Balla Original",
         "data": {
           "action": "g_m_y_ballaorig_01"
         }
