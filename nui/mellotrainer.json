@@ -9287,7 +9287,7 @@
         }
       },
       {
-        "menuName": "Anton Beaudelaire",
+        "menuName": "Anton Beaudelaire - Cutscene",
         "data": {
           "action": "csb_anton"
         }
@@ -9377,7 +9377,7 @@
         }
       },
       {
-        "menuName": "Azteca",
+        "menuName": "Azteca Gangster 1",
         "data": {
           "action": "g_m_y_azteca_01"
         }
@@ -9389,13 +9389,13 @@
         }
       },
       {
-        "menuName": "Balla East",
+        "menuName": "Balla East Territory 1",
         "data": {
           "action": "g_m_y_ballaeast_01"
         }
       },
       {
-        "menuName": "Balla Original",
+        "menuName": "Balla Original Territory 1",
         "data": {
           "action": "g_m_y_ballaorig_01"
         }
@@ -9407,19 +9407,19 @@
         }
       },
       {
-        "menuName": "Ballas OG",
+        "menuName": "Ballas OG - Cutscene",
         "data": {
           "action": "csb_ballasog"
         }
       },
       {
-        "menuName": "Ballasog",
+        "menuName": "Ballas OG - In-game",
         "data": {
           "action": "ig_ballasog"
         }
       },
       {
-        "menuName": "Ballasout",
+        "menuName": "Balla South Territory 1",
         "data": {
           "action": "g_m_y_ballasout_01"
         }
@@ -9671,7 +9671,7 @@
         }
       },
       {
-        "menuName": "Black Street Male",
+        "menuName": "Black Street Male 1",
         "data": {
           "action": "a_m_y_stbla_01"
         }
@@ -9683,13 +9683,13 @@
         }
       },
       {
-        "menuName": "Blackops",
+        "menuName": "Black Operative 1",
         "data": {
           "action": "s_m_y_blackops_01"
         }
       },
       {
-        "menuName": "Blackops",
+        "menuName": "Black Operative 2",
         "data": {
           "action": "s_m_y_blackops_02"
         }
@@ -10127,13 +10127,13 @@
         }
       },
       {
-        "menuName": "Davenorton",
+        "menuName": "Dave Norton",
         "data": {
           "action": "ig_davenorton"
         }
       },
       {
-        "menuName": "Davenorton-BROKEN",
+        "menuName": "Dave Norton - Cutscene - BROKEN",
         "data": {
           "action": "cs_davenorton"
         }
@@ -10151,7 +10151,7 @@
         }
       },
       {
-        "menuName": "Debra-BROKEN",
+        "menuName": "Debra - Cutscene - BROKEN",
         "data": {
           "action": "cs_debra"
         }
@@ -10175,19 +10175,19 @@
         }
       },
       {
-        "menuName": "Devin",
+        "menuName": "Devin Weston - Ingame",
         "data": {
           "action": "ig_devin"
         }
       },
       {
-        "menuName": "Devin-BROKEN",
+        "menuName": "Devin Weston - Cutscene - BROKEN",
         "data": {
           "action": "cs_devin"
         }
       },
       {
-        "menuName": "Devinsec",
+        "menuName": "Devin's Security",
         "data": {
           "action": "s_m_y_devinsec_01"
         }
@@ -10241,25 +10241,25 @@
         }
       },
       {
-        "menuName": "Dreyfuss",
+        "menuName": "Peter Dreyfuss - In-game",
         "data": {
           "action": "ig_dreyfuss"
         }
       },
       {
-        "menuName": "Dreyfuss-BROKEN",
+        "menuName": "Peter Dreyfuss - Cutscene - BROKEN",
         "data": {
           "action": "cs_dreyfuss"
         }
       },
       {
-        "menuName": "Drfriedlander",
+        "menuName": "Dr. Isiah Friedlander - In-game",
         "data": {
           "action": "ig_drfriedlander"
         }
       },
       {
-        "menuName": "Drfriedlander-BROKEN",
+        "menuName": "Dr. Isiah Friedlander - Cutscene - BROKEN",
         "data": {
           "action": "cs_drfriedlander"
         }
