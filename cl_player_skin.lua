@@ -55,6 +55,7 @@ function SetSkin( skin )
 			SetPlayerModel( PlayerId(), skin )
 			SetPedDefaultComponentVariation( PlayerId() )
 			SetModelAsNoLongerNeeded( skin )
+			resetTrainerMenus("playerskinmodify playerpropmodify")
 		end 
 	end 
 end 
