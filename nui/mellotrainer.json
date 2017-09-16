@@ -9245,13 +9245,13 @@
         }
       },
       {
-        "menuName": "Amanda Townley",
+        "menuName": "Amanda Townley - In-game",
         "data": {
           "action": "ig_amandatownley"
         }
       },
       {
-        "menuName": "Amanda Townley - BROKEN",
+        "menuName": "Amanda Townley - Cutscene -BROKEN",
         "data": {
           "action": "cs_amandatownley"
         }
@@ -9269,13 +9269,13 @@
         }
       },
       {
-        "menuName": "Andreas",
+        "menuName": "Andreas - In-game",
         "data": {
           "action": "ig_andreas"
         }
       },
       {
-        "menuName": "Andreas - BROKEN",
+        "menuName": "Andreas - Cutscene - BROKEN",
         "data": {
           "action": "cs_andreas"
         }
@@ -9347,13 +9347,13 @@
         }
       },
       {
-        "menuName": "Ashley Butler",
+        "menuName": "Ashley Butler - In-game",
         "data": {
           "action": "ig_ashley"
         }
       },
       {
-        "menuName": "Ashley Butler - BROKEN",
+        "menuName": "Ashley Butler - Cutscene - BROKEN",
         "data": {
           "action": "cs_ashley"
         }
@@ -11087,13 +11087,13 @@
         }
       },
       {
-        "menuName": "Johnny Klebitz",
+        "menuName": "Johnny Klebitz - In-game",
         "data": {
           "action": "ig_johnnyklebitz"
         }
       },
       {
-        "menuName": "Johnny Klebitz - BROKEN",
+        "menuName": "Johnny Klebitz - Cutscene - BROKEN",
         "data": {
           "action": "cs_johnnyklebitz"
         }
@@ -12179,13 +12179,13 @@
         }
       },
       {
-        "menuName": "Russian Drunk",
+        "menuName": "Russian Drunk - In-game",
         "data": {
           "action": "ig_russiandrunk"
         }
       },
       {
-        "menuName": "Russian Drunk - BROKEN",
+        "menuName": "Russian Drunk - Cutscene - BROKEN",
         "data": {
           "action": "cs_russiandrunk"
         }
@@ -12341,13 +12341,13 @@
         }
       },
       {
-        "menuName": "Simeon Yetarian",
+        "menuName": "Simeon Yetarian - In-game",
         "data": {
           "action": "ig_siemonyetarian"
         }
       },
       {
-        "menuName": "Simeon Yetarian - BROKEN",
+        "menuName": "Simeon Yetarian - Cutscene - BROKEN",
         "data": {
           "action": "cs_siemonyetarian"
         }
