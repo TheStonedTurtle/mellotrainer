@@ -1,3 +1,25 @@
+<h1>v0.5.5 (09-@@-2017)</h1>
+New Weapon Saving System and General bug fixes/improvments.
+
+
+
+<h3>Changes</h3>
+<ul>
+    <li>Fixed Cosmetic Damage toggle showing scratches</li>
+    <li>Updated <b>data-require</b> to work with <b>data-action</b>, was previously only working with <b>data-sub</b></li>
+    <li>Fixed Skin Changing menu when loading a saved skin</li>
+    <li>Fixed Voice Proximity Sync</li>
+    <li>Fixed incorrect submenu linking</li>
+    <li>JSON Menu Name updates(credits @Matty45)</li>
+</ul>
+
+<h3>Additions</h3>
+<ul>
+    <li>Added the weapon loadout saving/loading system</li>
+</ul>
+
+
+
 <h1>v0.5.0 (09-06-2017)</h1>
 JSON Updates, JSON Editor, Setting Sync System, New Location Menu, Blip/Overhead System Rewrite, and many other code improvements.
 
