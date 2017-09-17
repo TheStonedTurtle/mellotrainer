@@ -1149,7 +1149,7 @@
         ]
       },
       {
-        "menuName": "Flaregun",
+        "menuName": "Flare Gun",
         "weaponName": "WEAPON_FLAREGUN",
         "data": {
           "sub": 8
@@ -1320,7 +1320,7 @@
         ]
       },
       {
-        "menuName": "Stungun",
+        "menuName": "Stun Gun",
         "weaponName": "WEAPON_STUNGUN",
         "data": {
           "sub": 7
@@ -9191,19 +9191,19 @@
         }
       },
       {
-        "menuName": "Airhostess",
+        "menuName": "Air Hostess",
         "data": {
           "action": "s_f_y_airhostess_01"
         }
       },
       {
-        "menuName": "Airworker",
+        "menuName": "Air Worker",
         "data": {
           "action": "s_m_y_airworker"
         }
       },
       {
-        "menuName": "Aldinapoli",
+        "menuName": "Al Di Napoli",
         "data": {
           "action": "u_m_m_aldinapoli"
         }
@@ -9245,37 +9245,37 @@
         }
       },
       {
-        "menuName": "Amandatownley",
+        "menuName": "Amanda Townley - In-game",
         "data": {
           "action": "ig_amandatownley"
         }
       },
       {
-        "menuName": "Amandatownley-BROKEN",
+        "menuName": "Amanda Townley - Cutscene -BROKEN",
         "data": {
           "action": "cs_amandatownley"
         }
       },
       {
-        "menuName": "Ammucity",
+        "menuName": "Ammu-Nation Clerk - City",
         "data": {
           "action": "s_m_y_ammucity_01"
         }
       },
       {
-        "menuName": "Ammucountry",
+        "menuName": "Ammu-Nation Clerk - Country",
         "data": {
           "action": "s_m_m_ammucountry"
         }
       },
       {
-        "menuName": "Andreas",
+        "menuName": "Andreas - In-game",
         "data": {
           "action": "ig_andreas"
         }
       },
       {
-        "menuName": "Andreas-BROKEN",
+        "menuName": "Andreas - Cutscene - BROKEN",
         "data": {
           "action": "cs_andreas"
         }
@@ -9287,73 +9287,73 @@
         }
       },
       {
-        "menuName": "Anton Beaudelaire",
+        "menuName": "Anton Beaudelaire - Cutscene",
         "data": {
           "action": "csb_anton"
         }
       },
       {
-        "menuName": "Antonb",
+        "menuName": "Anton Beaudelaire - In-Game",
         "data": {
           "action": "u_m_y_antonb"
         }
       },
       {
-        "menuName": "Armboss",
+        "menuName": "Armenian Mob Boss",
         "data": {
           "action": "g_m_m_armboss_01"
         }
       },
       {
-        "menuName": "Armgoon",
+        "menuName": "Armenian Mob Goon 1",
         "data": {
           "action": "g_m_m_armgoon_01"
         }
       },
       {
-        "menuName": "Armgoon",
+        "menuName": "Armenian Mob Goon 2",
         "data": {
           "action": "g_m_y_armgoon_02"
         }
       },
       {
-        "menuName": "Armlieut",
+        "menuName": "Armenian Mob lieutenant 1",
         "data": {
           "action": "g_m_m_armlieut_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - MP",
         "data": {
           "action": "mp_s_m_armoured_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - SP 1",
         "data": {
           "action": "s_m_m_armoured_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - SP 2",
         "data": {
           "action": "s_m_m_armoured_02"
         }
       },
       {
-        "menuName": "Armymech",
+        "menuName": "Army Mechanic",
         "data": {
           "action": "s_m_y_armymech_01"
         }
       },
       {
-        "menuName": "Ashley",
+        "menuName": "Ashley Butler - In-game",
         "data": {
           "action": "ig_ashley"
         }
       },
       {
-        "menuName": "Ashley-BROKEN",
+        "menuName": "Ashley Butler - Cutscene - BROKEN",
         "data": {
           "action": "cs_ashley"
         }
@@ -9377,7 +9377,7 @@
         }
       },
       {
-        "menuName": "Azteca",
+        "menuName": "Azteca Gangster 1",
         "data": {
           "action": "g_m_y_azteca_01"
         }
@@ -9389,13 +9389,13 @@
         }
       },
       {
-        "menuName": "Ballaeast",
+        "menuName": "Balla East Territory 1",
         "data": {
           "action": "g_m_y_ballaeast_01"
         }
       },
       {
-        "menuName": "Ballaorig",
+        "menuName": "Balla Original Territory 1",
         "data": {
           "action": "g_m_y_ballaorig_01"
         }
@@ -9407,19 +9407,19 @@
         }
       },
       {
-        "menuName": "Ballas OG",
+        "menuName": "Ballas OG - Cutscene",
         "data": {
           "action": "csb_ballasog"
         }
       },
       {
-        "menuName": "Ballasog",
+        "menuName": "Ballas OG - In-game",
         "data": {
           "action": "ig_ballasog"
         }
       },
       {
-        "menuName": "Ballasout",
+        "menuName": "Balla South Territory 1",
         "data": {
           "action": "g_m_y_ballasout_01"
         }
@@ -9671,7 +9671,7 @@
         }
       },
       {
-        "menuName": "Black Street Male",
+        "menuName": "Black Street Male 1",
         "data": {
           "action": "a_m_y_stbla_01"
         }
@@ -9683,13 +9683,13 @@
         }
       },
       {
-        "menuName": "Blackops",
+        "menuName": "Black Ops Soldier 1",
         "data": {
           "action": "s_m_y_blackops_01"
         }
       },
       {
-        "menuName": "Blackops",
+        "menuName": "Black Ops Soldier 2",
         "data": {
           "action": "s_m_y_blackops_02"
         }
@@ -10127,13 +10127,13 @@
         }
       },
       {
-        "menuName": "Davenorton",
+        "menuName": "Dave Norton",
         "data": {
           "action": "ig_davenorton"
         }
       },
       {
-        "menuName": "Davenorton-BROKEN",
+        "menuName": "Dave Norton - Cutscene - BROKEN",
         "data": {
           "action": "cs_davenorton"
         }
@@ -10151,7 +10151,7 @@
         }
       },
       {
-        "menuName": "Debra-BROKEN",
+        "menuName": "Debra - Cutscene - BROKEN",
         "data": {
           "action": "cs_debra"
         }
@@ -10175,19 +10175,19 @@
         }
       },
       {
-        "menuName": "Devin",
+        "menuName": "Devin Weston - Ingame",
         "data": {
           "action": "ig_devin"
         }
       },
       {
-        "menuName": "Devin-BROKEN",
+        "menuName": "Devin Weston - Cutscene - BROKEN",
         "data": {
           "action": "cs_devin"
         }
       },
       {
-        "menuName": "Devinsec",
+        "menuName": "Devin's Security",
         "data": {
           "action": "s_m_y_devinsec_01"
         }
@@ -10241,25 +10241,25 @@
         }
       },
       {
-        "menuName": "Dreyfuss",
+        "menuName": "Peter Dreyfuss - In-game",
         "data": {
           "action": "ig_dreyfuss"
         }
       },
       {
-        "menuName": "Dreyfuss-BROKEN",
+        "menuName": "Peter Dreyfuss - Cutscene - BROKEN",
         "data": {
           "action": "cs_dreyfuss"
         }
       },
       {
-        "menuName": "Drfriedlander",
+        "menuName": "Dr. Isiah Friedlander - In-game",
         "data": {
           "action": "ig_drfriedlander"
         }
       },
       {
-        "menuName": "Drfriedlander-BROKEN",
+        "menuName": "Dr. Isiah Friedlander - Cutscene - BROKEN",
         "data": {
           "action": "cs_drfriedlander"
         }
@@ -11087,13 +11087,13 @@
         }
       },
       {
-        "menuName": "Johnnyklebitz",
+        "menuName": "Johnny Klebitz - In-game",
         "data": {
           "action": "ig_johnnyklebitz"
         }
       },
       {
-        "menuName": "Johnnyklebitz-BROKEN",
+        "menuName": "Johnny Klebitz - Cutscene - BROKEN",
         "data": {
           "action": "cs_johnnyklebitz"
         }
@@ -12155,13 +12155,13 @@
         }
       },
       {
-        "menuName": "Rocco Pelosi",
+        "menuName": "Rocco Pelosi - Cutscene",
         "data": {
           "action": "csb_roccopelosi"
         }
       },
       {
-        "menuName": "Roccopelosi",
+        "menuName": "Rocco Pelosi - In-Game",
         "data": {
           "action": "ig_roccopelosi"
         }
@@ -12179,13 +12179,13 @@
         }
       },
       {
-        "menuName": "Russiandrunk",
+        "menuName": "Russian Drunk - In-game",
         "data": {
           "action": "ig_russiandrunk"
         }
       },
       {
-        "menuName": "Russiandrunk-BROKEN",
+        "menuName": "Russian Drunk - Cutscene - BROKEN",
         "data": {
           "action": "cs_russiandrunk"
         }
@@ -12341,13 +12341,13 @@
         }
       },
       {
-        "menuName": "Siemonyetarian",
+        "menuName": "Simeon Yetarian - In-game",
         "data": {
           "action": "ig_siemonyetarian"
         }
       },
       {
-        "menuName": "Siemonyetarian-BROKEN",
+        "menuName": "Simeon Yetarian - Cutscene - BROKEN",
         "data": {
           "action": "cs_siemonyetarian"
         }
@@ -12389,7 +12389,7 @@
         }
       },
       {
-        "menuName": "Snowcop",
+        "menuName": "Yankton Cop",
         "data": {
           "action": "s_m_m_snowcop_01"
         }
@@ -12539,13 +12539,13 @@
         }
       },
       {
-        "menuName": "Spyactor",
+        "menuName": "Spy Actor",
         "data": {
           "action": "u_m_m_spyactor"
         }
       },
       {
-        "menuName": "Spyactress",
+        "menuName": "Spy Actress",
         "data": {
           "action": "u_f_y_spyactress"
         }
@@ -13171,7 +13171,7 @@
         }
       },
       {
-        "menuName": "Humpback",
+        "menuName": "Humpback Whale",
         "data": {
           "action": "a_c_humpback"
         }
@@ -13213,7 +13213,7 @@
         }
       },
       {
-        "menuName": "Rhesus",
+        "menuName": "Rhesus Monkey",
         "data": {
           "action": "a_c_rhesus"
         }
@@ -13225,19 +13225,19 @@
         }
       },
       {
-        "menuName": "Sharkhammer",
+        "menuName": "Hammerhead Shark",
         "data": {
           "action": "a_c_sharkhammer"
         }
       },
       {
-        "menuName": "Sharktiger",
+        "menuName": "Tiger Shark",
         "data": {
           "action": "a_c_sharktiger"
         }
       },
       {
-        "menuName": "Shepherd",
+        "menuName": "German Shepherd",
         "data": {
           "action": "a_c_shepherd"
         }
