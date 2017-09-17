@@ -213,7 +213,8 @@ function maxAmmoWeapon(weaponName)
     local weapon = GetHashKey(weaponName)
     local ammoType = GetPedAmmoType(playerPed, weapon)
     if(HasPedGotWeapon(playerPed, weapon, 0))then
-        SetPedAmmoByType(playerPed, ammoType, 9999)
+        -- SetPedAmmoByType(playerPed, ammoType, 9999)
+        AddAmmoToPed( playerPed, weapon, 9999 )
         drawNotification("Max Ammo")
     end
 end
@@ -225,9 +226,10 @@ function addWeaponClip(weaponName)
     local ammoType = GetPedAmmoType(playerPed, weapon)
 
     if(HasPedGotWeapon(playerPed, weapon, 0))then
-        local maxAmmo = GetWeaponClipSize(weapon)
-        --SetAmmoInClip(playerPed, weapon, maxAmmo) -- Refill Current Clip
-        AddAmmoToPed(playerPed, weapon, maxAmmo) 
+        -- local maxAmmo = GetWeaponClipSize(weapon)
+        local maxAmmo = GetMaxAmmoInClip( playerPed, weapon, true )
+        SetAmmoInClip(playerPed, weapon, maxAmmo) -- Refill Current Clip
+        -- AddAmmoToPed(playerPed, weapon, maxAmmo)
         drawNotification("Ammo Clip Added")
     end
 end
@@ -271,7 +273,7 @@ end
 
 -- Toggle a weapon component on/off for a weapon.
 function toggleWeaponComponent(weaponName,componentName)
-    --Citizen.Trace(weaponName.." "..componentName)
+    -- Citizen.Trace(weaponName.." "..componentName)
     local weapon = GetHashKey(weaponName)
     local component = GetHashKey(componentName)
     if(HasPedGotWeaponComponent(playerPed,weapon,component))then
@@ -282,6 +284,7 @@ function toggleWeaponComponent(weaponName,componentName)
         drawNotification("Weapon Mod Added")
     end
 
+    maxAmmoWeapon( weaponName )
 end
 
 
@@ -339,7 +342,7 @@ end)
 
 
 
-local allWeapons = {"WEAPON_KNIFE","WEAPON_KNUCKLE","WEAPON_NIGHTSTICK","WEAPON_HAMMER","WEAPON_BAT","WEAPON_GOLFCLUB","WEAPON_CROWBAR","WEAPON_BOTTLE","WEAPON_DAGGER","WEAPON_HATCHET","WEAPON_MACHETE","WEAPON_FLASHLIGHT","WEAPON_SWITCHBLADE","WEAPON_PISTOL","WEAPON_COMBATPISTOL","WEAPON_APPISTOL","WEAPON_PISTOL50","WEAPON_SNSPISTOL","WEAPON_HEAVYPISTOL","WEAPON_VINTAGEPISTOL","WEAPON_STUNGUN","WEAPON_FLAREGUN","WEAPON_MARKSMANPISTOL","WEAPON_REVOLVER","WEAPON_MICROSMG","WEAPON_SMG","WEAPON_ASSAULTSMG","WEAPON_MG","WEAPON_COMBATMG","WEAPON_COMBATPDW","WEAPON_GUSENBERG","WEAPON_MACHINEPISTOL","WEAPON_ASSAULTRIFLE","WEAPON_CARBINERIFLE","WEAPON_ADVANCEDRIFLE","WEAPON_SPECIALCARBINE","WEAPON_BULLPUPRIFLE","WEAPON_COMPACTRIFLE","WEAPON_PUMPSHOTGUN","WEAPON_SAWNOFFSHOTGUN","WEAPON_BULLPUPSHOTGUN","WEAPON_ASSAULTSHOTGUN","WEAPON_MUSKET","WEAPON_HEAVYSHOTGUN","WEAPON_DBSHOTGUN","WEAPON_SNIPERRIFLE","WEAPON_HEAVYSNIPER","WEAPON_MARKSMANRIFLE","WEAPON_GRENADELAUNCHER","WEAPON_GRENADELAUNCHER_SMOKE","WEAPON_RPG","WEAPON_STINGER","WEAPON_MINIGUN","WEAPON_FIREWORK","WEAPON_RAILGUN","WEAPON_HOMINGLAUNCHER","WEAPON_GRENADE","WEAPON_STICKYBOMB","WEAPON_PROXMINE","WEAPON_BZGAS","WEAPON_SMOKEGRENADE","WEAPON_MOLOTOV","WEAPON_FIREEXTINGUISHER","WEAPON_PETROLCAN","WEAPON_SNOWBALL","WEAPON_FLARE","WEAPON_BALL"}
+local allWeapons = {"WEAPON_KNIFE","WEAPON_KNUCKLE","WEAPON_NIGHTSTICK","WEAPON_HAMMER","WEAPON_BAT","WEAPON_GOLFCLUB","WEAPON_CROWBAR","WEAPON_BOTTLE","WEAPON_DAGGER","WEAPON_HATCHET","WEAPON_MACHETE","WEAPON_FLASHLIGHT","WEAPON_SWITCHBLADE","WEAPON_PISTOL","WEAPON_PISTOL_MK2","WEAPON_COMBATPISTOL","WEAPON_APPISTOL","WEAPON_PISTOL50","WEAPON_SNSPISTOL","WEAPON_HEAVYPISTOL","WEAPON_VINTAGEPISTOL","WEAPON_STUNGUN","WEAPON_FLAREGUN","WEAPON_MARKSMANPISTOL","WEAPON_REVOLVER","WEAPON_MICROSMG","WEAPON_SMG","WEAPON_SMG_MK2","WEAPON_ASSAULTSMG","WEAPON_MG","WEAPON_COMBATMG","WEAPON_COMBATMG_MK2","WEAPON_COMBATPDW","WEAPON_GUSENBERG","WEAPON_MACHINEPISTOL","WEAPON_ASSAULTRIFLE","WEAPON_ASSAULTRIFLE_MK2","WEAPON_CARBINERIFLE","WEAPON_CARBINERIFLE_MK2","WEAPON_ADVANCEDRIFLE","WEAPON_SPECIALCARBINE","WEAPON_BULLPUPRIFLE","WEAPON_COMPACTRIFLE","WEAPON_PUMPSHOTGUN","WEAPON_SAWNOFFSHOTGUN","WEAPON_BULLPUPSHOTGUN","WEAPON_ASSAULTSHOTGUN","WEAPON_MUSKET","WEAPON_HEAVYSHOTGUN","WEAPON_DBSHOTGUN","WEAPON_SNIPERRIFLE","WEAPON_HEAVYSNIPER","WEAPON_HEAVYSNIPER_MK2","WEAPON_MARKSMANRIFLE","WEAPON_GRENADELAUNCHER","WEAPON_GRENADELAUNCHER_SMOKE","WEAPON_RPG","WEAPON_STINGER","WEAPON_MINIGUN","WEAPON_FIREWORK","WEAPON_RAILGUN","WEAPON_HOMINGLAUNCHER","WEAPON_GRENADE","WEAPON_STICKYBOMB","WEAPON_PROXMINE","WEAPON_BZGAS","WEAPON_SMOKEGRENADE","WEAPON_MOLOTOV","WEAPON_FIREEXTINGUISHER","WEAPON_PETROLCAN","WEAPON_SNOWBALL","WEAPON_FLARE","WEAPON_BALL"}
 
 
 -- Toggle Infinite ammo for all weapons.
@@ -405,7 +408,15 @@ RegisterNUICallback("weaponoptions", function(data)
 end)
 
 
+-- Citizen.CreateThread( function()
+--     while true do 
+--         SetPedInfiniteAmmo(GetPlayerPed(-1), true)
+--         SetPedInfiniteAmmoClip(GetPlayerPed(-1), true)
+--         SetPedAmmo(GetPlayerPed(-1), (GetSelectedPedWeapon(GetPlayerPed(-1))), 999)
 
+--         Citizen.Wait( 0 )
+--     end 
+-- end )
 
 -- Infinite Parachutes, checks 4 times per second
 Citizen.CreateThread(function()

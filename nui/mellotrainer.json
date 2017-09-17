@@ -271,6 +271,107 @@
         ]
       },
       {
+        "menuName": "Heavy Sniper MK2", 
+        "weaponName": "WEAPON_HEAVYSNIPER_MK2",
+        "data": {
+          "sub": 3
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_01"
+            }
+          },
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_02"
+            }
+          },
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_INCENDIARY"
+            }
+          },
+          {
+            "menuName": "Armor Piercing Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_ARMORPIERCING"
+            }
+          },
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_FMJ"
+            }
+          },
+          {
+            "menuName": "Explosive Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_EXPLOSIVE"
+            }
+          },
+          {
+            "menuName": "Normal Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_LARGE_MK2"
+            }
+          }, 
+          {
+            "menuName": "Advanced Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MAX"
+            }
+          }, 
+          {
+            "menuName": "Night Vision Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_NV"
+            }
+          }, 
+          {
+            "menuName": "Thermal Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_THERMAL"
+            }
+          },
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_SR_SUPP_03"
+            }
+          },
+          {
+            "menuName": "Default Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SR_BARREL_01"
+            }
+          }, 
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SR_BARREL_02"
+            }
+          }, 
+          {
+            "menuName": "Squared Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_08"
+            }
+          }, 
+          {
+            "menuName": "Bell-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_09"
+            }
+          }
+        ]
+      },
+      {
         "menuName": "Marksman Rifle",
         "weaponName": "WEAPON_MARKSMANRIFLE",
         "data": {
