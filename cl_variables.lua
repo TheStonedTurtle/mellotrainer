@@ -117,7 +117,14 @@ featureVPNearby = false;
 featureVPDistant = false;
 featureVPFar = false;
 featureVPVeryFar = false;
-
+-- One of the below must be true.
+-- If multiple are true only the first one will apply.
+featureChannelDefault = true;
+featureChannel1 = false;
+featureChannel2 = false;
+featureChannel3 = false;
+featureChannel4 = false;
+featureChannel5 = false;
 
 
 
