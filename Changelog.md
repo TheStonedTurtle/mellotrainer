@@ -9,6 +9,7 @@ New Weapon Saving System and General bug fixes/improvments.
     <li>Updated <b>data-require</b> to work with <b>data-action</b>, was previously only working with <b>data-sub</b></li>
     <li>Fixed Skin Changing menu when loading a saved skin</li>
     <li>Fixed Voice Proximity Sync</li>
+    <li>Fixed Voice Channel Menu and added Syncing</li>
     <li>Fixed incorrect submenu linking</li>
     <li>JSON Menu Name updates(credits @Matty45)</li>
 </ul>
@@ -16,6 +17,7 @@ New Weapon Saving System and General bug fixes/improvments.
 <h3>Additions</h3>
 <ul>
     <li>Added the weapon loadout saving/loading system</li>
+    <li>Added custom privledge information to the readme document</li>
 </ul>
 
 

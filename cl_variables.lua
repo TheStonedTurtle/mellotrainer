@@ -344,15 +344,7 @@ fib = nil;
 --ptexture = {};
 --pallet = {};
 
-
---featureChannelDefault = false;
---featureChannel1 = false;
---featureChannel2 = false;
---featureChannel3 = false;
---featureChannel4 = false;
---featureChannel5 = false;
-
-
+-- Horizontal/Vertical Camera features.
 --featureVC1 = false;
 --featureVC2 = false;
 --featureVC3 = false;
