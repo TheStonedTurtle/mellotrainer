@@ -547,9 +547,12 @@ function checkValidPropComponents(propID)
 	return valid
 end
 
-local playerSkin = {}
 
-function savePlayerApperanceVariables()
+
+local playerSkin = {}
+local pmodel = nil
+function savePlayerAppearanceVariables(pmod)
+	pmodel = pmod
 	local ped = PlayerPedId()
 	for i=0,12,1 do
 		table.insert(playerSkin, {
@@ -564,19 +567,19 @@ function savePlayerApperanceVariables()
 end
 
 
-function restorePlayerApperance(pmodel)	
-	if(IsModelInCdimage(pmodel) and IsModelValid(pmodel))then
-		RequestModel(pmodel)
-		while not HasModelLoaded(pmodel)do
-			Wait(1)
-		end
-
-		SetPlayerModel(PlayerId(),pmodel)
-		for _,obj in playerSkin do
-			local obj
-			SetPedComponentVariation(PlayerPedId(), 1, obj.drawable, obj.dtexture, obj.palette)
-			SetPedPropIndex(PlayerPedId(), obj.index, obj.prop, obj.ptexture)
-		end
-		SetModelAsNoLongerNeeded(pmodel)
+function restorePlayerAppearance()	
+	_LoadModel(pmodel)
+	SetPlayerModel(PlayerId(),pmodel)
+	local ped = GetPlayerPed(-1)
+	for _,obj in pairs(playerSkin) do
+		SetPedComponentVariation(ped, obj.index, obj.drawable, obj.dtexture, obj.palette)
+		SetPedPropIndex(ped, obj.index, obj.prop, obj.ptexture)
 	end
+	SetModelAsNoLongerNeeded(pmodel)
 end
+
+AddEventHandler("mellotrainer:playerSpawned",function()
+	if(featureRestoreAppearance)then
+		restorePlayerAppearance()
+	end
+end)

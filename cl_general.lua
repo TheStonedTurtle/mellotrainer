@@ -188,6 +188,12 @@ AddEventHandler("mellotrainer:init", function()
 
 	-- Initialize Client Settings
 	syncSettings()
+
+	-- Create Mellotrainer Spawn Event Handler.
+
+	AddEventHandler("playerSpawned", function(spawn)
+		TriggerEvent("mellotrainer:playerSpawned")
+	end)
 end)
 
 

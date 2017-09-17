@@ -52,6 +52,8 @@ featureHideHud = false;
 featureBigHud = false;
 featureMapBlips = true;
 featureAreaStreetNames = false;
+featureRestoreAppearance = true;
+--featureRestoreWeapons = false;
 
 
 --Vehicle Options
