@@ -546,3 +546,37 @@ function checkValidPropComponents(propID)
 	end
 	return valid
 end
+
+local playerSkin = {}
+
+function savePlayerApperanceVariables()
+	local ped = PlayerPedId()
+	for i=0,12,1 do
+		table.insert(playerSkin, {
+			drawable = GetPedDrawableVariation(ped, i),
+			dtexture = GetPedTextureVariation(ped, i),
+			prop = GetPedPropIndex(ped, i),
+			ptexture = GetPedPropTextureIndex(ped, i),
+			palette = GetPedPaletteVariation(ped, i),
+			index = i
+		})
+	end
+end
+
+
+function restorePlayerApperance(pmodel)	
+	if(IsModelInCdimage(pmodel) and IsModelValid(pmodel))then
+		RequestModel(pmodel)
+		while not HasModelLoaded(pmodel)do
+			Wait(1)
+		end
+
+		SetPlayerModel(PlayerId(),pmodel)
+		for _,obj in playerSkin do
+			local obj
+			SetPedComponentVariation(PlayerPedId(), 1, obj.drawable, obj.dtexture, obj.palette)
+			SetPedPropIndex(PlayerPedId(), obj.index, obj.prop, obj.ptexture)
+		end
+		SetModelAsNoLongerNeeded(pmodel)
+	end
+end
