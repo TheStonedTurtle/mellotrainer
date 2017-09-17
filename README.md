@@ -91,6 +91,7 @@ This section is only intended for people with LUA experience and a basic underst
 <tr><td>data-sub</td><td>ID of the new menu to show when selected.</td></tr>
 <tr><td>data-share</td><td>Information to share with the sub menu action options.(won't do anything unless data-sub is also specified)</td></tr>
 <tr><td>data-shareid</td><td>Updates the submenu ID to this if it exists. Useful for ensuring that a menu that is used my multiple different options will return to the correct place within the trainer.</td></tr>
+<tr><td>data-require</td><td>Used for permission checks for <b>data-action</b> and <b>data-sub</b> events. See Below</td></tr>
 </tbody>
 </table>
 
@@ -145,3 +146,44 @@ This section is only intended for people with LUA experience and a basic underst
 I created a website hosted on my github.io pages for editing the Mello Trainer JSON. It is not the best website and may have performance issues but it accomplishes the required task. Please read the above JSON information before trying/asking questions about this editor.
 
 <a href="https://thestonedturtle.github.io/mellotrainer/mellotrainer.html" target="_blank">TheStonedTurtle.github.io</a></li>
+
+
+<h2>Custom Privileges</h2>
+To create custom privileges within mello trainer using data-require you can follow the below template. This works for data-action and data-sub but does not support data-hover events. <i>Note: This can be done without triggering a server event.</i>
+
+<h3>Client.lua</h3>
+Add the below to any client lua file.
+
+
+```
+-- Request Cop Status
+RegisterNUICallback("requirecop", function(data, cb)
+    TriggerServerEvent("mellotrainer:requestCopStatus")
+end)
+
+-- Recieve Cop Status
+RegisterNetEvent("mellotrainer:copstatus")
+AddEventHandler("mellotrainer:copstatus", function(status)
+    if(status)then
+        SendNUIMessage({customprivilegecheck = true})
+    else
+        drawNotification("~r~Permission Denied!")
+    end     
+end)
+```
+
+<h3>Server.lua</h3>
+
+Add the below to any server lua file.
+
+
+```
+RegisterServerEvent('mellotrainer:requestCopStatus')
+AddEventHandler('mellotrainer:requestCopStatus', function(id) 
+    local result = false
+    
+    -- Logic to check if they are a cop here
+
+    TriggerClientEvent("mellotrainer:copstatus",source,result)
+end)
+```

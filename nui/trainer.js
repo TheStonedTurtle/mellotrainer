@@ -24,8 +24,8 @@ var maxVisibleItems = 10;           // Max amount of items in 1 menu (before aut
 
 
 // Trainer Memory for pages & options. Only works backwards.
-var pageMemory = [];    // Holds memory of which page you were previously on
-var optionMemory = [];  // Holds memory of which option you were previously on
+var memoryTree = {};    // Holds the memory for every menu in the trainer
+var currentMemory = {}; // Holds the memory for the current menu
 var counter;            // Current Trainer Option
 var maxamount;          // Max Amount of Options for Current Menu
 var currentpage;        // Current Page Number
@@ -154,7 +154,7 @@ $(function() {
         }
 
         // If they passed the security check access the menu and skip the check
-        if (item.vehicleaccess || item.adminaccess){
+        if (item.vehicleaccess || item.adminaccess || item.customprivilegecheck){
             handleSelectedOption(true);
         }
 
@@ -385,8 +385,8 @@ function resetTrainer() {
     showMenu(menus["mainmenu"], true);
 
     // Reset trainer memory.
-    pageMemory = [];
-    optionMemory = [];
+    memoryTree = {};
+    currentMemory = {};
 }
 
 
@@ -575,6 +575,14 @@ function handleSelectedOption(requireSkip) {
     if(dataArray.indexOf("action") > -1){
         var newstate = true;     // Default the state to True
 
+        // Does this sub menu require anything?
+        if(dataArray.indexOf("require") > -1 && requireSkip != true){
+            var requireString = "require"+item.data("require");
+            sendData(requireString, {});
+            playSound("SELECT");
+            return;
+        }
+
         if (dataArray.indexOf("state") > -1) {
             // .attr() because .data() gives original values
 
@@ -726,13 +734,26 @@ function resetSelected() {
 }
 
 
+// Grabs Memory Tree for new Menu and updates old one.
+function MemoryTreeHandler(menu){
+    // Update old Menu
+    if (content != null) {
+        // Update memory Tree
+        var ID = $(content.menu).attr("id");
+        memoryTree[ID] = {"page":currentpage,"option":counter}
+    }
+
+    // Request New Memory
+    var ID = $(menu.menu).attr("id")
+    currentMemory = memoryTree[ID] || {}
+    return [currentMemory.page || 0, currentMemory.option || 0]
+}
+
+
 // used to show a menu (adds back to container);
 function showMenu(menu, memoryPrevention) {
-    // Add the current page/option to memory.
-    if(!memoryPrevention){
-        pageMemory.push(currentpage);
-        optionMemory.push(counter);
-    }
+    // Retrieve Page & Option to show for menu
+    var [newPage,newOption] = MemoryTreeHandler(menu)
 
     // Remove old menu div
     if (content != null) {
@@ -743,22 +764,18 @@ function showMenu(menu, memoryPrevention) {
     content = menu;
     container.append(content.menu);
 
-    showPage(0);
-    resetSelected();
-    requestStateToggles($(content.menu).attr( "id" )); 
+
+    showPage(newPage);
+    selectOption(newOption)
+    requestStateToggles($(content.menu).attr("id")); 
 }
 
 
 // Used to show previous menu page, with memory
 function showBackMenu(menu) {
-    var newPage = pageMemory[pageMemory.length - 1] || 0;
-    var newOption = optionMemory[optionMemory.length - 1] || 0;
-
-
-    // Remove the options from memory
-    pageMemory.pop();
-    optionMemory.pop();
-
+    // Retrieve Page & Option to show for menu
+    var [newPage,newOption] = MemoryTreeHandler(menu)
+    
     // remove old menu
     if (content != null) {
         content.menu.detach();
@@ -900,6 +917,7 @@ function addWeaponTintMenu(containerDiv,spawnName,idName){
 
 // Adds new attributes for the specified element. Recursive call to handle linking to sub-menu
 function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction){
+    var subSeparator = "_"
     // defaultAction is used for static menus
     //sendData("debug",curIndex+" "+idName+" "+defaultAction+" : curIndex idName defaultAction")
     if(!defaultAction){
@@ -918,7 +936,7 @@ function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction
 
                     // Ensure unique IDs by using parent ID as starting point.
                     if(dataKey == "sub" || dataKey == "shareid"){
-                        curDataValue = idName+curDataValue;
+                        curDataValue = idName+subSeparator+curDataValue;
                         //sendData("debug","data-"+dataKey+" "+curDataValue)
                     }
 
@@ -941,7 +959,7 @@ function addNewTrainerOptions(newEle,currentObject,curIndex,idName,defaultAction
 
             // Add submenu (accompanies by data-sub)
             case "submenu":
-                var newID = idName+currentObject["data"]["sub"];
+                var newID = idName+subSeparator+currentObject["data"]["sub"];
 
                 //sendData("debug","creating submenu: "+newID)
 
