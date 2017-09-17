@@ -9683,13 +9683,13 @@
         }
       },
       {
-        "menuName": "Black Operative 1",
+        "menuName": "Black Ops Soldier 1",
         "data": {
           "action": "s_m_y_blackops_01"
         }
       },
       {
-        "menuName": "Black Operative 2",
+        "menuName": "Black Ops Soldier 2",
         "data": {
           "action": "s_m_y_blackops_02"
         }
