@@ -16,7 +16,8 @@ New Weapon Saving System and General bug fixes/improvments.
 
 <h3>Additions</h3>
 <ul>
-    <li>Added the weapon loadout saving/loading system</li>
+	<li>Added Restore Apperance toggle (Default = ON)</li>
+    <li>Added Weapon Loadout saving and loading system</li>
     <li>Added custom privledge information to the readme document</li>
 </ul>
 
