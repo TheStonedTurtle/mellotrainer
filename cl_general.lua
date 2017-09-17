@@ -102,23 +102,23 @@ end
 
 -- Manually Sync Trainer Settings
 function syncSettings()
-	local distance = 0
+	local distance = 0.0
 	if(featureVPAllPlayers)then
-		distance = 0;
+		distance = 0.0
 	elseif(featureVPTooClose)then
-		distance = 5
+		distance = 5.0
 	elseif(featureVPVeryClose)then
-		distance = 25
+		distance = 25.0
 	elseif(featureVPClose)then
-		distance = 75
+		distance = 75.0
 	elseif(featureVPNearby)then
-		distance = 200
+		distance = 200.0
 	elseif(featureVPDistant)then
-		distance = 500
+		distance = 500.0
 	elseif(featureVPFar)then
-		distance = 2500
+		distance = 2500.0
 	elseif(featureVPVeryFar)then
-		distance = 8000
+		distance = 8000.0
 	end
 
 	NetworkSetTalkerProximity(distance)     					  -- Voice Proximity

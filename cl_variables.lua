@@ -107,7 +107,9 @@ featureWeatherFreeze = false;
 -- Voice
 featureShowVoiceChatSpeaker = true;
 featureVoiceChat = true;
--- One of the below must be true
+-- One of the below must be true.
+-- If multiple are true only the first one will apply.
+featureVPAllPlayers = true;
 featureVPTooClose = false;
 featureVPVeryClose = false;
 featureVPClose = false;
@@ -115,7 +117,6 @@ featureVPNearby = false;
 featureVPDistant = false;
 featureVPFar = false;
 featureVPVeryFar = false;
-featureVPAllPlayers = true;
 
 
 
