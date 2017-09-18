@@ -124,8 +124,9 @@ end
 
 
 function DATASAVE:SendSavedData( file, type, source )
-    local event = "wk:RecieveSaved" .. string.gsub(type, "^%l", string.upper)
+    local event = "wk:RecieveSaved" .. string.gsub( type, "^%l", string.upper )
     local data = self:LoadFile( file )
+
     if ( next( data ) ~= nil ) then 
         TriggerClientEvent( event, source, data )
     end
@@ -186,8 +187,8 @@ function DATASAVE:AddPlayerToDataSave( source )
         fileNames.skins = id .. "_skins.txt"
         fileNames.toggles = id .. "_toggles.txt"
 
-        for key,filename in pairs( fileNames ) do
-            if(self:DoesFileExist( filename ) )then
+        for key, filename in pairs( fileNames ) do
+            if ( self:DoesFileExist( filename ) )then
                 self:SendSavedData( filename, key, source )
             else
                 self:print( "Creating " .. key .. " save file for " .. GetPlayerName( source) )
@@ -218,9 +219,11 @@ RegisterServerEvent( 'wk:DataLoad' )
 AddEventHandler( 'wk:DataLoad', function( type )
     if ( Config.settings.localSaving ) then 
         local id = DATASAVE:GetIdentifier( source, "steam" )
+
         if ( id ~= nil ) then 
             local file = id .. "_" .. type .. ".txt"
-            if( DATASAVE:DoesFileExist( file ) ) then
+
+            if ( DATASAVE:DoesFileExist( file ) ) then
                 DATASAVE:SendSavedData( file, type, source )
             end
         end 
