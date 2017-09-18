@@ -1,5 +1,5 @@
 <h1>v0.5.5 (09-@@-2017)</h1>
-New Weapon Saving System and General bug fixes/improvments.
+Added new trainer features, new Weapon & Setting Saving, and some general bug fixes/improvments
 
 
 
@@ -17,6 +17,8 @@ New Weapon Saving System and General bug fixes/improvments.
 <h3>Additions</h3>
 <ul>
 	<li>Added Restore Apperance toggle (Default = ON)</li>
+	<li>Added Local Setting Saving System (Trainer Toggles)</li>
+	<li>Added MK2 Weapons and some of their attachments</li>
     <li>Added Weapon Loadout saving and loading system</li>
     <li>Added custom privledge information to the readme document</li>
 </ul>
