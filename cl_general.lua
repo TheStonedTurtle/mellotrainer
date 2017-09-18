@@ -402,6 +402,11 @@ RegisterNUICallback("savefeaturevariables", function()
 	drawNotification("Current settings saved")
 end)
 
+RegisterNUICallback("resetfeaturevariables", function()
+	TriggerServerEvent( "wk:DataSave", "toggles", {}, 0)
+	drawNotification("Saved settings cleared  Reconnect to resync")
+end)
+
 RegisterNUICallback("loadfeaturevariables", function()
 	TriggerServerEvent( "wk:DataLoad", "toggles")
 end)
