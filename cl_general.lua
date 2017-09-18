@@ -369,3 +369,46 @@ Citizen.CreateThread(function()
 
 	end
 end)
+
+
+-- *
+-- * Toggle Saving/Loading System
+-- *
+
+function setFeatureToggleStates(data)
+	for k,v in pairs(data) do
+		_G[k] = v
+	end
+end
+
+
+function getFeatureToggleStates()
+	local featureVariables = {}
+	for k,v in pairs(_G)do
+		if string.find(k,"feature") then
+			featureVariables[k] = v
+			if string.find(k,"Updated") then -- Force sync
+				featureVariables[k] = true
+			end
+		end
+	end
+	return featureVariables
+end
+
+
+RegisterNUICallback("savefeaturevariables", function()
+	local toggles = getFeatureToggleStates()
+	TriggerServerEvent( "wk:DataSave", "toggles", toggles, 0)
+	drawNotification("Current settings saved")
+end)
+
+RegisterNUICallback("loadfeaturevariables", function()
+	TriggerServerEvent( "wk:DataLoad", "toggles")
+end)
+
+RegisterNetEvent("wk:RecieveSavedToggles")
+AddEventHandler("wk:RecieveSavedToggles", function(data)
+	setFeatureToggleStates(data["0"])
+	syncSettings()
+	drawNotification("Settings loaded")
+end)

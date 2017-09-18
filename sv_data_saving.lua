@@ -122,6 +122,15 @@ function DATASAVE:WriteToFile( name, data, index )
     file:close()
 end 
 
+
+function DATASAVE:SendSavedData( file, type, source )
+    local event = "wk:RecieveSaved" .. string.gsub(type, "^%l", string.upper)
+    local data = self:LoadFile( file )
+    if ( next( data ) ~= nil ) then 
+        TriggerClientEvent( event, source, data )
+    end
+end 
+
 function DATASAVE:SendSaveData( source )
     local id = self:GetIdentifier( source, "steam" )
 
@@ -146,7 +155,7 @@ function DATASAVE:SendSaveData( source )
         end
 
         if ( next( trainerToggles ) ~= nil ) then
-            TriggerClientEvent( 'wk:ReceiveTrainerToggles', source, trainerToggles)
+            TriggerClientEvent( 'wk:RecieveSavedToggles', source, trainerToggles)
         end
     else 
         self:print( "Attempted to load save data for " .. GetPlayerName( source ) .. ", but does not have a steam id." ) 
@@ -178,7 +187,9 @@ function DATASAVE:AddPlayerToDataSave( source )
         fileNames.toggles = id .. "_toggles.txt"
 
         for key,filename in pairs( fileNames ) do
-            if(not self:DoesFileExist( filename ) )then
+            if(self:DoesFileExist( filename ) )then
+                self:SendSavedData( filename, key, source )
+            else
                 self:print( "Creating " .. key .. " save file for " .. GetPlayerName( source) )
                 self:CreateFile( filename )
             end
@@ -202,6 +213,20 @@ AddEventHandler( 'wk:DataSave', function( type, data, index )
         end 
     end 
 end )
+
+RegisterServerEvent( 'wk:DataLoad' )
+AddEventHandler( 'wk:DataLoad', function( type )
+    if ( Config.settings.localSaving ) then 
+        local id = DATASAVE:GetIdentifier( source, "steam" )
+        if ( id ~= nil ) then 
+            local file = id .. "_" .. type .. ".txt"
+            if( DATASAVE:DoesFileExist( file ) ) then
+                DATASAVE:SendSavedData( file, type, source )
+            end
+        end 
+    end 
+end )
+
 
 function startsWith( string, start )
     return string.sub( string, 1, string.len( start ) ) == start
