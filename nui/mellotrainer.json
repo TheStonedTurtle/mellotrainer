@@ -1176,6 +1176,137 @@
             }
           }
         ]
+      },
+      {
+        "menuName": "SMG MK2", 
+        "weaponName": "WEAPON_SMG_MK2", 
+        "data": {
+          "sub": 9
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_01"
+            }
+          }, 
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_02"
+            }
+          }, 
+          {
+            "menuName": "Tracer Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_TRACER"
+            }
+          }, 
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_INCENDIARY"
+            }
+          }, 
+          {
+            "menuName": "Hollow Point Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_HOLLOWPOINT"
+            }
+          }, 
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_FMJ"
+            }
+          }, 
+          {
+            "menuName": "Flashlight", 
+            "data": {
+              "action": "COMPONENT_AT_AR_FLSH"
+            }
+          }, 
+          {
+            "menuName": "Holographic Sight", 
+            "data": {
+              "action": "COMPONENT_AT_SIGHTS_SMG"
+            }
+          }, 
+          {
+            "menuName": "Small Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MACRO_02_SMG_MK2"
+            }
+          }, 
+          {
+            "menuName": "Medium Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_SMALL_SMG_MK2"
+            }
+          }, 
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_PI_SUPP"
+            }
+          }, 
+          {
+            "menuName": "Flat Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_01"
+            }
+          }, 
+          {
+            "menuName": "Tactical Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_02"
+            }
+          }, 
+          {
+            "menuName": "Fat-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_03"
+            }
+          }, 
+          {
+            "menuName": "Precision Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_04"
+            }
+          }, 
+          {
+            "menuName": "Heavy Duty Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_05"
+            }
+          }, 
+          {
+            "menuName": "Slanted Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_06"
+            }
+          }, 
+          {
+            "menuName": "Split-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_07"
+            }
+          }, 
+          {
+            "menuName": "Default Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SB_BARREL_01"
+            }
+          }, 
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SB_BARREL_02"
+            }
+          } 
+        ]
       }
     ],
     "Handguns": [
@@ -1408,7 +1539,7 @@
             }
           },
           {
-            "menuName": "Mounted Scope", 
+            "menuName": "Red Dot Sight", 
             "data": {
               "action": "COMPONENT_AT_PI_RAIL"
             }
