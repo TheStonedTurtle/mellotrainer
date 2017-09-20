@@ -958,6 +958,143 @@
         ]
       },
       {
+        "menuName": "Carbine Rifle MK2", 
+        "weaponName": "WEAPON_CARBINERIFLE_MK2", 
+        "data": {
+          "sub": 7 
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_01"
+            }
+          }, 
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_02"
+            }
+          }, 
+          {
+            "menuName": "Tracer Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_TRACER"
+            }
+          }, 
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_INCENDIARY"
+            }
+          }, 
+          {
+            "menuName": "Armor Piercing Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_ARMORPIERCING"
+            }
+          }, 
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_FMJ"
+            }
+          }, 
+          {
+            "menuName": "Grip", 
+            "data": {
+              "action": "COMPONENT_AT_AR_AFGRIP_02"
+            }
+          }, 
+          {
+            "menuName": "Flashlight", 
+            "data": {
+              "action": "COMPONENT_AT_AR_FLSH"
+            }
+          }, 
+          {
+            "menuName": "Holographic Sight", 
+            "data": {
+              "action": "COMPONENT_AT_SIGHTS"
+            }
+          }, 
+          {
+            "menuName": "Small Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MACRO_MK2"
+            }
+          }, 
+          {
+            "menuName": "Large Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MEDIUM_MK2"
+            }
+          }, 
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_AR_SUPP"
+            }
+          }, 
+          {
+            "menuName": "Flat Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_01"
+            }
+          }, 
+          {
+            "menuName": "Tactical Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_02"
+            }
+          }, 
+          {
+            "menuName": "Fat-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_03"
+            }
+          },
+          {
+            "menuName": "Precision Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_04"
+            }
+          },
+          {
+            "menuName": "Heavy Duty Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_05"
+            }
+          },
+          {
+            "menuName": "Slanted Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_06"
+            }
+          },
+          {
+            "menuName": "Split-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_07"
+            }
+          },
+          {
+            "menuName": "Normal Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_CR_BARREL_01"
+            }
+          },
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_CR_BARREL_02"
+            }
+          }
+        ]
+      }, 
+      {
         "menuName": "Compact Rifle",
         "weaponName": "WEAPON_COMPACTRIFLE",
         "data": {
