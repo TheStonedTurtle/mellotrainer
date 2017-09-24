@@ -1,4 +1,4 @@
-<h1>v0.5.5 (09-@@-2017)</h1>
+<h1>v0.5.5 (09-24-2017)</h1>
 Added new trainer features, new Setting Saving, and some general bug fixes/improvments
 
 
