@@ -122,6 +122,16 @@ function DATASAVE:WriteToFile( name, data, index )
     file:close()
 end 
 
+
+function DATASAVE:SendSavedData( file, type, source )
+    local event = "wk:RecieveSaved" .. string.gsub( type, "^%l", string.upper )
+    local data = self:LoadFile( file )
+
+    if ( next( data ) ~= nil ) then 
+        TriggerClientEvent( event, source, data )
+    end
+end 
+
 function DATASAVE:SendSaveData( source )
     local id = self:GetIdentifier( source, "steam" )
 
@@ -131,9 +141,11 @@ function DATASAVE:SendSaveData( source )
 
         local vehFileName = id .. "_vehicles.txt"
         local skinFileName = id .. "_skins.txt"
+        local trainerFileName = id .. "_toggles.txt"
 
         vehicleData = self:LoadFile( vehFileName )
         skinData = self:LoadFile( skinFileName )
+        trainerToggles = self:LoadFile( trainerFileName )
 
         if ( next( vehicleData ) ~= nil ) then 
             TriggerClientEvent( 'wk:RecieveSavedVehicles', source, vehicleData )
@@ -141,7 +153,11 @@ function DATASAVE:SendSaveData( source )
 
         if ( next( skinData ) ~= nil ) then 
             TriggerClientEvent( 'wk:RecieveSavedSkins', source, skinData )
-        end 
+        end
+
+        if ( next( trainerToggles ) ~= nil ) then
+            TriggerClientEvent( 'wk:RecieveSavedToggles', source, trainerToggles)
+        end
     else 
         self:print( "Attempted to load save data for " .. GetPlayerName( source ) .. ", but does not have a steam id." ) 
     end 
@@ -166,20 +182,19 @@ function DATASAVE:AddPlayerToDataSave( source )
     local id = self:GetIdentifier( source, "steam" )
     
     if ( id ~= nil ) then 
-        local vehFileName = id .. "_vehicles.txt"
-        local skinFileName = id .. "_skins.txt"
+        local fileNames = {}
+        fileNames.vehicles = id .. "_vehicles.txt"
+        fileNames.skins = id .. "_skins.txt"
+        fileNames.toggles = id .. "_toggles.txt"
 
-        local exists = self:DoesFileExist( vehFileName ) and self:DoesFileExist( skinFileName )
-
-        if ( exists ) then 
-            self:print( GetPlayerName( source ) .. " has a save file." )
-            self:SendSaveData( source )
-        else 
-            self:print( GetPlayerName( source ) .. " does not have a save file, creating one." )
-
-            self:CreateFile( vehFileName )
-            self:CreateFile( skinFileName )
-        end 
+        for key, filename in pairs( fileNames ) do
+            if ( self:DoesFileExist( filename ) )then
+                self:SendSavedData( filename, key, source )
+            else
+                self:print( "Creating " .. key .. " save file for " .. GetPlayerName( source) )
+                self:CreateFile( filename )
+            end
+        end
     else 
         self:print( GetPlayerName( source ) .. " is not connecting with a steam id.\nPlayer will not have the ability to save/load." )
     end 
@@ -199,6 +214,22 @@ AddEventHandler( 'wk:DataSave', function( type, data, index )
         end 
     end 
 end )
+
+RegisterServerEvent( 'wk:DataLoad' )
+AddEventHandler( 'wk:DataLoad', function( type )
+    if ( Config.settings.localSaving ) then 
+        local id = DATASAVE:GetIdentifier( source, "steam" )
+
+        if ( id ~= nil ) then 
+            local file = id .. "_" .. type .. ".txt"
+
+            if ( DATASAVE:DoesFileExist( file ) ) then
+                DATASAVE:SendSavedData( file, type, source )
+            end
+        end 
+    end 
+end )
+
 
 function startsWith( string, start )
     return string.sub( string, 1, string.len( start ) ) == start

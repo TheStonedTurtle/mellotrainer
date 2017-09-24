@@ -52,6 +52,8 @@ featureHideHud = false;
 featureBigHud = false;
 featureMapBlips = true;
 featureAreaStreetNames = false;
+featureRestoreAppearance = true;
+--featureRestoreWeapons = false;
 
 
 --Vehicle Options
@@ -107,7 +109,9 @@ featureWeatherFreeze = false;
 -- Voice
 featureShowVoiceChatSpeaker = true;
 featureVoiceChat = true;
--- One of the below must be true
+-- One of the below must be true.
+-- If multiple are true only the first one will apply.
+featureVPAllPlayers = true;
 featureVPTooClose = false;
 featureVPVeryClose = false;
 featureVPClose = false;
@@ -115,8 +119,14 @@ featureVPNearby = false;
 featureVPDistant = false;
 featureVPFar = false;
 featureVPVeryFar = false;
-featureVPAllPlayers = true;
-
+-- One of the below must be true.
+-- If multiple are true only the first one will apply.
+featureChannelDefault = true;
+featureChannel1 = false;
+featureChannel2 = false;
+featureChannel3 = false;
+featureChannel4 = false;
+featureChannel5 = false;
 
 
 
@@ -336,15 +346,7 @@ fib = nil;
 --ptexture = {};
 --pallet = {};
 
-
---featureChannelDefault = false;
---featureChannel1 = false;
---featureChannel2 = false;
---featureChannel3 = false;
---featureChannel4 = false;
---featureChannel5 = false;
-
-
+-- Horizontal/Vertical Camera features.
 --featureVC1 = false;
 --featureVC2 = false;
 --featureVC3 = false;

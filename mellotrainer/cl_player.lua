@@ -153,6 +153,9 @@ RegisterNUICallback("player", function(data, cb)
 	elseif action == "keepclean" then
 		featureKeepClean = newstate
 		drawNotification("Keep Clean: "..tostring(text))
+	elseif action == "restoreappearance"then
+		featureRestoreAppearance = newstate
+		drawNotification("Restore Appearance: "..tostring(text))
 	end
 
 	if(cb)then cb("ok") end

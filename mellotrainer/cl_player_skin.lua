@@ -55,6 +55,7 @@ function SetSkin( skin )
 			SetPlayerModel( PlayerId(), skin )
 			SetPedDefaultComponentVariation( PlayerId() )
 			SetModelAsNoLongerNeeded( skin )
+			resetTrainerMenus("playerskinmodify playerpropmodify")
 		end 
 	end 
 end 
@@ -545,3 +546,40 @@ function checkValidPropComponents(propID)
 	end
 	return valid
 end
+
+
+
+local playerSkin = {}
+local pmodel = nil
+function savePlayerAppearanceVariables(pmod)
+	pmodel = pmod
+	local ped = PlayerPedId()
+	for i=0,12,1 do
+		table.insert(playerSkin, {
+			drawable = GetPedDrawableVariation(ped, i),
+			dtexture = GetPedTextureVariation(ped, i),
+			prop = GetPedPropIndex(ped, i),
+			ptexture = GetPedPropTextureIndex(ped, i),
+			palette = GetPedPaletteVariation(ped, i),
+			index = i
+		})
+	end
+end
+
+
+function restorePlayerAppearance()	
+	_LoadModel(pmodel)
+	SetPlayerModel(PlayerId(),pmodel)
+	local ped = GetPlayerPed(-1)
+	for _,obj in pairs(playerSkin) do
+		SetPedComponentVariation(ped, obj.index, obj.drawable, obj.dtexture, obj.palette)
+		SetPedPropIndex(ped, obj.index, obj.prop, obj.ptexture)
+	end
+	SetModelAsNoLongerNeeded(pmodel)
+end
+
+AddEventHandler("mellotrainer:playerSpawned",function()
+	if(featureRestoreAppearance)then
+		restorePlayerAppearance()
+	end
+end)

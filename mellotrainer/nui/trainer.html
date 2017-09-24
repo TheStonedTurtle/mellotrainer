@@ -45,7 +45,17 @@
                 <p class="traineroption" data-sub="settingsmenu">Settings</p>
                 <p class="traineroption" data-sub="adminmenu" data-require="admin">Admin Menu</p>
                 <p class="traineroption" data-sub="aboutmenu">About</p>
+                <p class="traineroption" data-sub="savemenu">Save/Load Trainer Settings</p>
             </div>
+
+
+            <!-- Toggle Save Menu -->
+            <div id="savemenu" data-parent="mainmenu">
+                <p class="traineroption" data-action="savefeaturevariables">Save Current Settings</p>
+                <p class="traineroption" data-action="loadfeaturevariables">Load Saved Settings</p>
+                <p class="traineroption" data-action="resetfeaturevariables">Clear Saved Settings</p>
+            </div>
+
 
 
             <!--
@@ -80,7 +90,7 @@
 
 
                 <!-- Player Options Menu (Online) -->
-                <div id="onlineplayersmenuplayeroptions" data-parent="onlineplayersmenu">
+                <div id="onlineplayersmenu_playeroptions" data-parent="onlineplayersmenu">
                     <p class="traineroption" data-action="otherplayer teleportto">Teleport to Player</p>
                     <p class="traineroption" data-action="otherplayer teleportinside">Teleport into Player Vehicle</p>
                     <p class="traineroption" data-action="otherplayer drawroute">Draw Route to Player</p>
@@ -124,6 +134,7 @@
                 <p class="traineroption" data-action="player police" data-state="OFF" data-toggle="featurePlayerIgnoredByPolice">Police Ignore You</p>
                 <p class="traineroption" data-action="player wanted" data-state="OFF" data-toggle="featurePlayerNeverWanted">Never Wanted</p>
                 <p class="traineroption" data-action="player keepwet" data-state="OFF" data-toggle="featureKeepWet">Keep Wet</p>
+                <p class="traineroption" data-action="player restoreappearance" data-state="OFF" data-toggle="featureRestoreAppearance">Restore Player Appearance</p>
                 <p class="traineroption" data-action="player suicide">Suicide</p>
             </div>
             
@@ -783,12 +794,18 @@
             
             <!-- Weapons menu -->
             <div id="weaponsmenu" data-parent="mainmenu">
+                <!-- <p class="traineroption" data-sub="weaponloadouts">Saved Loadouts</p> -->
                 <p class="traineroption" data-sub="weaponspawnmenu">Weapon Options</p>
                 <p class="traineroption" data-action="weaponoptions addall">Give All Weapons</p>
                 <p class="traineroption" data-action="weaponoptions removeall">Remove All Weapons</p>
                 <p class="traineroption" data-action="weaponoptions infiniteammo" data-state="OFF" data-toggle="featurePlayerInfiniteAmmo">Infinite Ammo</p>
                 <p class="traineroption" data-action="weaponoptions infinitechutes" data-state="OFF" data-toggle="featurePlayerInfiniteParachutes">Infinite Parachutes</p>
                 <p class="traineroption" data-action="weaponoptions noreload" data-state="OFF" data-toggle="featurePlayerNoReload">No Reload</p>
+            </div>
+
+
+            <!-- Saved Loadouts Menu -->
+            <div id="weaponloadouts" data-parent="weaponsmenu" data-dynamicmenu="loadsavedloadouts">
             </div>
 
 
@@ -1015,7 +1032,7 @@
 
             <!-- About menu -->
             <div id="aboutmenu" data-parent="mainmenu">
-                <p class="traineroption">Mello Trainer v0.5.0</p>
+                <p class="traineroption">Mello Trainer v0.5.5</p>
                 <p class="traineroption">Made By TheStonedTurtle</p>
                 <p class="traineroption">Special Thanks To:</p>
                 <p class="traineroption">WolfKnight</p>

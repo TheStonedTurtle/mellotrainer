@@ -142,7 +142,7 @@ function checkForDeaths()
         	if ( DoesEntityExist( currentPed ) and IsEntityDead( currentPed ) ) then 
 
         		if(deadPlayers[i] == nil)then
-	       			handlePlayerDeathMessage( i, currentPed )
+        			TriggerEvent("mellotrainer:playerDeath", i)
 	       			deadPlayers[i] = true
 	       		end
 	       	else
@@ -157,8 +157,22 @@ Citizen.CreateThread( function()
 	while true do
 		Citizen.Wait( 0 )
 
-		if ( featureDeathNotifications ) then
-			checkForDeaths()
-		end
+		checkForDeaths()
 	end
 end )
+
+
+
+
+AddEventHandler("mellotrainer:playerDeath", function(id)
+	local ped = GetPlayerPed(id)
+	-- Death Notifications
+	if(featureDeathNotifications)then
+		handlePlayerDeathMessage( id, ped )
+	end
+
+	-- Restore Appearance
+	if(featureRestoreAppearance and id == PlayerId())then
+		savePlayerAppearanceVariables(GetEntityModel(ped))
+	end
+end)

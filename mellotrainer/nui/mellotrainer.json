@@ -271,6 +271,107 @@
         ]
       },
       {
+        "menuName": "Heavy Sniper MK2", 
+        "weaponName": "WEAPON_HEAVYSNIPER_MK2",
+        "data": {
+          "sub": 3
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_01"
+            }
+          },
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_02"
+            }
+          },
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_INCENDIARY"
+            }
+          },
+          {
+            "menuName": "Armor Piercing Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_ARMORPIERCING"
+            }
+          },
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_FMJ"
+            }
+          },
+          {
+            "menuName": "Explosive Rounds", 
+            "data": {
+              "action": "COMPONENT_HEAVYSNIPER_MK2_CLIP_EXPLOSIVE"
+            }
+          },
+          {
+            "menuName": "Normal Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_LARGE_MK2"
+            }
+          }, 
+          {
+            "menuName": "Advanced Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MAX"
+            }
+          }, 
+          {
+            "menuName": "Night Vision Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_NV"
+            }
+          }, 
+          {
+            "menuName": "Thermal Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_THERMAL"
+            }
+          },
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_SR_SUPP_03"
+            }
+          },
+          {
+            "menuName": "Default Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SR_BARREL_01"
+            }
+          }, 
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SR_BARREL_02"
+            }
+          }, 
+          {
+            "menuName": "Squared Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_08"
+            }
+          }, 
+          {
+            "menuName": "Bell-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_09"
+            }
+          }
+        ]
+      },
+      {
         "menuName": "Marksman Rifle",
         "weaponName": "WEAPON_MARKSMANRIFLE",
         "data": {
@@ -632,6 +733,143 @@
         ]
       },
       {
+        "menuName": "Assault Rifle MK2", 
+        "weaponName": "WEAPON_ASSAULTRIFLE_MK2", 
+        "data": {
+          "sub": 6
+        }, 
+        "ammo": true,
+        "weapon": true,
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_ASSAULTRIFLE_MK2_CLIP_01"
+            }
+          }, 
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_ASSAULTRIFLE_MK2_CLIP_02"
+            }
+          }, 
+          {
+            "menuName": "Tracer Rounds", 
+            "data": {
+              "action": "COMPONENT_ASSAULTRIFLE_MK2_CLIP_TRACER"
+            }
+          }, 
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_ASSAULTRIFLE_MK2_CLIP_INCENDIARY"
+            }
+          }, 
+          {
+            "menuName": "Armor Piercing Rounds", 
+            "data": {
+              "action": "COMPONENT_ASSAULTRIFLE_MK2_CLIP_ARMORPIERCING"
+            }
+          }, 
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_ASSAULTRIFLE_MK2_CLIP_FMJ"
+            }
+          }, 
+          {
+            "menuName": "Grip", 
+            "data": {
+              "action": "COMPONENT_AT_AR_AFGRIP_02"
+            }
+          }, 
+          {
+            "menuName": "Flashlight", 
+            "data": {
+              "action": "COMPONENT_AT_AR_FLSH"
+            }
+          }, 
+          {
+            "menuName": "Holographic Sight", 
+            "data": {
+              "action": "COMPONENT_AT_SIGHTS"
+            }
+          }, 
+          {
+            "menuName": "Small Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MACRO_MK2"
+            }
+          }, 
+          {
+            "menuName": "Large Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MEDIUM_MK2"
+            }
+          }, 
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_AR_SUPP_02"
+            }
+          }, 
+          {
+            "menuName": "Flat Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_01"
+            }
+          }, 
+          {
+            "menuName": "Tactical Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_02"
+            }
+          }, 
+          {
+            "menuName": "Fat-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_03"
+            }
+          }, 
+          {
+            "menuName": "Precision Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_04"
+            }
+          }, 
+          {
+            "menuName": "Heavy Duty Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_05"
+            }
+          }, 
+          {
+            "menuName": "Slanted Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_06"
+            }
+          },
+          {
+            "menuName": "Split-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_07"
+            }
+          }, 
+          {
+            "menuName": "Standard Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_AR_BARREL_01"
+            }
+          }, 
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_AR_BARREL_02"
+            }
+          } 
+        ]
+      }, 
+      {
         "menuName": "Bullpup Rifle",
         "weaponName": "WEAPON_BULLPUPRIFLE",
         "data": {
@@ -719,6 +957,143 @@
           }
         ]
       },
+      {
+        "menuName": "Carbine Rifle MK2", 
+        "weaponName": "WEAPON_CARBINERIFLE_MK2", 
+        "data": {
+          "sub": 7 
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_01"
+            }
+          }, 
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_02"
+            }
+          }, 
+          {
+            "menuName": "Tracer Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_TRACER"
+            }
+          }, 
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_INCENDIARY"
+            }
+          }, 
+          {
+            "menuName": "Armor Piercing Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_ARMORPIERCING"
+            }
+          }, 
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_CARBINERIFLE_MK2_CLIP_FMJ"
+            }
+          }, 
+          {
+            "menuName": "Grip", 
+            "data": {
+              "action": "COMPONENT_AT_AR_AFGRIP_02"
+            }
+          }, 
+          {
+            "menuName": "Flashlight", 
+            "data": {
+              "action": "COMPONENT_AT_AR_FLSH"
+            }
+          }, 
+          {
+            "menuName": "Holographic Sight", 
+            "data": {
+              "action": "COMPONENT_AT_SIGHTS"
+            }
+          }, 
+          {
+            "menuName": "Small Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MACRO_MK2"
+            }
+          }, 
+          {
+            "menuName": "Large Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MEDIUM_MK2"
+            }
+          }, 
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_AR_SUPP"
+            }
+          }, 
+          {
+            "menuName": "Flat Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_01"
+            }
+          }, 
+          {
+            "menuName": "Tactical Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_02"
+            }
+          }, 
+          {
+            "menuName": "Fat-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_03"
+            }
+          },
+          {
+            "menuName": "Precision Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_04"
+            }
+          },
+          {
+            "menuName": "Heavy Duty Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_05"
+            }
+          },
+          {
+            "menuName": "Slanted Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_06"
+            }
+          },
+          {
+            "menuName": "Split-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_07"
+            }
+          },
+          {
+            "menuName": "Normal Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_CR_BARREL_01"
+            }
+          },
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_CR_BARREL_02"
+            }
+          }
+        ]
+      }, 
       {
         "menuName": "Compact Rifle",
         "weaponName": "WEAPON_COMPACTRIFLE",
@@ -1075,6 +1450,137 @@
             }
           }
         ]
+      },
+      {
+        "menuName": "SMG MK2", 
+        "weaponName": "WEAPON_SMG_MK2", 
+        "data": {
+          "sub": 9
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_01"
+            }
+          }, 
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_02"
+            }
+          }, 
+          {
+            "menuName": "Tracer Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_TRACER"
+            }
+          }, 
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_INCENDIARY"
+            }
+          }, 
+          {
+            "menuName": "Hollow Point Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_HOLLOWPOINT"
+            }
+          }, 
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_SMG_MK2_CLIP_FMJ"
+            }
+          }, 
+          {
+            "menuName": "Flashlight", 
+            "data": {
+              "action": "COMPONENT_AT_AR_FLSH"
+            }
+          }, 
+          {
+            "menuName": "Holographic Sight", 
+            "data": {
+              "action": "COMPONENT_AT_SIGHTS_SMG"
+            }
+          }, 
+          {
+            "menuName": "Small Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_MACRO_02_SMG_MK2"
+            }
+          }, 
+          {
+            "menuName": "Medium Scope", 
+            "data": {
+              "action": "COMPONENT_AT_SCOPE_SMALL_SMG_MK2"
+            }
+          }, 
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_PI_SUPP"
+            }
+          }, 
+          {
+            "menuName": "Flat Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_01"
+            }
+          }, 
+          {
+            "menuName": "Tactical Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_02"
+            }
+          }, 
+          {
+            "menuName": "Fat-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_03"
+            }
+          }, 
+          {
+            "menuName": "Precision Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_04"
+            }
+          }, 
+          {
+            "menuName": "Heavy Duty Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_05"
+            }
+          }, 
+          {
+            "menuName": "Slanted Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_06"
+            }
+          }, 
+          {
+            "menuName": "Split-End Muzzle Brake", 
+            "data": {
+              "action": "COMPONENT_AT_MUZZLE_07"
+            }
+          }, 
+          {
+            "menuName": "Default Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SB_BARREL_01"
+            }
+          }, 
+          {
+            "menuName": "Heavy Barrel", 
+            "data": {
+              "action": "COMPONENT_AT_SB_BARREL_02"
+            }
+          } 
+        ]
       }
     ],
     "Handguns": [
@@ -1149,7 +1655,7 @@
         ]
       },
       {
-        "menuName": "Flaregun",
+        "menuName": "Flare Gun",
         "weaponName": "WEAPON_FLAREGUN",
         "data": {
           "sub": 8
@@ -1262,6 +1768,77 @@
         ]
       },
       {
+        "menuName": "Pistol MK2", 
+        "weaponName": "WEAPON_PISTOL_MK2", 
+        "data": {
+          "sub":10
+        }, 
+        "ammo": true, 
+        "weapon": true, 
+        "submenu": [
+          {
+            "menuName": "Default Magazine", 
+            "data": {
+              "action": "COMPONENT_PISTOL_MK2_CLIP_01"
+            }
+          },
+          {
+            "menuName": "Extended Magazine", 
+            "data": {
+              "action": "COMPONENT_PISTOL_MK2_CLIP_02"
+            }
+          },
+          {
+            "menuName": "Tracer Rounds", 
+            "data": {
+              "action": "COMPONENT_PISTOL_MK2_CLIP_TRACER"
+            }
+          },
+          {
+            "menuName": "Incendiary Rounds", 
+            "data": {
+              "action": "COMPONENT_PISTOL_MK2_CLIP_INCENDIARY"
+            }
+          },
+          {
+            "menuName": "Hollow Point Rounds", 
+            "data": {
+              "action": "COMPONENT_PISTOL_MK2_CLIP_HOLLOWPOINT"
+            }
+          },
+          {
+            "menuName": "Full Metal Jacket Rounds", 
+            "data": {
+              "action": "COMPONENT_PISTOL_MK2_CLIP_FMJ"
+            }
+          },
+          {
+            "menuName": "Red Dot Sight", 
+            "data": {
+              "action": "COMPONENT_AT_PI_RAIL"
+            }
+          },
+          {
+            "menuName": "Flashlight", 
+            "data": {
+              "action": "COMPONENT_AT_PI_FLSH_02"
+            }
+          },
+          {
+            "menuName": "Suppressor", 
+            "data": {
+              "action": "COMPONENT_AT_PI_SUPP_02"
+            }
+          },
+          {
+            "menuName": "Compensator", 
+            "data": {
+              "action": "COMPONENT_AT_PI_COMP"
+            }
+          } 
+        ]
+      },
+      {
         "menuName": "Pistol .50",
         "weaponName": "WEAPON_PISTOL50",
         "data": {
@@ -1320,7 +1897,7 @@
         ]
       },
       {
-        "menuName": "Stungun",
+        "menuName": "Stun Gun",
         "weaponName": "WEAPON_STUNGUN",
         "data": {
           "sub": 7
@@ -5893,97 +6470,97 @@
         }
       },
       {
-        "menuName": "Sadtrombone Horn",
+        "menuName": "Sad Trombone",
         "data": {
           "action": "14 8"
         }
       },
       {
-        "menuName": "Calssical Horn 1",
+        "menuName": "Classical Horn 1",
         "data": {
           "action": "14 9"
         }
       },
       {
-        "menuName": "Calssical Horn 2",
+        "menuName": "Classical Horn 2",
         "data": {
           "action": "14 10"
         }
       },
       {
-        "menuName": "Calssical Horn 3",
+        "menuName": "Classical Horn 3",
         "data": {
           "action": "14 11"
         }
       },
       {
-        "menuName": "Calssical Horn 4",
+        "menuName": "Classical Horn 4",
         "data": {
           "action": "14 12"
         }
       },
       {
-        "menuName": "Calssical Horn 5",
+        "menuName": "Classical Horn 5",
         "data": {
           "action": "14 13"
         }
       },
       {
-        "menuName": "Calssical Horn 6",
+        "menuName": "Classical Horn 6",
         "data": {
           "action": "14 14"
         }
       },
       {
-        "menuName": "Calssical Horn 7",
+        "menuName": "Classical Horn 7",
         "data": {
           "action": "14 15"
         }
       },
       {
-        "menuName": "Scaledo Horn",
+        "menuName": "Scale - Do",
         "data": {
           "action": "14 16"
         }
       },
       {
-        "menuName": "Scalere Horn",
+        "menuName": "Scale - Re",
         "data": {
           "action": "14 17"
         }
       },
       {
-        "menuName": "Scalemi Horn",
+        "menuName": "Scale - Mi",
         "data": {
           "action": "14 18"
         }
       },
       {
-        "menuName": "Scalefa Horn",
+        "menuName": "Scale - Fa",
         "data": {
           "action": "14 19"
         }
       },
       {
-        "menuName": "Scalesol Horn",
+        "menuName": "Scale - Sol",
         "data": {
           "action": "14 20"
         }
       },
       {
-        "menuName": "Scalela Horn",
+        "menuName": "Scale - La",
         "data": {
           "action": "14 21"
         }
       },
       {
-        "menuName": "Scaleti Horn",
+        "menuName": "Scale - Ti",
         "data": {
           "action": "14 22"
         }
       },
       {
-        "menuName": "Scaledo Horn High",
+        "menuName": "Scale - Do - High",
         "data": {
           "action": "14 23"
         }
@@ -6007,37 +6584,37 @@
         }
       },
       {
-        "menuName": "Jazzloop Horn",
+        "menuName": "Jazz Horn Looped",
         "data": {
           "action": "14 28"
         }
       },
       {
-        "menuName": "Starspangban Horn 1",
+        "menuName": "Star Spangled Banner 1",
         "data": {
           "action": "14 29"
         }
       },
       {
-        "menuName": "Starspangban Horn 2",
+        "menuName": "Star Spangled Banner 2",
         "data": {
           "action": "14 30"
         }
       },
       {
-        "menuName": "Starspangban Horn 3",
+        "menuName": "Star Spangled Banner 3",
         "data": {
           "action": "14 31"
         }
       },
       {
-        "menuName": "Starspangban Horn 4",
+        "menuName": "Star Spangled Banner 4",
         "data": {
           "action": "14 32"
         }
       },
       {
-        "menuName": "Classicalloop Horn 1",
+        "menuName": "Classical Horn Looped 1",
         "data": {
           "action": "14 33"
         }
@@ -6049,7 +6626,7 @@
         }
       },
       {
-        "menuName": "Classicalloop Horn 2",
+        "menuName": "Classical Horn 2 Looped",
         "data": {
           "action": "14 35"
         }
@@ -9191,19 +9768,19 @@
         }
       },
       {
-        "menuName": "Airhostess",
+        "menuName": "Air Hostess",
         "data": {
           "action": "s_f_y_airhostess_01"
         }
       },
       {
-        "menuName": "Airworker",
+        "menuName": "Air Worker",
         "data": {
           "action": "s_m_y_airworker"
         }
       },
       {
-        "menuName": "Aldinapoli",
+        "menuName": "Al Di Napoli",
         "data": {
           "action": "u_m_m_aldinapoli"
         }
@@ -9245,37 +9822,37 @@
         }
       },
       {
-        "menuName": "Amandatownley",
+        "menuName": "Amanda Townley - In-game",
         "data": {
           "action": "ig_amandatownley"
         }
       },
       {
-        "menuName": "Amandatownley-BROKEN",
+        "menuName": "Amanda Townley - Cutscene -BROKEN",
         "data": {
           "action": "cs_amandatownley"
         }
       },
       {
-        "menuName": "Ammucity",
+        "menuName": "Ammu-Nation Clerk - City",
         "data": {
           "action": "s_m_y_ammucity_01"
         }
       },
       {
-        "menuName": "Ammucountry",
+        "menuName": "Ammu-Nation Clerk - Country",
         "data": {
           "action": "s_m_m_ammucountry"
         }
       },
       {
-        "menuName": "Andreas",
+        "menuName": "Andreas - In-game",
         "data": {
           "action": "ig_andreas"
         }
       },
       {
-        "menuName": "Andreas-BROKEN",
+        "menuName": "Andreas - Cutscene - BROKEN",
         "data": {
           "action": "cs_andreas"
         }
@@ -9287,73 +9864,73 @@
         }
       },
       {
-        "menuName": "Anton Beaudelaire",
+        "menuName": "Anton Beaudelaire - Cutscene",
         "data": {
           "action": "csb_anton"
         }
       },
       {
-        "menuName": "Antonb",
+        "menuName": "Anton Beaudelaire - In-Game",
         "data": {
           "action": "u_m_y_antonb"
         }
       },
       {
-        "menuName": "Armboss",
+        "menuName": "Armenian Mob Boss",
         "data": {
           "action": "g_m_m_armboss_01"
         }
       },
       {
-        "menuName": "Armgoon",
+        "menuName": "Armenian Mob Goon 1",
         "data": {
           "action": "g_m_m_armgoon_01"
         }
       },
       {
-        "menuName": "Armgoon",
+        "menuName": "Armenian Mob Goon 2",
         "data": {
           "action": "g_m_y_armgoon_02"
         }
       },
       {
-        "menuName": "Armlieut",
+        "menuName": "Armenian Mob lieutenant 1",
         "data": {
           "action": "g_m_m_armlieut_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - MP",
         "data": {
           "action": "mp_s_m_armoured_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - SP 1",
         "data": {
           "action": "s_m_m_armoured_01"
         }
       },
       {
-        "menuName": "Armoured",
+        "menuName": "Security - Armoured - SP 2",
         "data": {
           "action": "s_m_m_armoured_02"
         }
       },
       {
-        "menuName": "Armymech",
+        "menuName": "Army Mechanic",
         "data": {
           "action": "s_m_y_armymech_01"
         }
       },
       {
-        "menuName": "Ashley",
+        "menuName": "Ashley Butler - In-game",
         "data": {
           "action": "ig_ashley"
         }
       },
       {
-        "menuName": "Ashley-BROKEN",
+        "menuName": "Ashley Butler - Cutscene - BROKEN",
         "data": {
           "action": "cs_ashley"
         }
@@ -9377,7 +9954,7 @@
         }
       },
       {
-        "menuName": "Azteca",
+        "menuName": "Azteca Gangster 1",
         "data": {
           "action": "g_m_y_azteca_01"
         }
@@ -9389,13 +9966,13 @@
         }
       },
       {
-        "menuName": "Ballaeast",
+        "menuName": "Balla East Territory 1",
         "data": {
           "action": "g_m_y_ballaeast_01"
         }
       },
       {
-        "menuName": "Ballaorig",
+        "menuName": "Balla Original Territory 1",
         "data": {
           "action": "g_m_y_ballaorig_01"
         }
@@ -9407,19 +9984,19 @@
         }
       },
       {
-        "menuName": "Ballas OG",
+        "menuName": "Ballas OG - Cutscene",
         "data": {
           "action": "csb_ballasog"
         }
       },
       {
-        "menuName": "Ballasog",
+        "menuName": "Ballas OG - In-game",
         "data": {
           "action": "ig_ballasog"
         }
       },
       {
-        "menuName": "Ballasout",
+        "menuName": "Balla South Territory 1",
         "data": {
           "action": "g_m_y_ballasout_01"
         }
@@ -9671,7 +10248,7 @@
         }
       },
       {
-        "menuName": "Black Street Male",
+        "menuName": "Black Street Male 1",
         "data": {
           "action": "a_m_y_stbla_01"
         }
@@ -9683,13 +10260,13 @@
         }
       },
       {
-        "menuName": "Blackops",
+        "menuName": "Black Ops Soldier 1",
         "data": {
           "action": "s_m_y_blackops_01"
         }
       },
       {
-        "menuName": "Blackops",
+        "menuName": "Black Ops Soldier 2",
         "data": {
           "action": "s_m_y_blackops_02"
         }
@@ -10127,13 +10704,13 @@
         }
       },
       {
-        "menuName": "Davenorton",
+        "menuName": "Dave Norton",
         "data": {
           "action": "ig_davenorton"
         }
       },
       {
-        "menuName": "Davenorton-BROKEN",
+        "menuName": "Dave Norton - Cutscene - BROKEN",
         "data": {
           "action": "cs_davenorton"
         }
@@ -10151,7 +10728,7 @@
         }
       },
       {
-        "menuName": "Debra-BROKEN",
+        "menuName": "Debra - Cutscene - BROKEN",
         "data": {
           "action": "cs_debra"
         }
@@ -10175,19 +10752,19 @@
         }
       },
       {
-        "menuName": "Devin",
+        "menuName": "Devin Weston - Ingame",
         "data": {
           "action": "ig_devin"
         }
       },
       {
-        "menuName": "Devin-BROKEN",
+        "menuName": "Devin Weston - Cutscene - BROKEN",
         "data": {
           "action": "cs_devin"
         }
       },
       {
-        "menuName": "Devinsec",
+        "menuName": "Devin's Security",
         "data": {
           "action": "s_m_y_devinsec_01"
         }
@@ -10241,25 +10818,25 @@
         }
       },
       {
-        "menuName": "Dreyfuss",
+        "menuName": "Peter Dreyfuss - In-game",
         "data": {
           "action": "ig_dreyfuss"
         }
       },
       {
-        "menuName": "Dreyfuss-BROKEN",
+        "menuName": "Peter Dreyfuss - Cutscene - BROKEN",
         "data": {
           "action": "cs_dreyfuss"
         }
       },
       {
-        "menuName": "Drfriedlander",
+        "menuName": "Dr. Isiah Friedlander - In-game",
         "data": {
           "action": "ig_drfriedlander"
         }
       },
       {
-        "menuName": "Drfriedlander-BROKEN",
+        "menuName": "Dr. Isiah Friedlander - Cutscene - BROKEN",
         "data": {
           "action": "cs_drfriedlander"
         }
@@ -11087,13 +11664,13 @@
         }
       },
       {
-        "menuName": "Johnnyklebitz",
+        "menuName": "Johnny Klebitz - In-game",
         "data": {
           "action": "ig_johnnyklebitz"
         }
       },
       {
-        "menuName": "Johnnyklebitz-BROKEN",
+        "menuName": "Johnny Klebitz - Cutscene - BROKEN",
         "data": {
           "action": "cs_johnnyklebitz"
         }
@@ -12155,13 +12732,13 @@
         }
       },
       {
-        "menuName": "Rocco Pelosi",
+        "menuName": "Rocco Pelosi - Cutscene",
         "data": {
           "action": "csb_roccopelosi"
         }
       },
       {
-        "menuName": "Roccopelosi",
+        "menuName": "Rocco Pelosi - In-Game",
         "data": {
           "action": "ig_roccopelosi"
         }
@@ -12179,13 +12756,13 @@
         }
       },
       {
-        "menuName": "Russiandrunk",
+        "menuName": "Russian Drunk - In-game",
         "data": {
           "action": "ig_russiandrunk"
         }
       },
       {
-        "menuName": "Russiandrunk-BROKEN",
+        "menuName": "Russian Drunk - Cutscene - BROKEN",
         "data": {
           "action": "cs_russiandrunk"
         }
@@ -12341,13 +12918,13 @@
         }
       },
       {
-        "menuName": "Siemonyetarian",
+        "menuName": "Simeon Yetarian - In-game",
         "data": {
           "action": "ig_siemonyetarian"
         }
       },
       {
-        "menuName": "Siemonyetarian-BROKEN",
+        "menuName": "Simeon Yetarian - Cutscene - BROKEN",
         "data": {
           "action": "cs_siemonyetarian"
         }
@@ -12389,7 +12966,7 @@
         }
       },
       {
-        "menuName": "Snowcop",
+        "menuName": "Yankton Cop",
         "data": {
           "action": "s_m_m_snowcop_01"
         }
@@ -12539,13 +13116,13 @@
         }
       },
       {
-        "menuName": "Spyactor",
+        "menuName": "Spy Actor",
         "data": {
           "action": "u_m_m_spyactor"
         }
       },
       {
-        "menuName": "Spyactress",
+        "menuName": "Spy Actress",
         "data": {
           "action": "u_f_y_spyactress"
         }
@@ -13171,7 +13748,7 @@
         }
       },
       {
-        "menuName": "Humpback",
+        "menuName": "Humpback Whale",
         "data": {
           "action": "a_c_humpback"
         }
@@ -13213,7 +13790,7 @@
         }
       },
       {
-        "menuName": "Rhesus",
+        "menuName": "Rhesus Monkey",
         "data": {
           "action": "a_c_rhesus"
         }
@@ -13225,19 +13802,19 @@
         }
       },
       {
-        "menuName": "Sharkhammer",
+        "menuName": "Hammerhead Shark",
         "data": {
           "action": "a_c_sharkhammer"
         }
       },
       {
-        "menuName": "Sharktiger",
+        "menuName": "Tiger Shark",
         "data": {
           "action": "a_c_sharktiger"
         }
       },
       {
-        "menuName": "Shepherd",
+        "menuName": "German Shepherd",
         "data": {
           "action": "a_c_shepherd"
         }
