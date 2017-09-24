@@ -384,9 +384,9 @@ function toggleErrorIndex(){
 function resetTrainer() {
     showMenu(menus["mainmenu"], true);
 
-    // Reset trainer memory.
-    memoryTree = {};
-    currentMemory = {};
+    // Reset trainer memory
+    // memoryTree = {};
+    // currentMemory = {};
 }
 
 
