@@ -175,8 +175,9 @@ function isAdmin(identifier)
 	for _,v in pairs(admins) do
 		adminList[v] = true
 	end
-	identifier = string.lower(identifier)
-	identifier2 = string.upper(identifier)
+	local info = stringsplit(identifier,":")
+	identifier = info[1]..":"..string.lower(info[2])
+	identifier2 = info[1]..":"..string.upper(info[2])
 
 	if(adminList[identifier] or adminList[identifier2])then
 		return true
