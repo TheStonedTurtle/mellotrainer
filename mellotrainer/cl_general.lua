@@ -417,3 +417,17 @@ AddEventHandler("wk:RecieveSavedToggles", function(data)
 	syncSettings()
 	drawNotification("Settings loaded")
 end)
+
+RegisterNUICallback("leavenetsession", function()
+	NetworkBail()
+	drawNotification("Left Network Session")
+	SendNUIMessage({
+		trainerback = true
+	})
+end)
+
+RegisterNUICallback("cancelleavenetsession", function()
+	SendNUIMessage({
+		trainerback = true
+	})
+end)
